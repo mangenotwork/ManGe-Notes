@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>漫鸽笔记</title>
+	<link rel="stylesheet" href="../static/plugin/layui/css/layui.css" media="all">
+	<script src="../static/plugin/layui/layui.js?v=1"></script>
+	<script src="../static/js/jquery-3.3.1.min.js?v=1"></script>
+	<script src="../static/js/man.js?v=1"></script>
+</head>
+<body style="background-color: #000;color: #fff;">
+	<div style="margin:0 auto;width:500px;height:300px;margin-top: 10%;">
+
+
+		<div class="layui-inline" style="margin-top: 20px;">
+		    <label class="layui-form-label"></label>
+		    <div class="layui-input-inline">
+		      <h1>ManGe-Notes Login</h1>
+		    </div>
+		  </div>
+
+
+		<div class="layui-inline" style="margin-top: 20px;">
+		    <label class="layui-form-label">账号</label>
+		    <div class="layui-input-inline">
+		      <input type="text" id="loginacc" name="" autocomplete="off" class="layui-input" style="width: 280px;">
+		    </div>
+		  </div>
+
+		<div class="layui-inline" style="margin-top: 20px;">
+		    <label class="layui-form-label">密码</label>
+		    <div class="layui-input-inline">
+		      <input type="password" id="loginpassword" name="" autocomplete="off" class="layui-input" style="width: 280px;">
+		    </div>
+		  </div>
+
+		<div class="layui-inline" style="margin-top: 20px;">
+			<label class="layui-form-label"></label>
+			<div class="layui-input-inline">
+				<a onclick="registered()" style="color: #ddd;">新注册！</a>
+			</div>
+		</div>
+
+		<div class="layui-inline" style="margin-top: 20px;">
+		    <label class="layui-form-label"></label>
+		    <div class="layui-input-inline">
+		      <a onclick="login()" class="layui-btn layui-btn-primary" style="width: 280px;">登录</a>
+		    </div>
+		  </div>
+
+
+	</div>
+
+
+<script type="text/javascript">
+	//<!--添加分类-->
+function registered(){
+
+	var addDiv='<div class="layui-inline" style="margin-top: 20px;color: #000;">\
+		    <label class="layui-form-label"></label>\
+		    <div class="layui-input-inline">\
+		      <h2>账号密码注册</h2>\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label" style="color: #000;">账号*</label>\
+		    <div class="layui-input-inline">\
+		      <input id="accnumber" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label" style="color: #000;">密码*</label>\
+		    <div class="layui-input-inline">\
+		      <input id="password" type="password" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label" style="color: #000;">邀请码*</label>\
+		    <div class="layui-input-inline">\
+		      <input id="invite" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label" style="color: #000;">电话*(用于找回密码)</label>\
+		    <div class="layui-input-inline">\
+		      <input id="phone" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label"></label>\
+		    <div class="layui-input-inline">\
+		      <a onclick="UserReg()" class="layui-btn layui-btn-primary" style="width: 280px;">提交</a>\
+		    </div>\
+		  </div>'
+
+	layui.use("layer",function(){
+		var layer = layui.layer; 
+		layer.open({
+		  type: 1,
+		  title: '新注册', 
+		  maxmin: true,
+		  area: ['480px', '520px'],
+		  content: addDiv
+		});
+	});
+}
+
+
+
+function UserReg(){
+	var urlstr = '/userreg';
+	var data = {
+		"acc": $("#accnumber").val(),
+		"password": $("#password").val(),
+		"invite_code": $("#invite").val(),
+		"phone": $("#phone").val()
+	}
+	pubAjaxPOST(urlstr,data,SuccessShow);
+}
+
+function SuccessShow(data){
+	if (data.code == 1){
+        alert("成功!");
+    }else{
+        alert("失败!");
+    }
+    location.reload();
+}
+
+function loginshow(datas){
+	if (datas.code == 1){
+        alert("登录成功!");
+    }
+    else if (datas.code == 2){
+    	alert("账号不存在或密码错误!");
+    }
+    else{
+    	alert("未知错误!");
+    }
+    location.reload();
+}
+
+function login(){
+	var urlstr = '/userlogin';
+
+	var loginacc = $("#loginacc").val();
+	var loginpassword = $("#loginpassword").val();
+
+	if(loginacc != "" && loginpassword != ""){
+		var data = {
+		"loginacc": loginacc,
+		"loginpassword": loginpassword
+		}
+		pubAjaxPOST(urlstr,data,loginshow);
+	}else{
+		alert("请输入账号或密码！");
+	}
+	
+}
+
+
+
+</script>
+
+</body>
+</html>

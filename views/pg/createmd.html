@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>漫鸽笔记Markdown编辑器v0.1</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <link rel="stylesheet" href="../static/css/md.css?v=2">
+    <link rel="stylesheet" href="../static/plugin/inputtag/inputTags.css?v=2">
+    <script src="../static/plugin/layui/layui.js?v=3"></script>
+    <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
+    <script src="../static/plugin/editor.md-master/lib/marked.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/prettify.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/raphael.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/underscore.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/sequence-diagram.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/flowchart.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/jquery.flowchart.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/editormd.js?v=1"></script>
+    <script src="../static/js/man.js?v=1"></script>
+    <script src="../static/plugin/inputtag/inputTags.js?v=1"></script>
+    <style type="text/css">
+    pre{ 
+        white-space:pre-wrap; 
+        white-space:-moz-pre-wrap; 
+        white-space:-pre-wrap; 
+        white-space:-o-pre-wrap; 
+        word-wrap:break-word; 
+    } 
+    p {
+        word-break:break-word;
+    }
+
+  .scrollbar {
+  width : 30px;
+  height: 300px;
+  margin: 0 auto;
+  }
+  .scrollbar-div::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #535353;
+  }
+  .scrollbar-div::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+
+  .scrollbar-div2::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div2::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+  .scrollbar-div2::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #c2c2c2;
+  }
+  
+  .fontsize21{font-size: 21px;}
+
+    </style>
+</head>
+<body>
+    <ul class="layui-nav" lay-filter="">
+        <li class="layui-nav-item"><a onclick="closecreateNoet()"><i class="layui-icon">&#xe65c;</i>   退出编写</a></li>
+        <li class="layui-nav-item">|</li>
+        <li class="layui-nav-item"><a onclick="Bold()" title="粗体"><i class="layui-icon fontsize21">&#xe62b;</i></a></li>
+        <li class="layui-nav-item"><a onclick="Strikethrough()" title="删除线"><i class="layui-icon fontsize21">&#xe64f;</i></a></li>
+        <li class="layui-nav-item"><a onclick="Slash()" title="斜体"><i class="layui-icon fontsize21">&#xe644;</i></a></li>
+        <li class="layui-nav-item">
+            <a href="javascript:;" title="标题"><i class="layui-icon fontsize21">&#xe671;</i></a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+              <dd><a onclick="Title(1)">H1</a></dd>
+              <dd><a onclick="Title(2)">H2</a></dd>
+              <dd><a onclick="Title(3)">H3</a></dd>
+              <dd><a onclick="Title(4)">H4</a></dd>
+              <dd><a onclick="Title(5)">H5</a></dd>
+              <dd><a onclick="Title(6)">H6</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item">
+            <a href="javascript:;" title="序列"><i class="layui-icon fontsize21">&#xe649;</i></a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+              <dd><a onclick="Sequence(1)">无序列</a></dd>
+              <dd><a onclick="Sequence(2)">有序列</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item"><a onclick="Horizontal()" title="横线"><i class="layui-icon fontsize21">&#xe67e;</i></a></li>
+        <li class="layui-nav-item"><a onclick="Link()" title="链接"><i class="layui-icon fontsize21">&#xe64c;</i></a></li>
+        <li class="layui-nav-item"><a onclick="Image()" title="图片"><i class="layui-icon fontsize21">&#xe64a;</i></a></li>
+        <li class="layui-nav-item"><a onclick="Code()" title="代码"><i class="layui-icon fontsize21">&#xe64e;</i></a></li>
+        <li class="layui-nav-item"><a onclick="Table()" title="表格"><i class="layui-icon fontsize21">&#xe62d;</i></a></li>
+
+    </ul>
+    <ul class="layui-nav layui-layout-right" style="padding:0;">
+      <li class="layui-nav-item" style="margin-right: 20px;">
+        <a href="javascript:;">
+          <i class="layui-icon">&#xe614;</i>设置
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="" style="color: #fff;"> <i class="layui-icon">&#xe681;</i> 保存 </a></li>
+      <li class="layui-nav-item" style="background-color: red;"><a onclick="CreateMDNote()" style="color: #fff;"><b> <i class="layui-icon">&#xe67c;</i> 提交 </b></a></li>
+    </ul>
+        
+    <div style="width: 100%;height: 50px;background-color: #fff;">
+        <input type="text" id="title" name="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" style="height: 50px;font-size: 20px;width: 100%;">
+    </div>
+
+    <div style="margin-top: 10px;">
+
+        <textarea id="content" name="desc" placeholder="请输入内容" class="layui-textarea scrollbar-div2" style="width: 43%;float: left;background-color: #ddd;height: 698px;" onkeyup="mdToHml()"></textarea>
+
+        <div id="result" style="width: 43%;float: left;overflow-y:scroll; overflow-x:hidden;background-color: #fff;height: 698px;padding-left: 1%;padding-right: 1%;background: #fff; box-shadow: #d4d2d2 0px 0px 10px;-webkit-box-shadow: #d4d2d2 0px 0px 10px;-moz-box-shadow: #d4d2d2 0px 0px 10px;" class="scrollbar-div2"></div>
+
+        <div id="help" style="width: 12%;float: left;overflow-y:scroll; overflow-x:hidden;background-color: #f9f2f4;height: 698px;" class="scrollbar-div">
+            <h3>《帮助文档》</h3>
+            <hr>
+            <h4> [快捷键] </h4>
+            Alt + A 粗体<br>
+            Alt + F1 H1<br>
+            Alt + F2 H2<br>
+            Alt + F3 H3<br>
+            Alt + F4 H4<br>
+            Alt + F5 H5<br>
+            Alt + F6 H6<br>
+            Alt + Q 有序列<br>
+            Alt + V 无序列<br>
+            Alt + G 横线<br>
+            Alt + S 删除线<br>
+            Alt + Y 斜线<br>
+            Alt + C 代码<br>
+            Alt + R 链接<br>
+            Alt + F 图片<br>
+            Alt + T 表格<br>
+
+            <hr>
+            <h4> [标题] </h4>
+            # 一级标题<br>
+            ## 二级标题<br>
+            ### 三级标题<br>
+            #### 四级标题<br>
+            ##### 五级标题<br>
+            ###### 六级标题<br>
+            <hr>
+            <h4> [引用] </h4>
+            > 标记区块引用<br>
+            <hr>
+            <h4> [列表] </h4>
+            * 无序列表<br>
+            - 无序列表<br>
+            + 无序列表<br>
+            1. 有序列表<br>
+            <hr>
+            <h4> [代码] </h4>
+            ``` ``` 三个反引号 "`"来表示代码框,他是成对出现<br>
+            <hr>
+            <h4> [链接] </h4>
+            [This link](http://example.net/)<br>
+            在方块括号后面紧接着圆括号并插入网址链接<br>
+            <hr>
+            <h4> [图片] </h4>
+            ![markdown](https://www.mdeditor.com/images/logos/markdown.png "markdown")<br>
+            一个惊叹号 !<br>
+            接着一个方括号，里面放上图片的替代文字<br>
+            接着一个普通括号，里面放上图片的网址，最后还可以用引号包住并加上 选择性的 'title' 文字<br>
+            <hr>
+            <h4>强调</h4>
+            **strong**<br>
+            __strong__<br>
+            使用两个星号（*）和底线（_）作为标记强调字词的符号<br>
+            <hr>
+            <h4>分割线</h4>
+            ****** * * *<br>
+            ***<br>
+            ---<br>
+            - - -<br>
+            -----<br>
+            在一行中用三个以上的星号、减号、底线来建立一个分隔线，行内不能有其他东西。你也可以在星号或是减号中间插入空格<br>
+        </div>
+    </div>
+
+
+
+        
+<script>
+
+    //注意：导航 依赖 element 模块，否则无法进行功能性操作
+    layui.use('element', function(){
+        var element = layui.element;
+          
+        //…
+    });
+
+
+    //markDown转HTMl的方法
+    function mdToHml(){
+        //先对容器初始化，在需要展示的容器中创建textarea隐藏标签，
+        $("#result").html('<textarea id="appendTest" style="display:none;"></textarea>');
+        var content=$("#content").val();//获取需要转换的内容
+        $("#appendTest").val(content);//将需要转换的内容加到转换后展示容器的textarea隐藏标签中
+        //转换开始,第一个参数是上面的div的id
+        editormd.markdownToHTML("result", {
+            htmlDecode: "style,script,iframe", //可以过滤标签解码
+            emoji: true,
+            taskList:true,
+            tex: true,               // 默认不解析
+            flowChart:true,         // 默认不解析
+            sequenceDiagram:true,  // 默认不解析
+        });
+    }
+
+    //设置光标的位置
+    $.fn.setCursorPosition = function(position){
+        if(this.length == 0) return this;
+        return $(this).setSelection(position, position);
+    }
+
+    //光标移动 
+    $.fn.setSelection = function(selectionStart, selectionEnd) {
+        if(this.length == 0) return this;
+        input = this[0];
+        if (input.createTextRange) {
+            var range = input.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', selectionEnd);
+            range.moveStart('character', selectionStart);
+            range.select();
+        } else if (input.setSelectionRange) {
+            input.focus();
+            input.setSelectionRange(selectionStart, selectionEnd);
+        }
+     
+        return this;
+    }
+    
+    //光标移到到最后
+    $.fn.focusEnd = function(){
+        this.setCursorPosition(this.val().length);
+        return this;
+    }
+
+    //光标移到到指定位置
+    $.fn.focusNumber = function(v){
+        this.setCursorPosition(v);
+        return this;
+    }
+
+    //获取光标位置
+    $.fn.selection = function(){
+        var s,e,range,stored_range;
+        if(this[0].selectionStart == undefined){
+            var selection=document.selection;
+            if (this[0].tagName.toLowerCase() != "textarea") {
+                var val = this.val(),
+                range = selection.createRange().duplicate();
+                range.moveEnd("character", val.length);
+                s = (range.text == "" ? val.length:val.lastIndexOf(range.text));
+                range = selection.createRange().duplicate();
+                range.moveStart("character", -val.length);
+                e = range.text.length;
+            }else {
+                range = selection.createRange();
+                stored_range = range.duplicate();
+                stored_range.moveToElementText(this[0]);
+                stored_range.setEndPoint('EndToEnd', range);
+                s = stored_range.text.length - range.text.length;
+                e = s + range.text.length;
+            }
+        }else{
+            s=this[0].selectionStart;
+            e=this[0].selectionEnd;
+        }
+        var te=this[0].value.substring(s,e);
+        //return {start:s,end:e,text:te}
+        return s
+    }
+
+
+    //粗体
+    function Bold(){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"****"+t2);
+        $("#content").focusNumber(i+2);
+        mdToHml();
+    }
+
+    //删除线
+    function Strikethrough(){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"~~~~"+t2);
+        $("#content").focusNumber(i+2);
+        mdToHml();
+    }
+
+    //斜线
+    function Slash(){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"**"+t2);
+        $("#content").focusNumber(i+1);
+        mdToHml();
+    }
+
+    //标题
+    function Title(h){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        switch(h){
+            case 1:
+                $("#content").val(t1+"\r\n#"+t2);
+                $("#content").focusNumber(i+2);
+                break;
+            case 2:
+                $("#content").val(t1+"\r\n##"+t2);
+                $("#content").focusNumber(i+3);
+                break;
+            case 3:
+                $("#content").val(t1+"\r\n###"+t2);
+                $("#content").focusNumber(i+4);
+                break;
+            case 4:
+                $("#content").val(t1+"\r\n####"+t2);
+                $("#content").focusNumber(i+5);
+                break;
+            case 5:
+                $("#content").val(t1+"\r\n#####"+t2);
+                $("#content").focusNumber(i+6);
+                break;
+            case 6:
+                $("#content").val(t1+"\r\n######"+t2);
+                $("#content").focusNumber(i+7);
+                break;
+        }
+        mdToHml();
+    }
+
+    //序列
+    function Sequence(type){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        switch(type){
+            case 1:
+                $("#content").val(t1+"\r\n- "+t2);
+                $("#content").focusNumber(i+3);
+                break;
+            case 2:
+                $("#content").val(t1+"\r\n1. "+t2);
+                $("#content").focusNumber(i+4);
+                break;
+        }
+        mdToHml();
+    }
+
+    //横线
+    function Horizontal(){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"\r\n\r\n------------\r\n\r\n"+t2);
+        $("#content").focusNumber(i+15);
+        mdToHml();
+    }
+
+    //关闭子窗口
+    function closecreateNoet(){
+        var index = parent.layer.getFrameIndex(window.name);
+        console.log(index)
+        parent.layer.close(index);
+    }
+
+    //添加链接的弹出层
+    var AddLinkLayer;
+    //添加图片的弹出层
+    var AddImgLayer;
+    //添加表格的弹出层
+    var AddTableLayer;
+    //创建笔记
+    var CreateMDNoteLayer;
+
+    //链接
+    function Link(){
+        var addDiv='<div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接名</label>\
+            <div class="layui-input-inline">\
+              <input id="linktitle" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接地址</label>\
+            <div class="layui-input-inline">\
+              <input id="linkpath" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+          <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接提示</label>\
+            <div class="layui-input-inline">\
+              <input id="linkprompt" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="AddLink()" class="layui-btn layui-btn-primary" style="width: 280px;">添加</a>\
+            </div>\
+          </div>'
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                AddLinkLayer = layer.open({
+                  type: 1,
+                  title: '在内容中添加一个链接', 
+                  maxmin: true,
+                  area: ['550px', '380px'],
+                  content: addDiv
+                });
+            });
+        });
+    }
+    //添加链接
+    function AddLink(){
+        var linktitle = $("#linktitle").val();
+        var linkpath = $("#linkpath").val();
+        var linkprompt = $("#linkprompt").val();
+        var linkinfo = '['+linktitle+']('+linkpath+'"'+linkprompt+'")'
+        console.log(linkinfo)
+
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+linkinfo+t2);
+        $("#content").focusNumber(i+linkinfo.length);
+        mdToHml();
+        layer.close(AddLinkLayer);
+    }
+
+    //图片
+    function Image(){
+        var addDiv='<div class="layui-tab" style="width:90%;height:90%;">\
+                      <ul class="layui-tab-title" style="text-align: center;padding-left:0px;">\
+                        <li class="layui-this" style="width:49%;">图片链接</li>\
+                        <li style="width:50%;">上传图片</li>\
+                      </ul>\
+                      <div class="layui-tab-content" style="height: 100px;">\
+                        <div class="layui-tab-item layui-show">\
+                        <div class="layui-inline" style="margin-top: 32px;">\
+                                <label class="layui-form-label">图片链接</label>\
+                                <div class="layui-input-inline">\
+                                  <input id="imglink" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+                                </div>\
+                              </div>\
+                            <div class="layui-inline" style="margin-top: 2px;">\
+                                <label class="layui-form-label">图片描述(名称)</label>\
+                                <div class="layui-input-inline">\
+                                  <input id="imgname" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+                                </div>\
+                              </div>\
+                            <div class="layui-inline" style="margin-top: 10px;">\
+                                <label class="layui-form-label"></label>\
+                                <div class="layui-input-inline">\
+                                  <a onclick="AddImg()" class="layui-btn layui-btn-primary" style="width: 280px;">添加</a>\
+                                </div>\
+                              </div>\
+                        </div>\
+                        <div class="layui-tab-item">\
+                        <h1>上传图片</h1>\
+                        </div>\
+                      </div>\
+                    </div>';
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                AddImgLayer = layer.open({
+                  type: 1,
+                  title: '在内容中添加一个图片', 
+                  maxmin: true,
+                  area: ['550px', '380px'],
+                  content: addDiv
+                });
+            });
+        });
+    }
+    //添加图片
+    function AddImg(){
+        var imglink = $("#imglink").val();
+        var imgname = $("#imgname").val();
+        var imginfo = '!['+imgname+']('+imglink+' "'+imgname+'")'
+        console.log(imginfo)
+
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"\r\n"+imginfo+"\r\n"+t2);
+        $("#content").focusNumber(i+imginfo.length+2);
+        mdToHml();
+        layer.close(AddImgLayer);
+    }
+    //上传图片
+    function UpLoadImg(){
+
+    }
+
+    //代码
+    function Code(){
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"\r\n```\r\n```\r\n"+t2);
+        $("#content").focusNumber(i+4);
+        mdToHml();
+    }
+
+    //表格
+    function Table(){
+        var addDiv='<div class="layui-inline" style="margin-top: 50px;">\
+            <label class="layui-form-label">行数</label>\
+            <div class="layui-input-inline">\
+              <input id="tableRow" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 5px;">\
+            <label class="layui-form-label">列数</label>\
+            <div class="layui-input-inline">\
+              <input id="tableColumn" type="text" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 10px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="addTable()" class="layui-btn layui-btn-primary" style="width: 280px;">添加</a>\
+            </div>\
+          </div>';
+
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                AddTableLayer = layer.open({
+                  type: 1,
+                  title: '在内容中添加一个表格', 
+                  maxmin: true,
+                  area: ['550px', '380px'],
+                  content: addDiv
+                });
+            });
+        });
+    }
+    String.prototype.times = function(n) { 
+        return Array.prototype.join.call({length:n+1}, this); 
+    }; 
+    function addTable(){
+        var tableRow = $("#tableRow").val();
+        var tableColumn = $("#tableColumn").val();
+        console.log(tableRow,tableColumn);
+
+        var tr = '|'.times(parseInt(tableColumn))+'|\n'+'| ------------'.times(parseInt(tableColumn))+'|\n';
+        console.log(tr);
+        
+        for(var i=0;i<tableRow;i++){
+                tr += '|'.times(parseInt(tableColumn))+'|\n'
+        }
+
+        console.log(tr);
+
+        var contentVal = $("#content").val();
+        var i = $("#content").selection();
+        var t1 = contentVal.substring(0,i);
+        console.log(t1)
+        var t2 = contentVal.substring(i,contentVal.length);
+
+        $("#content").val(t1+"\r\n\r\n"+tr+"\r\n"+t2);
+        $("#content").focusNumber(i+3);
+        mdToHml();
+        layer.close(AddTableLayer);
+    }
+
+
+    //快捷键
+    document.onkeydown=function(event){
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        if(e && e.keyCode==27){ // 按 Esc 
+            //要做的事情
+          }
+        if(e && e.keyCode==113){ // 按 F2 
+             //要做的事情
+           }  
+        if (event.which == 13) { //Enter
+
+        }
+        //Alt + A 粗体
+        if(e.altKey && e.keyCode ==65){
+            Bold();
+        }
+        //Alt + F1 H1
+        if(e.altKey && e.keyCode ==112){
+            Title(1);
+        }
+        //Alt + F2 H2
+        if(e.altKey && e.keyCode ==113){
+            Title(2);
+        }
+        //Alt + F3 H3
+        if(e.altKey && e.keyCode ==114){
+            Title(3);
+        }
+        //Alt + F5 H4
+        if(e.altKey && e.keyCode ==116){
+            Title(4);
+        }
+        //Alt + F6 H5
+        if(e.altKey && e.keyCode ==117){
+            Title(5);
+        }
+        //Alt + F7 H6
+        if(e.altKey && e.keyCode ==118){
+            Title(6);
+        }
+        //Alt + Q 有序列
+        if(e.altKey && e.keyCode ==81){
+            Sequence(2);
+        }
+        //Alt + V 无序列
+        if(e.altKey && e.keyCode ==86){
+            Sequence(1);
+        }
+        //Alt + G 横线
+        if(e.altKey && e.keyCode ==71){
+            Horizontal();
+        }
+        //Alt + S 删除线
+        if(e.altKey && e.keyCode ==83){
+            Strikethrough();
+        }
+        //Alt + Y 斜线
+        if(e.altKey && e.keyCode ==89){
+            Slash();
+        }
+        //Alt + C 代码
+        if(e.altKey && e.keyCode ==67){
+            Code();
+        }
+        //Alt + R 链接
+        if(e.altKey && e.keyCode ==82){
+            Link();
+        }
+        //Alt + F 图片
+        if(e.altKey && e.keyCode ==70){
+            Image();
+        }
+        //Alt + T 表格
+        if(e.altKey && e.keyCode ==84){
+            Table();
+        }
+
+        /*
+        keyCode 112 = F1
+        keyCode 113 = F2
+        keyCode 114 = F3
+        keyCode 115 = F4
+        keyCode 116 = F5
+        keyCode 117 = F6
+        keyCode 118 = F7
+        keyCode 119 = F8
+        keyCode 120 = F9
+        keyCode 121 = F10
+        keyCode 122 = F11
+        keyCode 123 = F12
+        
+
+        */
+    }; 
+
+//笔记本下拉菜单
+function notes(){
+    
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/noteslist",
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                $("#notes").empty();
+                $("#notes").append('<option value="0">默认笔记本</option>');
+                for(data in rdata.data){
+                    console.log(rdata.data[data]);
+                    var thisdata = rdata.data[data];
+                    console.log(thisdata["notes_name"]);
+                    //'+thisdata["notes_id"]+'
+                    
+                    $("#notes").append('<option value="'+thisdata["notes_id"]+'">'+thisdata["notes_name"]+'</option>');
+
+                }
+                //var aaa = '<option value="aaaa">aaa</option>';
+                //return aaa
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
+
+//notes();
+//创建笔记弹出层
+function CreateMDNote(){
+    notes()
+
+    var div = '<div id="addnote" >\
+    <div class="layui-inline" style="margin-top: 50px;">\
+            <label class="layui-form-label">选择笔记本</label>\
+            <div class="layui-input-inline">\
+              <select id="notes" name="city" lay-verify="" lay-search class="layui-input" style="width: 290px;">\</select>     \
+            </div>\
+          </div>\
+\
+          <div class="layui-inline" style="margin-top: 20px;">\
+          <label class="layui-form-label">添加标签</label>\
+          <div class="layui-input-inline">\
+        <div class="tags" id="tags">\
+               <input id="notetagval" type="text" name="notetagval" placeholder="回车生成标签" autocomplete="off" style="width: 230px;">\
+                </div>\
+            </div>\
+            </div>\
+        <div class="layui-inline" style="margin-top: 10px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="AddMDNote()" class="layui-btn layui-btn-primary" style="width: 280px;">创建</a>\
+            </div>\
+          </div>\
+    </div>'
+
+
+    var title = $("#title").val();
+
+    //如果有依赖的css则是
+    layui.define(function(exports){ 
+      //插件内容
+      //输出test接口
+      exports('inputTags');
+    }).addcss('inputTags.css?v=6');
+
+    layui.config({  
+            base: '../static/plugin/inputtag/',  
+        }).use(['inputTags'], function() {  
+            var inputTags = layui.inputTags; 
+
+                inputTags.render({
+              elem:'#notetagval',//定义输入框input对象
+              content: [],//默认标签
+              aldaBtn: true,//是否开启获取所有数据的按钮
+              done: function(value){ //回车后的回调
+                console.log(value)
+              }
+            })      
+
+           
+        })  
+    if(title != ""){
+        layui.use("layer",function(){
+            layer.ready(function(){
+                
+                var layer = layui.layer; 
+                AddTableLayer = layer.open({
+                  type: 1,
+                  title: '创建新笔记', 
+                  maxmin: true,
+                  area: ['550px', '450px'],
+                  content: div
+                });
+            });
+        });
+    }else{
+        alert("标题不能为空");
+    }
+
+}
+
+function AddSuccess(datas){
+    console.log(datas);
+    if (datas.code == 1){
+        alert("成功!");
+    }else{
+        alert("失败!");
+    }
+    layer.close(AddTableLayer);
+    var index = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(index);
+}
+
+function AddMDNote(){
+    var title = $("#title").val();
+    var mdc = $("#content").val();
+    var urlstr = "/cmd"
+    var notesid = $("#notes").val();
+    var tags = $("#tags").text();
+    tags = tags.replace(/\×/g,"|")
+
+    console.log(title,mdc);
+    console.log("标签",$("#tags").text());
+    console.log("标签",tags);
+    console.log(notesid)
+
+    if(title != ""){
+        var data = {
+            "md_title": title,
+            "md_detail": mdc,
+            "notesid": notesid,
+            "tags": tags,
+        }
+        pubAjaxPOST(urlstr,data,AddSuccess);
+    }else{
+        alert("标题不能为空");
+    }
+
+}
+
+
+
+
+</script>  
+
+
+</script>
+
+<div style="text-align: center;margin-left: "></div>
+
+    </body>
+</html>

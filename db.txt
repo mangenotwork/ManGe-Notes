@@ -1,0 +1,167 @@
+1. 账号表	tbl_acc
+用户id 		userid     uid_+(int64 id)
+账号 	account
+密码 	password
+手机号 	phone
+邮箱号 	mail
+头像 	avatar
+首次创建时间 		createtime
+上次登录时间 		logintime
+上次登录ip 	loginip
+
+
+CREATE TABLE tbl_acc(
+	userid varchar(30) NOT NULL,
+	account varchar(30) NOT NULL,
+	password varchar(50) NOT NULL,
+	phone varchar(11) NOT NULL DEFAULT "",
+	mail varchar(30) NOT NULL DEFAULT "",
+	avatar varchar(100) NOT NULL DEFAULT "",
+	createtime BIGINT unsigned NOT NULL DEFAULT 0,
+	logintime BIGINT unsigned NOT NULL DEFAULT 0,
+	loginip varchar(20) NOT NULL DEFAULT "",
+	
+	PRIMARY KEY (userid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+// tbl_acc表
+type ACC struct {
+	UserId     string `gorm:"column:userid"`     //用户id
+	Account     string `gorm:"column:account"`     //账号
+	Password     string    `gorm:"column:password"`     //密码
+	Phone string `gorm:"column:phone"` //手机号
+	Mail        string    `gorm:"column:mail"`        //邮箱号
+	Avatar       string `gorm:"column:avatar"`       //头像
+	Createtime      int64 `gorm:"column:createtime"`      //首次创建时间
+	Logintime  int64 `gorm:"column:logintime"`  //上次登录时间
+	LoginIP   string  `gorm:"column:loginip"`   //上次登录ip
+}
+
+
+[====================]
+
+2. md内容存储信息
+md title
+md 内容id
+md 属于的笔记本分类
+md 首次创建时间
+md 上次保存时间
+md 标签
+md 上次打开时间
+md 查看次数
+md 修改次数
+
+CREATE TABLE tbl_md_info(
+	md_tempid INT UNSIGNED AUTO_INCREMENT,
+	md_title varchar(100) NOT NULL,
+	md_des varchar(30) NOT NULL DEFAULT "",
+	md_img varchar(100) NOT NULL DEFAULT "",
+	is_img INT NOT NULL DEFAULT 0,
+	md_id varchar(30) NOT NULL,
+	uid varchar(30) NOT NULL,
+	md_notes_id INT NOT NULL DEFAULT 0,
+	md_createtime BIGINT unsigned NOT NULL DEFAULT 0,
+	md_savetime BIGINT unsigned NOT NULL DEFAULT 0,
+	md_tag varchar(500) NOT NULL DEFAULT "",
+	md_opentime BIGINT unsigned NOT NULL DEFAULT 0,
+	md_viewtimes INT unsigned NOT NULL DEFAULT 0,
+	md_modifytimes INT unsigned NOT NULL DEFAULT 0,
+	
+	PRIMARY KEY (md_tempid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+// tbl_md_info表
+type MDInof struct {
+	MDTempid     int `gorm:"column:md_tempid;primary_key;AUTO_INCREMENT"`     //临时自增id
+	MDTitle     string `gorm:"column:md_title"`     //title
+	MDDes 	string `gorm:"column:md_des"`     //前30个字符的内容
+	MDIMG   string `gorm:"column:md_img"`   //如果笔记内容有图片链接保存第一张图片的链接
+	IsIMG   int `gorm:"column:is_img"`    //是否有图片，如果有为1  没有为0
+	MDId     string    `gorm:"column:md_id"`     //内容id
+	Uid string `gorm:"column:uid"`     //用户id 
+	MDNotesid int `gorm:"column:md_notes_id"` //属于的笔记本分类
+	MDCreatetime        int64    `gorm:"column:md_createtime"`        //首次创建时间
+	MDSavetime       int64 `gorm:"column:md_savetime"`       //上次保存时间
+	MDTag      string `gorm:"column:md_tag"`      //标签
+	MDOpentime  int64 `gorm:"column:md_opentime"`  //上次打开时间
+	MDViewTimes   int  `gorm:"column:md_viewtimes"`   //查看次数
+	MDModifytimes int `gorm:"column:md_modifytimes"` //修改次数
+}
+
+[====================]
+
+3. md内容存储
+内容id
+内容
+
+CREATE TABLE tbl_md_text(
+	md_id varchar(30) NOT NULL,
+	md_content TEXT NOT NULL,
+	
+	PRIMARY KEY (md_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+// tbl_md_text表
+type MDText struct {
+	MDId     int `gorm:"column:md_id"`     //内容id
+	MDContent     string `gorm:"column:md_content"`     //内容
+}
+
+[====================]
+
+4. 笔记本分类表
+分类名笔记本名
+创建时间
+
+CREATE TABLE tbl_notes(
+	notes_id INT UNSIGNED AUTO_INCREMENT,
+	notes_name varchar(50) NOT NULL,
+	notes_des varchar(255) NOT NULL DEFAULT "",
+	notes_createtime BIGINT unsigned  NOT NULL DEFAULT 0,
+	
+	PRIMARY KEY (notes_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+Notes
+NotesName
+NotesCreatetime
+
+// tbl_notes表
+type Notes struct {
+	NotesId     int `gorm:"column:notes_id;primary_key;AUTO_INCREMENT"`     //笔记本id
+	NotesName     string `gorm:"column:notes_name"`     //分类名笔记本名
+	NotesDes 	string `gorm:"column:notes_des"` //笔记本描述
+	NotesCreatetime int64 `gorm:"column:notes_createtime"`     //创建时间
+}
+
+
+
+[====================]
+5. 工具与链接
+
+CREATE TABLE tbl_tool_link(
+	id INT UNSIGNED AUTO_INCREMENT,
+	uid varchar(25) NOT NULL,
+	name varchar(25) NOT NULL,
+	des varchar(30) NOT NULL,
+	link varchar(255) NOT NULL,
+	ico varchar(255) NOT NULL DEFAULT "",
+	tag varchar(255) NOT NULL DEFAULT "",
+	type int NOT NULL DEFAULT 0,
+	PRIMARY KEY (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+// tbl_tool_link
+type ToolandLink struct {
+	Id     int `gorm:"column:id;primary_key;AUTO_INCREMENT"`     //笔记本id
+	UID string `gorm:"column:uid"` //用户id
+	Name     string `gorm:"column:name"`     //工具或链接名称
+	Des 	string `gorm:"column:des"` //工具或链接描述
+	Link string `gorm:"column:link"`     //工具或链接 地址
+	Ico string `gorm:"column:ico"`     //工具或链接 地址 ico
+	Tag string `gorm:"column:tag"`     //工具或链接 标签
+	LinkType int `gorm:"column:type"` //链接 0    工具 1
+}
+
+[====================]

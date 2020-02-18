@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>漫鸽笔记Markdown编辑器v0.1</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <link rel="stylesheet" href="../static/css/md.css?v=2" media="all">
+    <script src="../static/plugin/layui/layui.js?v=1"></script>
+    <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
+    <script src="../static/plugin/editor.md-master/lib/marked.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/prettify.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/raphael.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/underscore.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/sequence-diagram.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/flowchart.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/lib/jquery.flowchart.min.js?v=1"></script>
+    <script src="../static/plugin/editor.md-master/editormd.js?v=1"></script>
+
+    <style type="text/css">
+    pre{ 
+        white-space:pre-wrap; 
+        white-space:-moz-pre-wrap; 
+        white-space:-pre-wrap; 
+        white-space:-o-pre-wrap; 
+        word-wrap:break-word; 
+    } 
+    p {
+        word-break:break-word;
+    }
+
+  .scrollbar {
+  width : 30px;
+  height: 300px;
+  margin: 0 auto;
+  }
+  .scrollbar-div::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #535353;
+  }
+  .scrollbar-div::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+
+  .scrollbar-div2::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div2::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+  .scrollbar-div2::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #c2c2c2;
+  }
+  
+  .fontsize21{font-size: 21px;}
+
+    </style>
+</head>
+
+<body class="scrollbar-div" style="padding:3%">
+
+  <div style="width: 100%;margin-bottom: 25px;">
+    <div class="layui-btn-group" style="float: right;">
+      <button type="button" class="layui-btn">导出</button>
+      <!--<button type="button" class="layui-btn" onclick="openedit()">编辑</button>-->
+      <a onclick="window.parent.editNote('/editmdnote/<<<.MDID>>>?title=<<<.Title>>>');" type="button" class="layui-btn" target="_parent">编辑</a>
+      <button type="button" class="layui-btn" style="background-color: red;color: #fff;" onclick="window.parent.createNoet();">删除</button>
+    </div>
+  </div>
+
+    <div id="result" style="float: left;width: 98%;"></div>
+<script type="text/javascript">
+  //markDown转HTMl的方法
+    function mdToHml(str){
+        //先对容器初始化，在需要展示的容器中创建textarea隐藏标签，
+        $("#result").html('<textarea id="appendTest" style="display:none;"></textarea>');
+        var content=str;//获取需要转换的内容
+        $("#appendTest").val(content);//将需要转换的内容加到转换后展示容器的textarea隐藏标签中
+        //转换开始,第一个参数是上面的div的id
+        editormd.markdownToHTML("result", {
+            htmlDecode: "style,script,iframe", //可以过滤标签解码
+            emoji: true,
+            taskList:true,
+            tex: true,               // 默认不解析
+            flowChart:true,         // 默认不解析
+            sequenceDiagram:true,  // 默认不解析
+        });
+    }
+
+var text = '<<<.MDText>>>';
+window.onload = function(){ 
+
+  var errinfo = <<<.Error>>>;
+  if(errinfo == 1){
+    //alert("显示成功")
+  }
+  else if  (errinfo == 0){
+    alert("后台错误")
+  }
+  else if  (errinfo == 2){
+    alert("没有权限")
+  }
+
+  mdToHml(text);
+  
+}
+
+
+function openedit(){
+  window.location.href='/editmdnote/<<<.MDID>>>';  
+}
+
+
+
+
+</script>
+
+</body>
+</html>

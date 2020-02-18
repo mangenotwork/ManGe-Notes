@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>漫鸽笔记Markdown编辑器v0.1</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <script src="../static/plugin/layui/layui.js?v=1"></script>
+    <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
+
+    <style type="text/css">
+        .lbdiv {box-shadow: 3px 3px 0px #888888;
+          border-bottom:5px solid #827f7f;
+          border-radius:18px;
+
+        }
+
+        .dhdiv {
+          border-radius:18px;
+        }
+
+        ul li{
+            list-style-type:disc;
+        }
+        ol li{
+            list-style-type:decimal;
+        }
+
+        blockquote {
+            border-left:.5em solid #eee;
+            padding: 0 0 0 2em;
+            margin-left:0;
+        }
+        blockquote  cite {
+            font-size:14px;
+            line-height:20px;
+            color:#bfbfbf;
+        }
+        blockquote cite:before {
+            content: '\2014 \00A0';
+        }
+
+        blockquote p {
+            color: #666;
+        }
+
+        ul, ol {
+            padding: 0;
+            padding-left: 24px;
+            margin: 0;
+        }
+        li {
+            line-height: 24px;
+        }
+
+    </style>
+</head>
+
+<body class="scrollbar-div" style="padding:3%">
+
+
+  
+  <div style="float: left;width: 100%;"><h1> 欢迎使用 ManGe-Notes v0.1</h1></div>
+
+  <div style="margin-top: 15px;margin-bottom: 30px;float: left;width: 100%;">
+      <div class="layui-carousel lbdiv" id="test1">
+        <div class="lbdiv" carousel-item>
+          <div class="lbdiv" style="background-color: #000;color: #fff;">
+            <div style="padding: 5%;"><h2>条目1</h2></div>
+          </div>
+          <div class="lbdiv" style="background-color: #006699;color: #fff;">
+            <div style="padding: 5%;"><h2>条目1</h2></div>
+          </div>
+          <div class="lbdiv" style="background-color: #9966FF;color: #fff;">
+            <div style="padding: 5%;"><h2>条目1</h2></div>
+          </div>
+          <div class="lbdiv" style="background-color: #CC9966;color: #fff;">
+            <div style="padding: 5%;"><h2>条目1</h2></div>
+          </div>
+          <div class="lbdiv" style="background-color: #FF3300;color: #fff;">
+            <div style="padding: 5%;"><h2>条目1</h2></div>
+          </div>
+        </div>
+      </div>
+  </div>
+  
+
+  
+
+  
+
+  <div style="float: left;width: 100%;margin-top: 30px;"><h2> 快速导航</h2></div>
+  <hr>
+  <div style="margin-top: 15px;width: 100%;margin-bottom: 25px;float: left;">
+
+
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>数据统计</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>我的笔记本</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>在线翻译</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>导入笔记</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>网络搜索</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>我的链接</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>我的素材</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>常用工具</h3>
+      </div>
+
+      <div style="text-align: center;width: 100px;height: 100px;float: left;margin-left: 25px;margin-top: 5px;margin-bottom: 10px;">
+        <div class="dhdiv" style="width: 100px;height: 80px;background-color: #006699"></div>
+        <h3>帮助</h3>
+      </div>
+
+
+  </div>
+
+  <div style="float: left;width: 100%;margin-top: 30px;"><h2> 介绍</h2></div>
+  <hr>
+  <div style="float: left;">
+
+      <blockquote>
+      <ul>
+        <li>ManGe-Notes 是云笔记系统，集成了丰富的工具与个人博客，使你的笔记秒变你的博客！还拥有多种类型的文档处理功能，个人知识系统功能，万能搜索等丰富的功能！</li>
+        <li>Gthab 地址</li>
+        <li>文档</li>
+        <li>作者: ManGe</li>
+        <li>FQA</li>
+        <li>安装部署</li>
+        <li>版本介绍</li>
+      </ul>
+      </blockquote>
+
+  </div>
+
+
+  
+
+
+<script>
+layui.use('carousel', function(){
+  var carousel = layui.carousel;
+  //建造实例
+  carousel.render({
+    elem: '#test1'
+    ,width: '96%' //设置容器宽度
+    ,arrow: 'always' //始终显示箭头
+    //,anim: 'updown' //切换动画方式
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>漫鸽笔记</title>
+<!--导入-->
+<link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=3" media="all">
+<script src="../static/plugin/layui/layui.js?v=3"></script>
+<script src="../static/js/jquery-3.3.1.min.js?v=1"></script>
+<script src="../static/js/man.js?v=1"></script>
+
+
+<style type="text/css">
+	html,body{height:100%;overflow:hidden;}
+	.shousuo{width: 90%;margin: 5%;}
+	.shousuo i{position: absolute;top:13px;right: 13px;}
+	.fenlei{overflow-y:hidden; overflow-x:hidden;}
+	.bjlistdiv{width: 20%;height: 100%;background-color: #F8F8FF;float: left;overflow-y:scroll; overflow-x:hidden;float: left;}
+	.bjlist1{width: 88%;height: 168px;background-color: #282c34;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
+    .bjlistbk{margin-left: 2%;margin-right: 3%;margin-top:2%;box-shadow: 6px 6px 10px #888888;border-radius:10px;}
+	.bjlist1span{width: 40%;float: left;padding:2%;}
+	.bjlist2span{padding:2%;}
+	.bjlisttitle{width: 100%;padding-bottom: 3px;float: left;}
+	.bjlistbody{margin-top: 10px;float: left;width: 100%;}
+	.bjlistimg{height: 88px;width: 50%;float: left;margin-left:1%;}
+    .toollistimg{width: 25px;height: 25px;margin-right: 6%;}
+	.bjlist2{width: 88%;height: 120px;background-color: #282c34;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
+	span{word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden;}  
+
+    .scrollbar {
+  width : 30px;
+  height: 300px;
+  margin: 0 auto;
+  }
+  .scrollbar-div::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #535353;
+  }
+  .scrollbar-div::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+
+  .scrollbar-div2::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div2::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+  .scrollbar-div2::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #c2c2c2;
+  }
+  .fontsize17{
+    font-size: 17px;margin-right: 3px;
+  }
+
+  a {cursor:pointer;}
+
+  .tagshow {margin-left: 3px;margin-right: 3px;}
+
+</style>
+
+</head>
+<body>
+
+
+
+<div class="layui-layout layui-layout-admin">
+
+  <div class="layui-header" style="background-color: #000;">
+    <div class="layui-logo" style="color: #fff;">
+    	<h2>ManGe-Notes</h2>
+	</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a data-url="/home" data-id="1" data-title="首页" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd">首页</a></li>
+      <li class="layui-nav-item"><a onclick="addFenlei()" style="cursor:pointer;">添加笔记本</a></li>
+      <li class="layui-nav-item"><a onclick="createNoet()" style="cursor:pointer;">写笔记</a></li>
+      <li class="layui-nav-item"><a onclick="collect()" style="cursor:pointer;">收藏</a></li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">导入导出</a>
+        <dl class="layui-nav-child">
+          <dd><a href="">导入笔记</a></dd>
+          <dd><a href="">导出笔记</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">系统</a>
+        <dl class="layui-nav-child">
+          <dd><a href="">设置</a></dd>
+          <dd><a href="">帮助</a></dd>
+        </dl>
+      </li>
+
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="<<<.userbinfo.UAvatar>>>" class="layui-nav-img">
+          <<<.userbinfo.UName>>>
+        </a>
+        <dl class="layui-nav-child" style="position:static;">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+          <dd><a href="#"><span style="font-size: 6px;">上次登录：<<<.userbinfo.LastLogin>>></span></a></dd>
+          <dd><a href="#"><span style="font-size: 6px;">上次登录地址：<<<.userbinfo.LastLoginIp>>></span></a></dd>
+          <dd><a href="/outlogin">退出登录</a></dd>
+        </dl>
+      </li>
+      
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black scrollbar-div2">
+  	<div class="shousuo">
+  		<div class="layui-input-inline">
+                    <input type="text" name="keyword" class="layui-input" placeholder="搜索"/>
+                    <a href="#">
+                    <i class="layui-icon layui-icon-search"></i></a>
+                </div>
+  		</div>
+	  	<div class="fenlei">
+
+	  		<ul class="layui-nav layui-nav-tree"  lay-filter="test" id="fenleilist">
+    	        
+	       </ul>
+	  		
+	  	</div>
+
+  </div>
+
+
+
+  <div class="layui-body" style="bottom:0;">
+
+    <div class="bjlistdiv scrollbar-div" id="notelist">
+
+        <div id="indexlist">
+        	<div class="bjlist2 bjlistbk">
+        		<div class="bjlisttitle">
+                    <h2><a data-url="/home" data-id="1" data-title="首页" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">ManGe-Notes主页</a></h2>
+                    <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">2020-02-17</span>
+                    <span class="layui-badge layui-bg-cyan">主页|导航|介绍</span>
+        		</div>
+        		<div class="bjlistbody">
+        			<span class="bjlist2span">ManGe-Notes主页，快速导航，介绍...</span>
+        		</div>
+        	</div>
+        	
+            <div class="bjlist2 bjlistbk">
+                <div class="bjlisttitle">
+                    <h2><a href="#" style="color: #fff;">使用文档</a></h2>
+                    <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">2020-02-17</span>
+                    <span class="layui-badge layui-bg-cyan">文档|帮助</span>
+                </div>
+                <div class="bjlistbody">
+                    <span class="bjlist2span">学习使用ManGe-Notes，立即上手，快乐体验...</span>
+                </div>
+            </div>
+
+        	<div class="bjlist2 bjlistbk">
+                <div class="bjlisttitle">
+                    <h2><a href="#" style="color: #fff;">统计</a></h2>
+                    <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">2020-02-17</span>
+                    <span class="layui-badge layui-bg-cyan">统计|笔记|信息</span>
+                </div>
+                <div class="bjlistbody">
+                    <span class="bjlist2span">统计笔记信息，笔记新增量，笔记修改量，笔记查看量...</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="toollist">
+            <div class="bjlist2 bjlistbk">
+                <div class="bjlisttitle">
+                    <h2> <img src="https://shared.ydstatic.com/images/favicon.ico" class="toollistimg"><a data-url="http://www.youdao.com/" data-id="有道翻译" data-title="有道翻译" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">有道翻译</a></h2>
+                    <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">2020-02-17</span>
+                    <span class="layui-badge layui-bg-cyan">工具|翻译</span>
+                </div>
+                <div class="bjlistbody" style="margin-top: -5px;">
+                    <span class="bjlist2span">有道翻译常用工具...</span>
+                    <span class="bjlist2span">[修改] [删除]</span>
+                </div>
+            </div>
+        </div>
+    	
+    </div>
+
+
+    <!-- 选项卡和内容区 -->
+    <div class="layui-tab" lay-filter="home-tabs" lay-allowclose="true" style="width:80%;float: left;margin:0;height: calc(100% - 44px);">
+        <ul class="layui-tab-title"></ul>
+        <ul class="rightmenu" style="display: none;position: absolute;">
+            <li data-type="refresh">刷新</li>
+            <li data-type="closeOthers">关闭其他</li>
+            <li data-type="closeRight">关闭右侧所有</li>
+            <li data-type="closeAll">关闭所有</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100%;">
+        </div>
+    </div>
+
+
+
+  </div>
+
+
+
+
+  
+
+<script>
+//JavaScript代码区域
+//layui.use('element', function(){
+//  var element = layui.element;
+  
+//});
+
+function element2(){
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+}
+
+
+function element(){
+layui.use('element', function() {
+        var element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+ 
+        //触发事件
+        var active = {
+            //在这里给active绑定几项事件，后面可通过active调用这些事件
+            tabAdd: function(url, id, name) {
+                //新增一个Tab项 传入三个参数，分别是tab页面的地址，还有一个规定的id，对应其标题，是标签中data-id的属性值
+                //关于tabAdd的方法所传入的参数可看layui的开发文档中基础方法部分
+                element.tabAdd('home-tabs', {
+                    title: name,
+                    content: '<iframe id="aaa" data-frameid="' + id + '" scrolling="auto" frameborder="0" src="' + url +
+                        '" style="width:98%;height:100%;margin-left: 2%;"></iframe>',
+                    id: id //规定好的id
+                })
+                console.log("新增",id,url)
+                //通过鼠标mouseover事件  动态将新增的tab下的li标签绑定鼠标右键功能的菜单   
+                //下面的json.id是动态新增Tab的id，一定要传入这个id,避免重复加载mouseover数据
+                $(".layui-tab-title li[lay-id=" + id + "]").mouseover(function() {
+                    var tabId = $(this).attr("lay-id");
+                    CustomRightClick(tabId); //给tab绑定右击事件
+                    FrameWH(); //计算ifram层的大小
+                });
+            },
+            tabChange: function(id) {
+                //切换到指定Tab项
+                element.tabChange('home-tabs', id); //根据传入的id传入到指定的tab项
+                
+            },
+            tabDelete: function(id) {
+                
+                element.tabDelete('home-tabs', id); //删除
+                
+            },
+            tabRefresh: function(id) { //刷新页面
+                $("iframe[data-frameid='" + id + "']").attr("src", $("iframe[data-frameid='" + id + "']").attr("src")) //刷新框架
+            }
+        };
+ 
+        //当点击有site-demo-active属性的标签时，即左侧菜单栏中内容 ，触发点击事件
+        $('.site-demo-active').on('click', function() {
+            var dataid = $(this);
+ 
+            //这时会判断右侧.layui-tab-title属性下的有lay-id属性的li的数目，即已经打开的tab项数目
+            if ($(".layui-tab-title li[lay-id]").length <= 0) {
+                //如果比零小，则直接打开新的tab项
+                active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
+            } else {
+                //否则判断该tab项是否以及存在
+ 
+                var isData = false; //初始化一个标志，为false说明未打开该tab项 为true则说明已有
+                $.each($(".layui-tab-title li[lay-id]"), function() {
+                    //如果点击左侧菜单栏所传入的id 在右侧tab项中的lay-id属性可以找到，则说明该tab项已经打开
+                    if ($(this).attr("lay-id") == dataid.attr("data-id")) {
+                        isData = true;
+                    }
+                })
+                if (isData == false) {
+                    //标志为false 新增一个tab项
+                    active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
+                }
+            }
+            //最后不管是否新增tab，最后都转到要打开的选项页面上
+            active.tabChange(dataid.attr("data-id"));
+        });
+ 
+        function CustomRightClick(id) {
+            //取消右键  rightmenu属性开始是隐藏的 ，当右击的时候显示，左击的时候隐藏
+            $('.layui-tab-title li').on('contextmenu', function() {
+                return false;
+            })
+            $('.layui-tab-title,.layui-tab-title li').click(function() {
+                $('.rightmenu').hide();
+            });
+            //单击取消右键菜单
+            $('body,#aaa').click(function() {
+                $('.rightmenu').hide();
+            });
+            //tab点击右键 
+            $('.layui-tab-title li').on('contextmenu', function(e) {
+                var popupmenu = $(".rightmenu");
+                popupmenu.find("li").attr("data-id", id); //在右键菜单中的标签绑定id属性
+ 
+                //判断右侧菜单的位置 
+                l = ($(document).width() - e.clientX) < popupmenu.width() ? (e.clientX - popupmenu.width()) : e.clientX;
+                t = ($(document).height() - e.clientY) < popupmenu.height() ? (e.clientY - popupmenu.height()) : e.clientY;
+                popupmenu.css({
+                    left: l,
+                    top: t
+                }).show(); //进行绝对定位
+                return false;
+            });
+        }
+ 
+        $(".rightmenu li").click(function() {
+            //当前的tabId
+            var currentTabId = $(this).attr("data-id");
+ 
+            if ($(this).attr("data-type") == "closeOthers") { //关闭其他
+                var tabtitle = $(".layui-tab-title li");
+                $.each(tabtitle, function(i) {
+                    if ($(this).attr("lay-id") != currentTabId) {
+                        active.tabDelete($(this).attr("lay-id"))
+                    }
+                })
+            } else if ($(this).attr("data-type") == "closeAll") { //关闭全部
+                var tabtitle = $(".layui-tab-title li");
+                $.each(tabtitle, function(i) {
+                    active.tabDelete($(this).attr("lay-id"))
+                })
+ 
+            } else if ($(this).attr("data-type") == "refresh") { //刷新页面
+                active.tabRefresh($(this).attr("data-id"));
+ 
+            } else if ($(this).attr("data-type") == "closeRight") { //关闭右边所有
+                //找到当前聚焦的li之后的所有li标签 然后遍历
+                var tabtitle = $(".layui-tab-title li[lay-id=" + currentTabId + "]~li");
+                $.each(tabtitle, function(i) {
+                    active.tabDelete($(this).attr("lay-id"))
+                })
+            }
+ 
+            $('.rightmenu').hide();
+        });
+                
+        //导航栏点击选中时关闭其他选项卡
+        $('.layui-nav-item').click(function() {
+            $(this).siblings('li').attr('class', 'layui-nav-item');
+
+        });
+ 
+        function FrameWH() {
+            var h = $(window).height() - 41 - 10 - 60 - 10 - 44 - 10;
+            $("iframe").css("height", h + "px");
+        }
+ 
+        $(window).resize(function() {
+            FrameWH();
+        })
+ 
+        //打开默认页面
+        if($("iframe[data-frameid='1']").length<1){
+            active.tabAdd("/home", 1, "首页");
+            active.tabChange(1);
+        }
+
+    });
+}
+
+element();
+
+var AddFenleiLayer;
+var AddcollectLayer;
+
+//<!--添加分类-->
+function addFenlei(){
+
+	var addDiv='<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label"></label>\
+		    <div class="layui-input-inline">\
+		      <h3>创建一个笔记本</h3>\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label">笔记本名</label>\
+		    <div class="layui-input-inline">\
+		      <input type="text" id="notename" name="" autocomplete="off" class="layui-input" style="width: 280px;">\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label">描述</label>\
+		    <div class="layui-input-inline">\
+		      <textarea name="desc" id="notedes" placeholder="请输入内容" class="layui-textarea" style="width: 280px;"></textarea>\
+		    </div>\
+		  </div>\
+		<div class="layui-inline" style="margin-top: 20px;">\
+		    <label class="layui-form-label"></label>\
+		    <div class="layui-input-inline">\
+		      <a onclick="cnotes()" class="layui-btn layui-btn-primary" style="width: 280px;">提交</a>\
+		    </div>\
+		  </div>'
+
+	layui.use("layer",function(){
+		var layer = layui.layer; 
+		AddFenleiLayer = layer.open({
+		  type: 1,
+		  title: '添加笔记分类', 
+		  maxmin: true,
+		  area: ['550px', '380px'],
+		  content: addDiv
+		});
+	});
+}
+
+//请求数据显示左边栏
+function GetNotesList(){
+
+    var defaultnva = '<li class="layui-nav-item navid"><a onclick="indexshow()">ManGe-Notes主页</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="GetToollist()"><i class="layui-icon fontsize17">&#xe7ae;</i>工具&链接</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notesmage\')"><i class="layui-icon fontsize17">&#xe656;</i>管理</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/allnote\')"><i class="layui-icon fontsize17">&#xe705;</i>全部笔记(0)</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本(0)</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draft\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿(0)</a></li>\
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站(0)</a></li>'
+
+    $("#fenleilist").empty();
+    $("#fenleilist").append(defaultnva);
+    //当前笔记本列表
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/noteslist",
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                
+                for(data in rdata.data){
+                    console.log(rdata.data[data]);
+                    var thisdata = rdata.data[data];
+                    console.log(thisdata["notes_name"]);
+                    //'+thisdata["notes_id"]+'
+                    $("#fenleilist").append('<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/'+thisdata["notes_id"]+'\')" title="'+thisdata["notes_des"]+'" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe60a;</i>'+thisdata["notes_name"]+'</a></li>');
+                }
+                $("#fenleilist").append('<li class="layui-nav-item"><a onclick="addFenlei()" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe654;</i>添加笔记本</a></li>')
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+    
+}
+
+function NotesList(datas){
+    console.log(datas)
+    if (datas.code == 1){
+        alert("笔记本创建成功");
+        GetNotesList();
+        layer.close(AddFenleiLayer);
+    }
+    else if (datas.code == 2){
+        alert(datas.data);
+    }
+    else{
+        alert("未知错误!");
+    }
+    //location.reload();
+}
+
+function cnotes(){
+    var urlstr = '/cnotes';
+
+    var notes_name = $("#notename").val();
+    var description = $("#notedes").val();
+    if(notes_name != ""){
+        var data = {
+            "notes_name": notes_name,
+            "description": description
+        }
+        pubAjaxPOST(urlstr,data,NotesList);
+    }else{
+        alert("为设置笔记本名称");
+    }
+    
+}
+
+
+//写笔记
+//function 
+function createNoet(){
+	layui.use("layer",function(){
+		var layer = layui.layer; 
+		layer.open({
+		  type: 2,
+		  title: '漫鸽笔记Markdown编辑器v0.1',
+		  maxmin: true,
+		  area: ['100%', '100%'],
+		  content: '/mdeditor'
+		});
+	});
+}
+
+//编辑笔记
+function editNote(url){
+    layui.use("layer",function(){
+        var layer = layui.layer; 
+        layer.open({
+          type: 2,
+          title: '漫鸽笔记Markdown编辑器v0.1',
+          maxmin: true,
+          area: ['100%', '100%'],
+          content: url
+        });
+    });
+}
+
+
+//收藏
+function collect(){
+	var addDiv='\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">收藏类型</label>\
+            <div class="layui-input-inline">\
+              <select id="linktype" class="layui-input" style="width:280px;" lay-verify="required">\
+                <option value="0">网络链接(保存到工具&链接)</option>\
+                <option value="1">网络工具地址(保存到工具&链接)</option>\
+                <option value="2">网络图片地址(保存到网络素材)</option>\
+                <option value="3">网络视频地址(保存到网络素材)</option>\
+                <option value="4">网络音乐地址(保存到网络素材)</option>\
+              </select>\
+            </div>\
+          </div>\
+          <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接地址</label>\
+            <div class="layui-input-inline">\
+              <input type="text" id="link" name="" placeholder="必填项" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+          <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">命名</label>\
+            <div class="layui-input-inline">\
+              <input type="text" id="linkname" name="" placeholder="默认取title" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">简单描述</label>\
+            <div class="layui-input-inline">\
+              <textarea name="desc" id="linkdescr"" placeholder="请输入内容(30字符)" class="layui-textarea" style="width: 280px;"></textarea>\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="addlink()" class="layui-btn layui-btn-primary" style="width: 280px;">提交</a>\
+            </div>\
+          </div>'
+
+    layui.use("layer",function(){
+        var layer = layui.layer; 
+        AddcollectLayer = layer.open({
+          type: 1,
+          title: '收藏网络地址', 
+          maxmin: true,
+          area: ['550px', '420px'],
+          content: addDiv
+        });
+    });
+}
+
+function addlinkShow(datas){
+    console.log(datas)
+    
+    if (datas.code == 1){
+        alert("收藏成功");
+        GetToollist();
+        layer.close(AddcollectLayer);
+    }
+    else if (datas.code == 2){
+        alert(datas.data);
+    }
+    else{
+        alert("未知错误!");
+    }
+    
+    //location.reload();
+}
+
+function addlink(){
+    var urlstr = '/collectlink';
+
+    var link_type = $("#linktype").val();
+    var link = $("#link").val();
+    var link_name = $("#linkname").val();
+    var link_descr = $("#linkdescr").val();
+    if(link != ""){
+        var data = {
+            "type": link_type,
+            "link": link,
+            "name": link_name,
+            "descr": link_descr
+        }
+        pubAjaxPOST(urlstr,data,addlinkShow);
+    }else{
+        alert("必须填写链接地址");
+    }
+}
+
+//首页
+function addhome(){
+    var hometitle = '<li class="layui-this" id="home">欢迎</li>';
+    var homediv = '<div class="layui-tab-item layui-show">\
+                <div>\
+                    <h1>欢迎使用漫鸽笔记 v0.1</h1>\
+                </div>\
+            </div>';
+
+    $("#maintitle").append(hometitle);
+    $("#mainshow").append(homediv);
+}
+
+GetNotesList();
+
+window.onload = function(){ 
+
+    
+
+
+  //$("#fenleilist li").addClass('layui-this').siblings().removeClass('layui-this');
+  $("#<<<.IsShowNav>>>").addClass("layui-this");
+
+  $(".navid").click(function(){ 
+    
+    console.log(this);
+    $("#fenleilist li").addClass('layui-this').siblings().removeClass('layui-this');
+    $(this).addClass('layui-this')
+    })
+}
+
+
+
+function ShowDiv(ids){
+    console.log(ids);
+    $("#notelist").empty();
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + ids,
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                
+                if(JSON.stringify(rdata.data) === '[]'){
+                    $("#notelist").append("还未创建笔记")
+                }
+
+                for(data in rdata.data){
+                    console.log(rdata.data[data]);
+                    var thisdata = rdata.data[data];
+                    console.log(thisdata["title"]);
+                    if(thisdata["isimg"] == 1){
+                        console.log("IMG");
+                        var addnoteinfo = '<div class="bjlist1 bjlistbk">\
+                                            <div class="bjlisttitle">\
+                                                <h2><a data-url="/noteshow/'+thisdata["id"]+'" data-id="'+thisdata["id"]+'" data-title="'+thisdata["title"]+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+thisdata["title"]+'</a></h2>\
+                                                <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+thisdata["time"]+'</span>\
+                                                <span class="layui-badge layui-bg-cyan">'+thisdata["tags"]+'</span>\
+                                            </div>\
+                                            <div class="bjlistbody">\
+                                                <span class="bjlist1span">'+thisdata["desc"]+'</span>\
+                                                <img src="'+thisdata["imglink"]+'" class="bjlistimg">\
+                                            </div>\
+                                            <div style="width:100%;float:left;margin-top:5px;"><span style="font-size:4px;">修改:'+thisdata["modify_times"]+'&nbsp;&nbsp;&nbsp;查看:'+thisdata["view_times"]+'</span></div>\
+                                        </div>'
+                        $("#notelist").append(addnoteinfo)
+                    }else{
+                        console.log("NO IMG");
+                        var addnoteinfo = '<div class="bjlist2 bjlistbk">\
+                                                <div class="bjlisttitle">\
+                                                    <h2><a data-url="/noteshow/'+thisdata["id"]+'" data-id="'+thisdata["id"]+'" data-title="'+thisdata["title"]+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+thisdata["title"]+'</a></h2>\
+                                                    <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+thisdata["time"]+'</span>\
+                                                    <span class="layui-badge layui-bg-cyan">'+thisdata["tags"]+'</span>\
+                                                </div>\
+                                                <div class="bjlistbody">\
+                                                    <span class="bjlist2span">'+thisdata["desc"]+'</span>\
+                                                </div>\
+                                                <div style="width:100%;float:left;margin-top:5px;"><span style="font-size:4px;">修改:'+thisdata["modify_times"]+'&nbsp;&nbsp;&nbsp;查看:'+thisdata["view_times"]+'</span></div>\
+                                            </div>'
+                        $("#notelist").append(addnoteinfo)
+                    }
+
+                }
+                element();
+               
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
+
+
+//工具&链接的列表请求
+function GetToollist() {
+    //
+    $("#notelist").empty();
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/tandllist",
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+
+                var init = '<div id="toollist">\
+                                        <div class="bjlist2 bjlistbk">\
+                                            <div class="bjlisttitle">\
+                                                <h2> <img src="" class="toollistimg"><a data-url="/home" data-id="aaaaa" data-title="收藏链接" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">收藏链接</a></h2>\
+                                                <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">收藏链接</span>\
+                                                <span class="layui-badge layui-bg-cyan">收藏链接</span>\
+                                            </div>\
+                                            <div class="bjlistbody" style="margin-top: -5px;">\
+                                                <span class="bjlist2span">收藏的网络链接</span>\
+                                            </div>\
+                                        </div>\
+                                    </div>'
+                $("#notelist").append(init);
+
+                console.log(rdata);
+                for(data in rdata.data){
+                    var thisdata = rdata.data[data];
+                    var addnoteinfo = '<div id="toollist">\
+                                        <div class="bjlist2 bjlistbk">\
+                                            <div class="bjlisttitle">\
+                                                <h2> <img src="'+thisdata["Ico"]+'" class="toollistimg"><a data-url="'+thisdata["Link"]+'" data-id="'+'tool_'+thisdata["Id"]+'" data-title="'+thisdata["Name"]+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+thisdata["Name"]+'</a></h2>\
+                                                <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">网络工具</span>\
+                                                <span class="layui-badge layui-bg-cyan">'+thisdata["Tag"]+'</span>\
+                                            </div>\
+                                            <div class="bjlistbody" style="margin-top: -5px;">\
+                                                <span class="bjlist2span">'+thisdata["Des"]+'</span>\
+                                                <span class="bjlist2span">[修改] [删除]</span>\
+                                            </div>\
+                                        </div>\
+                                    </div>'
+                    $("#notelist").append(addnoteinfo)
+                }
+
+                element();
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+
+
+}
+
+    //刷新当前显示的笔记
+    function RefreshNowNote(id){
+        console.log('刷新页面')
+        $("iframe[data-frameid='" + id + "']").attr("src", $("iframe[data-frameid='" + id + "']").attr("src"))
+    }
+
+var indexlist = $("#indexlist").html();
+
+function indexshow(){
+    $("#notelist").empty();
+    console.log($("#indexlist").html());
+    $("#notelist").append(indexlist);
+    element();
+}
+
+
+</script>
+
+</body>
+</html>
+

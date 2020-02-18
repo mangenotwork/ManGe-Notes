@@ -1,0 +1,24 @@
+<script src="D:/Go/mango/src/man/ManNotes/static/js/jquery-3.3.1.min.js?v=1"></script> 
+
+<script type="text/javascript">
+
+get();
+function get(){
+	 $.ajax({
+            url:  "https://www.cnblogs.com/mengfangui/p/11543411.html",
+            contentType: "text/html; charset=utf-8",//这个参数也是header参数
+            headers: {"Access-Control-Allow-Origin":"*"},
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(xhr) {
+                console.log(xhr);
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
+</script>
