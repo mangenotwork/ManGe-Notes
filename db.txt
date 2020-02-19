@@ -116,6 +116,7 @@ type MDText struct {
 
 CREATE TABLE tbl_notes(
 	notes_id INT UNSIGNED AUTO_INCREMENT,
+	uid varchar(30) NOT NULL,
 	notes_name varchar(50) NOT NULL,
 	notes_des varchar(255) NOT NULL DEFAULT "",
 	notes_createtime BIGINT unsigned  NOT NULL DEFAULT 0,
@@ -130,6 +131,7 @@ NotesCreatetime
 // tbl_notes表
 type Notes struct {
 	NotesId     int `gorm:"column:notes_id;primary_key;AUTO_INCREMENT"`     //笔记本id
+	UID string `gorm:"column:uid"` //用户id
 	NotesName     string `gorm:"column:notes_name"`     //分类名笔记本名
 	NotesDes 	string `gorm:"column:notes_des"` //笔记本描述
 	NotesCreatetime int64 `gorm:"column:notes_createtime"`     //创建时间

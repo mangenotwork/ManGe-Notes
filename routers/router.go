@@ -30,6 +30,7 @@ func init() {
     beego.Router("/noteshow/:mdid:*", &controllers.MDController{}, "get:MDShow")//显示MD笔记内容
     beego.Router("/editmdnote/:mdid:*", &controllers.MDController{}, "get:MDEditPG")//修改MD笔记内容编辑页面
     beego.Router("/modifynote/:mdid:*", &controllers.MDController{}, "post:MDNoteModify")//提交修改笔记内容
+    beego.Router("/searchnote", &controllers.MDController{}, "get:SearchNote")//搜索笔记
 
     //收藏（链与工具）
     beego.Router("/collectlink", &controllers.TandLController{}, "post:AddCollectLink")//添加网络资源

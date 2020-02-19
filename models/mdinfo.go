@@ -104,3 +104,12 @@ func (this *MDInof) UpdateMDNote(mdcontent string,mid string) error {
 	}
 	return orm.Commit().Error
 }
+
+//通过title 模糊查询笔记信息
+func (this *MDInof) SearchTitle(word,uid string) ([]*MDInof,error) {
+	orm := conn.NotesDB()
+	dataList := make([]*MDInof, 0)
+	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_title like '%%%s%%' LIMIT %d,%d", uid, word, 0, 100)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
+}

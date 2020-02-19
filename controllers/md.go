@@ -111,3 +111,12 @@ func (this *MDController) MDNoteModify(){
 
 	this.RetuenJson(code,count,data)
 }
+
+//搜索笔记
+func (this *MDController) SearchNote() {
+	uid := this.GetUid()
+	word := this.GetString("word")
+
+	code,count,data := new(servers.MDServers).SearchNoteinfo(word,uid)
+	this.RetuenJson(code,count,data)
+}

@@ -199,3 +199,14 @@ func (this *MDServers) GetMDContent(uid string,mid string,types int) (code int, 
 }
 
 
+//通过笔记名模糊搜索查询笔记
+func (this *MDServers) SearchNoteinfo(word,uid string) (code int, count int, data interface{}) {
+	datas,err := new(models.MDInof).SearchTitle(word,uid)
+	if err != nil{
+		fmt.Println("获取所有笔记错误，后台错误",err)
+		return 0,1,"获取所有笔记错误"
+	}
+	rdata := this.NoteListFormat(datas)
+	
+	return 0,1,rdata
+}

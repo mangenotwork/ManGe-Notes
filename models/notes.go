@@ -9,9 +9,10 @@ import (
 // tbl_notes表
 type Notes struct {
 	NotesId     int `gorm:"column:notes_id;primary_key;AUTO_INCREMENT" json:"notes_id"`     //笔记本id
+	UID string `gorm:"column:uid"` //用户id
 	NotesName     string `gorm:"column:notes_name" json:"notes_name"`     //分类名笔记本名
 	NotesDes 	string `gorm:"column:notes_des" json:"notes_des"` //笔记本描述
-	NotesCreatetime int64 `gorm:"column:notes_createtime" json:"notes_ctime"`     //创建时间
+	NotesCreatetime int64 `gorm:"column:notes_createtime"`     //创建时间
 }
 
 func (this *Notes) TableName() string {
@@ -25,9 +26,9 @@ func (this *Notes) AddNotes() (err error) {
 }
 
 //查询笔记本名是否存在
-func (this *Notes) IsNotesName(notesname string) bool {
+func (this *Notes) IsNotesName(notesname,uid string) bool {
 	orm := conn.NotesDB()
-	err := orm.Where("notes_name = ?", notesname).First(this).Error
+	err := orm.Where("notes_name = ? and uid = ?", notesname, uid).First(this).Error
 	if err != nil && err.Error() == "record not found"{
 		return true
 	}
@@ -35,10 +36,10 @@ func (this *Notes) IsNotesName(notesname string) bool {
 }
 
 //分页查询
-func (this *Notes) GetNotesPgs(pg int, size int) ([]*Notes,error){
+func (this *Notes) GetNotesPgs(uid string, pg int, size int) ([]*Notes,error){
 	orm := conn.NotesDB()
 	dataList := make([]*Notes, 0)
-	sqlStr := fmt.Sprintf("SELECT * FROM tbl_notes LIMIT %d,%d", pg, size)
+	sqlStr := fmt.Sprintf("SELECT * FROM tbl_notes where uid='%s' LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
 	return dataList,err
 }

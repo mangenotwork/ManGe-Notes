@@ -44,8 +44,13 @@ func (this *ACC) UpdateLastLogin(uid string,lasttime int64, lsatip string) (err 
 }
 
 //判断用户账号是否存在
-func (this *ACC) ACCIsAccount(acc string){
-
+func (this *ACC) ACCIsAccount(acc string) bool {
+	orm := conn.NotesDB()
+	err := orm.Where("account = ?", acc).First(this).Error
+	if err != nil && err.Error() == "record not found"{
+		return true
+	}
+	return false
 }
 
 //判断用户绑定手机号是否存在

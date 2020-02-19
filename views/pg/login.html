@@ -49,8 +49,14 @@
 		    </div>
 		  </div>
 
-
+		  <div style="margin-top: 60px;color: #fff;">
+		<h3>ManGe开源云笔记系统</h3>
+		<h3><a href="https://github.com/mangenotwork/ManGe-Notes" style="color: #fff"> Github</a></h3>
+		<h3> 交流QQ群： 1060290526</h3>
+		<img src="">
 	</div>
+	</div>
+	
 
 
 <script type="text/javascript">
@@ -122,6 +128,8 @@ function UserReg(){
 function SuccessShow(data){
 	if (data.code == 1){
         alert("成功!");
+    }else if (data.code == 0){
+		alert("失败!"+data.data);
     }else{
         alert("失败!");
     }

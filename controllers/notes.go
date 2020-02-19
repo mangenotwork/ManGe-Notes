@@ -13,7 +13,7 @@ type NotesController struct {
 
 //创建笔记本
 func (this *NotesController) CreateNotes(){
-	this.IsSession()
+	uid := this.GetUid()
 
 	var obj object.CNotes
 	
@@ -23,13 +23,13 @@ func (this *NotesController) CreateNotes(){
 	}
 	fmt.Println(obj)
 
-	code,count,data := new(servers.NotesServers).CreateNotes(&obj)
+	code,count,data := new(servers.NotesServers).CreateNotes(&obj,uid)
 	this.RetuenJson(code,count,data)
 }
 
 //获取当前笔记本列表
 func (this *NotesController) GetNotesList(){
-	this.IsSession()
-	code,count,data := new(servers.NotesServers).AllNotes()
+	uid := this.GetUid()
+	code,count,data := new(servers.NotesServers).AllNotes(uid)
 	this.RetuenJson(code,count,data)
 }

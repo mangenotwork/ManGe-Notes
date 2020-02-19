@@ -132,8 +132,8 @@
   <div class="layui-side layui-bg-black scrollbar-div2">
   	<div class="shousuo">
   		<div class="layui-input-inline">
-                    <input type="text" name="keyword" class="layui-input" placeholder="搜索"/>
-                    <a href="#">
+                    <input id="word" type="text" name="keyword" class="layui-input" placeholder="搜索"/>
+                    <a onclick="searchnote()">
                     <i class="layui-icon layui-icon-search"></i></a>
                 </div>
   		</div>
@@ -663,6 +663,55 @@ window.onload = function(){
 }
 
 
+//含有图片笔记信息的模板
+function IMGNoteInfo_Template(noteid,notetitle,notetime,notetags,notedesc,imglink,modify_times,view_times){
+    return '<div class="bjlist1 bjlistbk">\
+              <div class="bjlisttitle">\
+                <h2><a data-url="/noteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+notetitle+'</a></h2>\
+                <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+notetime+'</span>\
+                <span class="layui-badge layui-bg-cyan">'+notetags+'</span>\
+              </div>\
+              <div class="bjlistbody">\
+                <span class="bjlist1span">'+notedesc+'</span>\
+                <img src="'+imglink+'" class="bjlistimg">\
+              </div>\
+              <div style="width:100%;float:left;margin-top:5px;">\
+                <span style="font-size:4px;">修改:'+modify_times+'&nbsp;&nbsp;&nbsp;查看:'+view_times+'</span>\
+              </div>\
+            </div>'
+}
+
+//不含图片笔记信息的模板
+function NoteInfo_Template(noteid,notetitle,notetime,notetags,notedesc,modify_times,view_times){
+    return '<div class="bjlist2 bjlistbk">\
+              <div class="bjlisttitle">\
+                <h2><a data-url="/noteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+notetitle+'</a></h2>\
+                <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+notetime+'</span>\
+                <span class="layui-badge layui-bg-cyan">'+notetags+'</span>\
+              </div>\
+              <div class="bjlistbody">\
+                <span class="bjlist2span">'+notedesc+'</span>\
+              </div>\
+              <div style="width:100%;float:left;margin-top:5px;">\
+                <span style="font-size:4px;">修改:'+modify_times+'&nbsp;&nbsp;&nbsp;查看:'+view_times+'</span>\
+              </div>\
+            </div>'
+}
+
+//工具信息的模板
+function Tool_Template(ico,link,id,name,tag,des){
+    return '<div class="bjlist2 bjlistbk">\
+                <div class="bjlisttitle">\
+                    <h2> <img src="'+ico+'" class="toollistimg"><a data-url="'+link+'" data-id="'+'tool_'+id+'" data-title="'+name+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+name+'</a></h2>\
+                    <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">网络工具</span>\
+                    <span class="layui-badge layui-bg-cyan">'+tag+'</span>\
+                </div>\
+                <div class="bjlistbody" style="margin-top: -5px;">\
+                    <span class="bjlist2span">'+des+'</span>\
+                    <span class="bjlist2span">[修改] [删除]</span>\
+                </div>\
+            </div>'
+}
 
 function ShowDiv(ids){
     console.log(ids);
@@ -685,32 +734,13 @@ function ShowDiv(ids){
                     console.log(thisdata["title"]);
                     if(thisdata["isimg"] == 1){
                         console.log("IMG");
-                        var addnoteinfo = '<div class="bjlist1 bjlistbk">\
-                                            <div class="bjlisttitle">\
-                                                <h2><a data-url="/noteshow/'+thisdata["id"]+'" data-id="'+thisdata["id"]+'" data-title="'+thisdata["title"]+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+thisdata["title"]+'</a></h2>\
-                                                <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+thisdata["time"]+'</span>\
-                                                <span class="layui-badge layui-bg-cyan">'+thisdata["tags"]+'</span>\
-                                            </div>\
-                                            <div class="bjlistbody">\
-                                                <span class="bjlist1span">'+thisdata["desc"]+'</span>\
-                                                <img src="'+thisdata["imglink"]+'" class="bjlistimg">\
-                                            </div>\
-                                            <div style="width:100%;float:left;margin-top:5px;"><span style="font-size:4px;">修改:'+thisdata["modify_times"]+'&nbsp;&nbsp;&nbsp;查看:'+thisdata["view_times"]+'</span></div>\
-                                        </div>'
+                        var addnoteinfo = IMGNoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["imglink"], 
+                            thisdata["modify_times"], thisdata["view_times"])
                         $("#notelist").append(addnoteinfo)
                     }else{
                         console.log("NO IMG");
-                        var addnoteinfo = '<div class="bjlist2 bjlistbk">\
-                                                <div class="bjlisttitle">\
-                                                    <h2><a data-url="/noteshow/'+thisdata["id"]+'" data-id="'+thisdata["id"]+'" data-title="'+thisdata["title"]+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+thisdata["title"]+'</a></h2>\
-                                                    <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+thisdata["time"]+'</span>\
-                                                    <span class="layui-badge layui-bg-cyan">'+thisdata["tags"]+'</span>\
-                                                </div>\
-                                                <div class="bjlistbody">\
-                                                    <span class="bjlist2span">'+thisdata["desc"]+'</span>\
-                                                </div>\
-                                                <div style="width:100%;float:left;margin-top:5px;"><span style="font-size:4px;">修改:'+thisdata["modify_times"]+'&nbsp;&nbsp;&nbsp;查看:'+thisdata["view_times"]+'</span></div>\
-                                            </div>'
+                        var addnoteinfo = NoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], 
+                            thisdata["view_times"])
                         $("#notelist").append(addnoteinfo)
                     }
 
@@ -738,36 +768,13 @@ function GetToollist() {
             cache:false,
             success:function(rdata) {
 
-                var init = '<div id="toollist">\
-                                        <div class="bjlist2 bjlistbk">\
-                                            <div class="bjlisttitle">\
-                                                <h2> <img src="" class="toollistimg"><a data-url="/home" data-id="aaaaa" data-title="收藏链接" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">收藏链接</a></h2>\
-                                                <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">收藏链接</span>\
-                                                <span class="layui-badge layui-bg-cyan">收藏链接</span>\
-                                            </div>\
-                                            <div class="bjlistbody" style="margin-top: -5px;">\
-                                                <span class="bjlist2span">收藏的网络链接</span>\
-                                            </div>\
-                                        </div>\
-                                    </div>'
+                var init = Tool_Template("","/home","alllinks","收藏链接","收藏链接列表","收藏的网络链接")
                 $("#notelist").append(init);
 
                 console.log(rdata);
                 for(data in rdata.data){
                     var thisdata = rdata.data[data];
-                    var addnoteinfo = '<div id="toollist">\
-                                        <div class="bjlist2 bjlistbk">\
-                                            <div class="bjlisttitle">\
-                                                <h2> <img src="'+thisdata["Ico"]+'" class="toollistimg"><a data-url="'+thisdata["Link"]+'" data-id="'+'tool_'+thisdata["Id"]+'" data-title="'+thisdata["Name"]+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+thisdata["Name"]+'</a></h2>\
-                                                <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">网络工具</span>\
-                                                <span class="layui-badge layui-bg-cyan">'+thisdata["Tag"]+'</span>\
-                                            </div>\
-                                            <div class="bjlistbody" style="margin-top: -5px;">\
-                                                <span class="bjlist2span">'+thisdata["Des"]+'</span>\
-                                                <span class="bjlist2span">[修改] [删除]</span>\
-                                            </div>\
-                                        </div>\
-                                    </div>'
+                    var addnoteinfo = Tool_Template(thisdata["Ico"], thisdata["Link"], thisdata["Id"], thisdata["Name"], thisdata["Tag"], thisdata["Des"])
                     $("#notelist").append(addnoteinfo)
                 }
 
@@ -798,6 +805,48 @@ function indexshow(){
     element();
 }
 
+
+function searchnote(){
+    $("#notelist").empty();
+    var word = $("#word").val();
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/searchnote?word="+word,
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                
+                if(JSON.stringify(rdata.data) === '[]'){
+                    $("#notelist").append("还未创建笔记")
+                }
+
+                for(data in rdata.data){
+                    console.log(rdata.data[data]);
+                    var thisdata = rdata.data[data];
+                    console.log(thisdata["title"]);
+                    if(thisdata["isimg"] == 1){
+                        console.log("IMG");
+                        var addnoteinfo = IMGNoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["imglink"], 
+                            thisdata["modify_times"], thisdata["view_times"])
+                        $("#notelist").append(addnoteinfo)
+                    }else{
+                        console.log("NO IMG");
+                        var addnoteinfo = NoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], 
+                            thisdata["view_times"])
+                        $("#notelist").append(addnoteinfo)
+                    }
+                }
+                element();
+
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
 
 </script>
 

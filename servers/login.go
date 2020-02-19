@@ -22,6 +22,14 @@ type LoginServers struct {}
 //用户注册 账号密码注册
 func (this *LoginServers) UserReg(datas *object.UserRegInfo,ip string) (code int, count int, data string, jwtStr string){
 	//验证邀请码
+	if datas.InviteCode != "mangenotes2020"{
+		return 0,1,"邀请码错误！需要邀请码请加qq群:1060290526",""
+	}
+
+	//检查账号是否存在
+	if !new(models.ACC).ACCIsAccount(datas.Acc){
+		return 0,1,"账号已存在",""
+	}
 
 	//创建账号id
 	id,uidErr := util.Int64ID()
