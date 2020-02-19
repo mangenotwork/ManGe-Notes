@@ -69,7 +69,12 @@ func (this *Str) RepMDDesc(txt string,strlen int) string {
 	txt = strings.Replace(txt, "`", "", -1 )
 	txt = strings.Replace(txt, "-", "", -1 )
 	txt = strings.Replace(txt, "\n", "   ", -1 )
-	return txt[0:strlen]
+	if len(txt) > strlen {
+		return txt[0:strlen]
+	}else{
+		return txt[0:len(txt)]
+	}
+	
 }
 
 //字符串空格转换html空格

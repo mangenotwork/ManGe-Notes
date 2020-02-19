@@ -667,7 +667,7 @@ window.onload = function(){
 function IMGNoteInfo_Template(noteid,notetitle,notetime,notetags,notedesc,imglink,modify_times,view_times){
     return '<div class="bjlist1 bjlistbk">\
               <div class="bjlisttitle">\
-                <h2><a data-url="/noteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+notetitle+'</a></h2>\
+                <h3><a data-url="/noteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+notetitle+'</a></h3>\
                 <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+notetime+'</span>\
                 <span class="layui-badge layui-bg-cyan">'+notetags+'</span>\
               </div>\
@@ -685,7 +685,7 @@ function IMGNoteInfo_Template(noteid,notetitle,notetime,notetags,notedesc,imglin
 function NoteInfo_Template(noteid,notetitle,notetime,notetags,notedesc,modify_times,view_times){
     return '<div class="bjlist2 bjlistbk">\
               <div class="bjlisttitle">\
-                <h2><a data-url="/noteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+notetitle+'</a></h2>\
+                <h3><a data-url="/noteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+notetitle+'</a></h3>\
                 <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+notetime+'</span>\
                 <span class="layui-badge layui-bg-cyan">'+notetags+'</span>\
               </div>\
@@ -702,7 +702,7 @@ function NoteInfo_Template(noteid,notetitle,notetime,notetags,notedesc,modify_ti
 function Tool_Template(ico,link,id,name,tag,des){
     return '<div class="bjlist2 bjlistbk">\
                 <div class="bjlisttitle">\
-                    <h2> <img src="'+ico+'" class="toollistimg"><a data-url="'+link+'" data-id="'+'tool_'+id+'" data-title="'+name+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+name+'</a></h2>\
+                    <h3> <img src="'+ico+'" class="toollistimg"><a data-url="'+link+'" data-id="'+'tool_'+id+'" data-title="'+name+'" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">'+name+'</a></h3>\
                     <span class="layui-badge layui-bg-gray" style="font-size:8px;margin-top: 10px;">网络工具</span>\
                     <span class="layui-badge layui-bg-cyan">'+tag+'</span>\
                 </div>\

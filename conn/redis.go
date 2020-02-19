@@ -19,6 +19,7 @@ import (
 	"time"
 	_ "unsafe"
 
+	"github.com/astaxie/beego"
 	"github.com/garyburd/redigo/redis"
 	"golang.org/x/crypto/ssh"
 )
@@ -202,9 +203,15 @@ func RSSHPool(user string, pass string, addr string, ip string, port int, passwo
 	}
 }
 
+var (
+	redishost = beego.AppConfig.DefaultString("redis::host","")
+	redisport,_ = beego.AppConfig.Int("redis::port")
+	redispassword = beego.AppConfig.DefaultString("redis::password", "")
+)
+
 func RedisConn() redis.Conn {
 	dbnumber := 2
-	conn := RPool("127.0.0.1",6379,"123").Get()
+	conn := RPool(redishost,redisport,redispassword).Get()
 	_, err := conn.Do("select", fmt.Sprintf("%d", dbnumber))
 	fmt.Println("Redis Error : ", err)
 	return conn
