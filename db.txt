@@ -100,13 +100,17 @@ CREATE TABLE tbl_md_text(
 	md_content TEXT NOT NULL,
 	
 	PRIMARY KEY (md_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 // tbl_md_text表
 type MDText struct {
 	MDId     int `gorm:"column:md_id"`     //内容id
 	MDContent     string `gorm:"column:md_content"`     //内容
 }
+
+
+
+
 
 [====================]
 

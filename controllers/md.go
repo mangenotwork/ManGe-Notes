@@ -59,6 +59,19 @@ func (this *MDController) MDShow(){
 	this.TplName = "pg/mdshow.html"
 }
 
+//显示回收站里的笔记内容
+func (this *MDController) RMDShow(){
+	uid := this.GetUid()
+	mdid := this.Ctx.Input.Param(":mdid")
+	code,_,data,title := new(servers.MDServers).GetMDContent(uid,mdid,1)//1 查看请求的内容
+
+	this.Data["Error"] = code
+	this.Data["MDText"] = data
+	this.Data["MDID"] = mdid
+	this.Data["MDTitle"] = title
+	this.TplName = "pg/delmdshow.html"
+}
+
 //MDEdit  修改MD笔记内容
 func (this *MDController) MDEditPG() {
 	uid := this.GetUid()
@@ -118,5 +131,48 @@ func (this *MDController) SearchNote() {
 	word := this.GetString("word")
 
 	code,count,data := new(servers.MDServers).SearchNoteinfo(word,uid)
+	this.RetuenJson(code,count,data)
+}
+
+//删除笔记
+func (this *MDController) DelNote(){
+	uid := this.GetUid()
+	mdid := this.Ctx.Input.Param(":mdid")
+	code,count,data := new(servers.MDServers).DeleteNote(mdid,uid)
+	this.RetuenJson(code,count,data)
+}
+
+//SchenNote 永久删除笔记
+func (this *MDController) SchenNote(){
+	uid := this.GetUid()
+	mdid := this.Ctx.Input.Param(":mdid")
+	code,count,data := new(servers.MDServers).SchenNote(mdid,uid)
+	this.RetuenJson(code,count,data)
+}
+
+//NoteRecycler 回收站
+func (this *MDController) NoteRecycler(){
+	uid := this.GetUid()
+	pg,err := this.GetInt("pg")
+	fmt.Println(pg,uid)
+	if err != nil || pg == 0{
+		fmt.Println("获取页数失败")
+		pg = 1
+	}
+	code,count,data := new(servers.MDServers).GetRecyclerNote(pg,uid)
+	this.RetuenJson(code,count,data)
+}
+
+
+//恢复到笔记本
+func (this *MDController) RestoreNote() {
+	uid := this.GetUid()
+	mdid := this.Ctx.Input.Param(":mdid")
+	notes,err := this.GetInt("notes")
+	if err != nil{
+		notes = 0
+	}
+
+	code,count,data := new(servers.MDServers).RestoreToNotes(mdid,uid,notes)
 	this.RetuenJson(code,count,data)
 }

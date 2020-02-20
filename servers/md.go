@@ -157,6 +157,19 @@ func (this *MDServers) GetAllNote(pg int,uid string) (code int, count int, data 
 	return 0,1,rdata
 }
 
+//获取回收站的笔记
+func (this *MDServers) GetRecyclerNote(pg int,uid string) (code int, count int, data interface{}) {
+	pgsize := (pg-1)*20
+	datas,err := new(models.MDInof).GetRecycler(pgsize,20,uid)
+	if err != nil{
+		fmt.Println("获取所有笔记错误，后台错误",err)
+		return 0,1,"获取所有笔记错误"
+	}
+	rdata := this.NoteListFormat(datas)
+	
+	return 0,1,rdata
+}
+
 //GetNoteList 获取笔记本下的笔记
 func (this *MDServers) GetNoteList(notesid int,pg int,uid string) (code int, count int, data interface{}) {
 	pgsize := (pg-1)*20
@@ -209,4 +222,50 @@ func (this *MDServers) SearchNoteinfo(word,uid string) (code int, count int, dat
 	rdata := this.NoteListFormat(datas)
 	
 	return 0,1,rdata
+}
+
+//删除笔记到回收站
+func (this *MDServers) DeleteNote(mdid,uid string) (code int, count int, data interface{}) {
+	ismd,_,err := new(models.MDInof).IsMD(uid,mdid)
+	if err != nil && err.Error() != "record not found"{
+		fmt.Println("判断查看MD权限错误，错误信息:",err)
+		return 0,1,"判断查看MD权限错误，错误信息"
+	}
+	if ismd {
+		err := new(models.MDInof).ToDEL(mdid,uid)
+		if err != nil {
+			fmt.Println("删除笔记错误",err)
+			return 0,1,"删除笔记错误"
+		}
+		return 1,1,"删除笔记成功"
+	}
+	return 2,1,"你没有权限删除此笔记"
+}
+
+//SchenNote 永久删除笔记
+func (this *MDServers) SchenNote(mdid,uid string) (code int, count int, data interface{}) {
+	ismd,_,err := new(models.MDInof).IsMD(uid,mdid)
+	if err != nil && err.Error() != "record not found"{
+		fmt.Println("判断查看MD权限错误，错误信息:",err)
+		return 0,1,"判断查看MD权限错误，错误信息"
+	}
+	if ismd {
+		err := new(models.MDInof).Schen(mdid,uid)
+		if err != nil {
+			fmt.Println("删除笔记错误",err)
+			return 0,1,"删除笔记错误"
+		}
+		return 1,1,"删除笔记成功"
+	}
+	return 2,1,"你没有权限删除此笔记"
+}
+
+//恢复笔记到笔记本
+func (this *MDServers) RestoreToNotes(mdid,uid string,notes int) (code int, count int, data interface{}) {
+	err := new(models.MDInof).NoteToNotes(mdid,uid,notes)
+	if err != nil {
+		fmt.Println("恢复笔记错误",err)
+		return 0,1,"恢复笔记错误"
+	}
+	return 1,1,"恢复笔记成功"
 }

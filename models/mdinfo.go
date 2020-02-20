@@ -48,7 +48,16 @@ func (this *MDInof) InsertMDNote(mdtext *MDText) error {
 func (this *MDInof) GetToPG(pg int, size int, uid string) ([]*MDInof,error) {
 	orm := conn.NotesDB()
 	dataList := make([]*MDInof, 0)
-	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' LIMIT %d,%d", uid, pg, size)
+	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id != -1 LIMIT %d,%d", uid, pg, size)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
+}
+
+//获取回收站笔记
+func (this *MDInof) GetRecycler(pg int, size int, uid string) ([]*MDInof,error) {
+	orm := conn.NotesDB()
+	dataList := make([]*MDInof, 0)
+	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id = -1 LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
 	return dataList,err
 }
@@ -112,4 +121,25 @@ func (this *MDInof) SearchTitle(word,uid string) ([]*MDInof,error) {
 	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_title like '%%%s%%' LIMIT %d,%d", uid, word, 0, 100)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
 	return dataList,err
+}
+
+//删除笔记到回收站 md_notes_id = -1
+func (this *MDInof) ToDEL(mdid,uid string) error{
+	orm := conn.NotesDB()
+	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=-1 where md_id='%s' and uid = '%s'; ", mdid,uid)
+	return orm.Exec(sqlStr).Error
+}
+
+//永久删除笔记
+func (this *MDInof) Schen(mdid,uid string) error{
+	orm := conn.NotesDB()
+	sqlStr := fmt.Sprintf("DELETE FROM tbl_md_info where md_id='%s' and uid = '%s' and md_notes_id=-1; ", mdid,uid)
+	return orm.Exec(sqlStr).Error
+}
+
+//笔记转移到指定笔记本
+func (this *MDInof) NoteToNotes(mdid,uid string,notes int) error {
+	orm := conn.NotesDB()
+	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=%d where md_id='%s' and uid = '%s'; ", notes,mdid,uid)
+	return orm.Exec(sqlStr).Error
 }

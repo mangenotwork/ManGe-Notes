@@ -31,6 +31,11 @@ func init() {
     beego.Router("/editmdnote/:mdid:*", &controllers.MDController{}, "get:MDEditPG")//修改MD笔记内容编辑页面
     beego.Router("/modifynote/:mdid:*", &controllers.MDController{}, "post:MDNoteModify")//提交修改笔记内容
     beego.Router("/searchnote", &controllers.MDController{}, "get:SearchNote")//搜索笔记
+    beego.Router("/delnote/:mdid:*", &controllers.MDController{}, "get:DelNote")//删除笔记到回收站
+    beego.Router("/recycler", &controllers.MDController{}, "get:NoteRecycler")//回收站
+    beego.Router("/rnoteshow/:mdid:*", &controllers.MDController{}, "get:RMDShow")//显示回收站MD笔记内容
+    beego.Router("/schen/:mdid:*", &controllers.MDController{}, "get:SchenNote")//笔记永久删除
+    beego.Router("/restore/:mdid:*", &controllers.MDController{}, "get:RestoreNote")//笔记永久删除
 
     //收藏（链与工具）
     beego.Router("/collectlink", &controllers.TandLController{}, "post:AddCollectLink")//添加网络资源

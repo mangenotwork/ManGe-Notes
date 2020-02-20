@@ -28,6 +28,8 @@
 	.bjlist2{width: 88%;height: 120px;background-color: #282c34;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
 	span{word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden;}  
 
+    .bjlistdel{width: 88%;height: 120px;background-color: #696969;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
+
     .scrollbar {
   width : 30px;
   height: 300px;
@@ -391,6 +393,15 @@ layui.use('element', function() {
     });
 }
 
+
+function deletetab(id){
+    layui.use('element', function() {
+        var element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        element.tabDelete('home-tabs', id);
+    });
+} 
+
+
 element();
 
 var AddFenleiLayer;
@@ -446,7 +457,7 @@ function GetNotesList(){
                       <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>\
                       <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本(0)</a></li>\
                       <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draft\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿(0)</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站(0)</a></li>'
+                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\',\'del\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站(0)</a></li>'
 
     $("#fenleilist").empty();
     $("#fenleilist").append(defaultnva);
@@ -713,7 +724,23 @@ function Tool_Template(ico,link,id,name,tag,des){
             </div>'
 }
 
-function ShowDiv(ids){
+function IMGNoteDel_Template(noteid,notetitle,notetime,notetags,notedesc,modify_times,view_times){
+    return '<div class="bjlistdel bjlistbk">\
+              <div class="bjlisttitle">\
+                <h3><a data-url="/rnoteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+notetitle+'</a></h3>\
+                <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+notetime+'</span>\
+                <span class="layui-badge layui-bg-cyan">'+notetags+'</span>\
+              </div>\
+              <div class="bjlistbody">\
+                <span class="bjlist2span">'+notedesc+'</span>\
+              </div>\
+              <div style="width:100%;float:left;margin-top:5px;">\
+                <span style="font-size:4px;">修改:'+modify_times+'&nbsp;&nbsp;&nbsp;查看:'+view_times+'</span>\
+              </div>\
+            </div>'
+}
+
+function ShowDiv(ids,typeshow){
     console.log(ids);
     $("#notelist").empty();
     $.ajax({
@@ -729,20 +756,25 @@ function ShowDiv(ids){
                 }
 
                 for(data in rdata.data){
+                    var addnoteinfo;
                     console.log(rdata.data[data]);
                     var thisdata = rdata.data[data];
                     console.log(thisdata["title"]);
-                    if(thisdata["isimg"] == 1){
-                        console.log("IMG");
-                        var addnoteinfo = IMGNoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["imglink"], 
-                            thisdata["modify_times"], thisdata["view_times"])
-                        $("#notelist").append(addnoteinfo)
+
+                    if(typeshow == "del"){
+                        addnoteinfo = IMGNoteDel_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], thisdata["view_times"])
                     }else{
-                        console.log("NO IMG");
-                        var addnoteinfo = NoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], 
-                            thisdata["view_times"])
-                        $("#notelist").append(addnoteinfo)
+                        if(thisdata["isimg"] == 1){
+                            console.log("IMG");
+                            addnoteinfo = IMGNoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["imglink"], 
+                            thisdata["modify_times"], thisdata["view_times"])
+                        }else{
+                            console.log("NO IMG");
+                            var addnoteinfo = NoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], 
+                                thisdata["view_times"])
+                        }
                     }
+                    $("#notelist").append(addnoteinfo)
 
                 }
                 element();

@@ -34,3 +34,8 @@
 ![show6](http://118.25.137.1/static/img/show6.png "show6")
 
 ![show7](http://118.25.137.1/static/img/show7.png "show7")
+
+## 版本记录
+v0.1.3 
+- [新增] 删除笔记功能
+- [新增] 笔记回收站功能

@@ -598,9 +598,11 @@
             });
         });
     }
+
     String.prototype.times = function(n) { 
         return Array.prototype.join.call({length:n+1}, this); 
     }; 
+    
     function addTable(){
         var tableRow = $("#tableRow").val();
         var tableColumn = $("#tableColumn").val();
