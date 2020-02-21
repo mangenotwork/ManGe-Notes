@@ -39,3 +39,26 @@ func (this *ToolandLink) GeTools(pg int, size int, uid string) ([]*ToolandLink,e
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
 	return dataList,err
 }
+
+//获取链接 列表
+func (this *ToolandLink) GetLinks(pg int, size int, uid string) ([]*ToolandLink,error){
+	orm := conn.NotesDB()
+	dataList := make([]*ToolandLink, 0)
+	sqlStr := fmt.Sprintf("SELECT * FROM tbl_tool_link where uid='%s' and type=0 LIMIT %d,%d", uid, pg, size)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
+}
+
+//修改收藏的链接
+func (this *ToolandLink) UpdateLink() error {
+	orm := conn.NotesDB()
+	sqlStr := fmt.Sprintf("update tbl_tool_link set name='%s',des='%s',link='%s',ico='%s' where id=%d and uid = '%s'; ", this.Name,this.Des,this.Link,this.Ico,this.Id,this.UID)
+	return orm.Exec(sqlStr).Error
+}
+
+//删除收藏的链接
+func (this *ToolandLink) DELLink(uid string, linkid int) error {
+	orm := conn.NotesDB()
+	sqlStr := fmt.Sprintf("DELETE FROM tbl_tool_link where uid='%s' and id=%d and type=0; ",uid,linkid)
+	return orm.Exec(sqlStr).Error
+}

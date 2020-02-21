@@ -450,14 +450,14 @@ function addFenlei(){
 //请求数据显示左边栏
 function GetNotesList(){
 
-    var defaultnva = '<li class="layui-nav-item navid"><a onclick="indexshow()">ManGe-Notes主页</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="GetToollist()"><i class="layui-icon fontsize17">&#xe7ae;</i>工具&链接</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notesmage\')"><i class="layui-icon fontsize17">&#xe656;</i>管理</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/allnote\')"><i class="layui-icon fontsize17">&#xe705;</i>全部笔记(0)</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本(0)</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draft\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿(0)</a></li>\
-                      <li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\',\'del\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站(0)</a></li>'
+    var defaultnva = '<li class="layui-nav-item navid"><a onclick="indexshow()">ManGe-Notes主页</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="GetToollist()"><i class="layui-icon fontsize17">&#xe7ae;</i>工具&链接</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notesmage\')"><i class="layui-icon fontsize17">&#xe656;</i>管理</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/allnote\')"><i class="layui-icon fontsize17">&#xe705;</i>全部笔记(0)</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本(0)</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draft\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿(0)</a></li>'+
+                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\',\'del\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站(0)</a></li>'
 
     $("#fenleilist").empty();
     $("#fenleilist").append(defaultnva);
@@ -800,7 +800,7 @@ function GetToollist() {
             cache:false,
             success:function(rdata) {
 
-                var init = Tool_Template("","/home","alllinks","收藏链接","收藏链接列表","收藏的网络链接")
+                var init = Tool_Template("","/linkshow","alllinks","收藏链接","收藏链接列表","收藏的网络链接")
                 $("#notelist").append(init);
 
                 console.log(rdata);

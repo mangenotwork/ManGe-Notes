@@ -40,4 +40,7 @@ func init() {
     //收藏（链与工具）
     beego.Router("/collectlink", &controllers.TandLController{}, "post:AddCollectLink")//添加网络资源
     beego.Router("/tandllist", &controllers.TandLController{}, "get:GetTandL")//获取网络工具列表
+    beego.Router("/linkshow", &controllers.TandLController{}, "get:LinkShow")//收藏链接的显示页
+    beego.Router("/edlink", &controllers.TandLController{}, "post:EDLink")//编辑收藏的链接
+    beego.Router("/dellink", &controllers.TandLController{}, "get:DELLink")//删除收藏的链接
 }

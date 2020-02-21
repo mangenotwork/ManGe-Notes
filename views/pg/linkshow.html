@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>漫鸽笔记Markdown编辑器v0.1</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <script src="../static/plugin/layui/layui.js?v=1"></script>
+    <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
+    <script src="../static/js/man.js?v=1"></script>
+    <style type="text/css">
+      .scrollbar {
+  width : 30px;
+  height: 300px;
+  margin: 0 auto;
+  }
+  .scrollbar-div::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #535353;
+  }
+  .scrollbar-div::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+
+  .scrollbar-div2::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+  }
+  .scrollbar-div2::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background   : #ededed;
+  }
+  .scrollbar-div2::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background   : #c2c2c2;
+  }
+  
+  .fontsize21{font-size: 21px;}
+
+    </style>
+</head>
+
+<body class="scrollbar-div" style="padding:3%">
+
+  <<<range .Links>>>
+
+    <div style="height: 100px;background-color: #ddd;float: left;box-shadow: 5px 5px 0px #888888;padding: 15px;border-radius:12px;margin-right: 35px;margin-bottom: 35px;">
+    <a href="<<<.Link>>>" target="_blank">
+      <img src="<<<.Ico>>>" style="width: 25px;height: 25px;margin-left: 5px;margin-right: 5px;margin-top:-10px;">
+      <span style="font-size: 28px;"><<<.Name>>></span>
+    </a>
+      <hr>
+      <!--<span><<<.Tag>>></span><br>-->
+      <span style="margin: 5px;"><<<.Des>>></span><br>
+      <div style="margin-top: 10px;">
+        <a onclick="edlink('<<<.Id>>>','<<<.Name>>>','<<<.Link>>>','<<<.Des>>>')" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal">编辑</a>
+        <a onclick="delink('<<<.Id>>>')" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger">删除</a>
+      </div>
+  </div>
+  <<<else>>>
+    <h1>还未收藏过链接</h1>
+  <<<end>>>
+
+  
+
+
+<script type="text/javascript">
+
+var EdlinkLinkLayer;
+
+//编辑标签
+function edlink(linkid,title,links,des) {
+  var addDiv='<div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接名</label>\
+            <div class="layui-input-inline">\
+              <input id="linktitle" type="text" name="" value="'+title+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接地址</label>\
+            <div class="layui-input-inline">\
+              <input id="linkpath" type="text" name="" value="'+links+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+          <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接描述</label>\
+            <div class="layui-input-inline">\
+              <input id="linkprompt" type="text" name=""  value="'+des+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="EdToLink('+linkid+')" class="layui-btn layui-btn-primary" style="width: 280px;">提交</a>\
+            </div>\
+          </div>'
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                EdlinkLinkLayer = layer.open({
+                  type: 1,
+                  title: '编辑链接：'+title, 
+                  maxmin: true,
+                  area: ['550px', '380px'],
+                  content: addDiv
+                });
+            });
+        });
+}
+
+function EdSuccess(rdata){
+  console.log(rdata)
+  if (rdata.code == 1){
+        alert("成功!");
+        layer.close(EdlinkLinkLayer);
+  }else if (rdata.code == 0){
+    alert("失败!"+rdata.data);
+  }else{
+        alert("失败!");
+    }
+  location.reload();
+}
+
+function EdToLink(linkid){
+    var link_id = linkid;
+    var link_title = $("#linktitle").val();
+    var link = $("#linkpath").val();
+    var link_des = $("#linkprompt").val();
+    var urlstr = "/edlink"
+    if(link_title != "" || link != ""){
+        var data = {
+            "link_id":link_id,
+            "link_title": link_title,
+            "link": link,
+            "link_des":link_des,
+        }
+        pubAjaxPOST(urlstr,data,EdSuccess);
+    }else if(link_title == ""){
+        alert("标题不能为空");
+    }else if(link == ""){
+        alert("链接地址不能为空");
+    }
+}
+
+
+//删除标签
+function delink(linkid){
+  $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/dellink?linkid="+linkid,
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                if (rdata.code == 1){
+                      alert("成功!");
+                }else if (rdata.code == 0){
+                  alert("失败!"+rdata.data);
+                }else{
+                      alert("失败!");
+                  }
+                location.reload();
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
+
+
+</script>
+
+</body>
+</html>

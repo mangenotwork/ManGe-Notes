@@ -68,3 +68,51 @@ func (this *TandLServers) GetToolList(uid string) (code int, count int, data int
 	}
 	return 1,1,toollist
 }
+
+//获取链接列表
+func (this *TandLServers) GetLinks(uid string) (code int, count int, data interface{}) {
+	toollist,err := new(models.ToolandLink).GetLinks(0,20,uid)
+	if err != nil {
+		fmt.Println(err)
+		return 1,1,"获取工具列表错误，后端错误"
+	}
+	return 1,1,toollist
+}
+
+//修改收藏的链接EDLink
+func (this *TandLServers) EditLink(datas *object.EDLinks, uid string) (code int, count int, data string) {
+	//判断是否命名，如果命名为空则取网络链接的title
+	var linkname string
+	if datas.LinkName == ""{
+		linkname,_ = new(util.WebInfo).GetWebTitle(datas.Link)
+	}else{
+		linkname = datas.LinkName
+	}
+	//取网络//主域名+ /favicon.ico
+	linkico := new(util.WebInfo).GetIcoLink(datas.Link)
+	linkinfos := &models.ToolandLink{
+		Id : datas.LinkID,
+		UID : uid,
+		Name : linkname,
+		Des : datas.LinkDes,
+		Link : datas.Link,
+		Ico : linkico,
+	}
+	err := linkinfos.UpdateLink()
+	if err != nil{
+		fmt.Println("修改收藏的链接错误",err)
+		return 0,1,"修改收藏的链接错误"
+	}
+	return 1,1,"修改成功"
+
+}
+
+//删除收藏的链接
+func (this *TandLServers) DELLink(uid string,linkid int) (code int, count int, data string) {
+	err := new(models.ToolandLink).DELLink(uid,linkid)
+	if err != nil{
+		fmt.Println("删除收藏的链接错误",err)
+		return 0,1,"删除收藏的链接错误"
+	}
+	return 1,1,"删除成功"
+}

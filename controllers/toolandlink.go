@@ -40,3 +40,43 @@ func (this *TandLController) GetTandL(){
 	this.RetuenJson(code,count,data)
 }
 
+//收藏链接的显示页
+func (this *TandLController) LinkShow(){
+	uid := this.GetUid()
+
+	fmt.Println(uid)
+
+	code,count,data := new(servers.TandLServers).GetLinks(uid)
+	fmt.Println(code,count)
+
+ 	this.Data["Links"] = data
+	this.TplName = "pg/linkshow.html"
+}
+
+
+//修改收藏的链接
+func (this *TandLController) EDLink() {
+	uid := this.GetUid()
+
+	var obj object.EDLinks
+
+	err := this.ResolvePostData(&obj)
+	if err != nil{
+		fmt.Println(err)
+	}
+	fmt.Println(obj,uid)
+
+	code,count,data := new(servers.TandLServers).EditLink(&obj,uid)
+
+	this.RetuenJson(code,count,data)
+}
+
+//删除收藏的链接
+func (this *TandLController) DELLink(){
+	uid := this.GetUid()
+	linkid,_ := this.GetInt("linkid")
+
+	code,count,data := new(servers.TandLServers).DELLink(uid,linkid)
+
+	this.RetuenJson(code,count,data)
+}

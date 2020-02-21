@@ -7,3 +7,11 @@ type AddLink struct {
 	LinkName string `json:"name"`
 	LinkDes string `json:"descr"`
 }
+
+//修改收藏的链接传参
+type EDLinks struct {
+	LinkID int `json:"link_id"`
+	LinkName string `json:"link_title"`
+	Link string `json:"link"`
+	LinkDes string `json:"link_des"`
+}
