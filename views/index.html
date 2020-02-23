@@ -27,9 +27,12 @@
     .toollistimg{width: 25px;height: 25px;margin-right: 6%;}
 	.bjlist2{width: 88%;height: 120px;background-color: #282c34;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
 	span{word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden;}  
+    .bjlistmange {width: 88%;height: 88px;background-color: #CC9966;border-bottom:1px solid #827f7f;padding: 10px;color: #ddd;margin-top: 10px;margin-bottom: 20px;}
 
     .bjlistdel{width: 88%;height: 120px;background-color: #696969;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
-
+    .bjlistdra{
+        width: 88%;height: 100px;background-color: #006699;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;
+    }
     .scrollbar {
   width : 30px;
   height: 300px;
@@ -447,20 +450,24 @@ function addFenlei(){
 	});
 }
 
+
+function defaultnva(allnumber,defnumber,darnumber,recnumber){
+    return '<li class="layui-nav-item navid"><a onclick="indexshow()">ManGe-Notes主页</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="GetToollist()"><i class="layui-icon fontsize17">&#xe7ae;</i>工具&链接</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="mangeshow()"><i class="layui-icon fontsize17">&#xe656;</i>管理</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/allnote\')"><i class="layui-icon fontsize17">&#xe705;</i>全部笔记('+allnumber+')</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本('+defnumber+')</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draftlist\',\'dra\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿('+darnumber+')</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\',\'del\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站('+recnumber+')</a></li>'
+}
+
 //请求数据显示左边栏
 function GetNotesList(){
 
-    var defaultnva = '<li class="layui-nav-item navid"><a onclick="indexshow()">ManGe-Notes主页</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="GetToollist()"><i class="layui-icon fontsize17">&#xe7ae;</i>工具&链接</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notesmage\')"><i class="layui-icon fontsize17">&#xe656;</i>管理</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/allnote\')"><i class="layui-icon fontsize17">&#xe705;</i>全部笔记(0)</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本(0)</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draft\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿(0)</a></li>'+
-                     '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\',\'del\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站(0)</a></li>'
 
     $("#fenleilist").empty();
-    $("#fenleilist").append(defaultnva);
+    
     //当前笔记本列表
     $.ajax({
             url:  document.location.protocol+ "//" + window.location.host + "/noteslist",
@@ -469,13 +476,20 @@ function GetNotesList(){
             cache:false,
             success:function(rdata) {
                 console.log(rdata);
-                
-                for(data in rdata.data){
-                    console.log(rdata.data[data]);
-                    var thisdata = rdata.data[data];
+                var thisdata = rdata.data
+
+                $("#fenleilist").append(defaultnva(thisdata["notes_all"],thisdata["notes_def"],thisdata["notes_dar"],thisdata["notes_rec"]));
+
+                var thisnotes = thisdata["notes"]
+
+                console.log(thisnotes)
+
+                for(data in thisnotes){
+                    console.log(thisnotes[data]);
+                    var thisdata = thisnotes[data];
                     console.log(thisdata["notes_name"]);
                     //'+thisdata["notes_id"]+'
-                    $("#fenleilist").append('<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/'+thisdata["notes_id"]+'\')" title="'+thisdata["notes_des"]+'" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe60a;</i>'+thisdata["notes_name"]+'</a></li>');
+                    $("#fenleilist").append('<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/'+thisdata["notes_id"]+'\')" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe60a;</i>'+thisdata["notes_name"]+'('+thisdata["note_number"]+')</a></li>');
                 }
                 $("#fenleilist").append('<li class="layui-nav-item"><a onclick="addFenlei()" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe654;</i>添加笔记本</a></li>')
             },
@@ -740,7 +754,25 @@ function IMGNoteDel_Template(noteid,notetitle,notetime,notetags,notedesc,modify_
             </div>'
 }
 
+function IMGNoteDra_Template(noteid,notetitle,notetime,notedesc,modify_times,view_times){
+    return '<div class="bjlistdra bjlistbk">\
+              <div class="bjlisttitle">\
+                <h3><a data-url="/dranoteshow/'+noteid+'" data-id="'+noteid+'" data-title="'+notetitle+'" href="javascript:void(0);" class="site-demo-active" style="color: #fff;">'+notetitle+'</a></h3>\
+                <span class="layui-badge layui-bg-gray" style="font-size:8px;">'+notetime+'</span>\
+              </div>\
+              <div class="bjlistbody">\
+                <span class="bjlist2span">'+notedesc+'</span>\
+              </div>\
+              <div style="width:100%;float:left;margin-top:5px;">\
+                <span style="font-size:4px;">修改:'+modify_times+'&nbsp;&nbsp;&nbsp;查看:'+view_times+'</span>\
+              </div>\
+            </div>'
+}
+
 function ShowDiv(ids,typeshow){
+
+    GetNotesList()
+
     console.log(ids);
     $("#notelist").empty();
     $.ajax({
@@ -763,11 +795,13 @@ function ShowDiv(ids,typeshow){
 
                     if(typeshow == "del"){
                         addnoteinfo = IMGNoteDel_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], thisdata["view_times"])
-                    }else{
+                    }else if (typeshow == "dra"){
+                        addnoteinfo = IMGNoteDra_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["desc"], thisdata["modify_times"], thisdata["view_times"])
+                    }
+                    else{
                         if(thisdata["isimg"] == 1){
                             console.log("IMG");
-                            addnoteinfo = IMGNoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["imglink"], 
-                            thisdata["modify_times"], thisdata["view_times"])
+                            addnoteinfo = IMGNoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"],thisdata["desc"], thisdata["imglink"], thisdata["modify_times"], thisdata["view_times"])
                         }else{
                             console.log("NO IMG");
                             var addnoteinfo = NoteInfo_Template(thisdata["id"], thisdata["title"], thisdata["time"], thisdata["tags"], thisdata["desc"], thisdata["modify_times"], 
@@ -837,6 +871,32 @@ function indexshow(){
     element();
 }
 
+var mangelist = '<div class="bjlistmange bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a data-url="/mangenotes" data-id="mangenotes" data-title="笔记本管理" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">笔记本管理</a></h2>'+
+                    '<h3 style="margin-top:15px;">对所有笔记本进行管理操作，修改，删除等功能</h3>'+
+                '</div>'+
+            '</div>'+
+            '<div class="bjlistmange bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a href="#" style="color: #fff;">链接管理</a></h2>'+
+                    '<h3 style="margin-top:15px;">对收藏的链接进行管理操作，修改，删除等功能</h3>'+
+                '</div>'+
+            '</div>'+
+            '<div class="bjlistmange bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a href="#" style="color: #fff;">工具管理</a></h2>'+
+                    '<h3 style="margin-top:15px;">对收藏的网络工具进行管理操作，编辑，删除等功能</h3>'+
+                '</div>'+
+            '</div>'
+
+//管理列表
+function mangeshow(){
+    $("#notelist").empty();
+    console.log($("#indexlist").html());
+    $("#notelist").append(mangelist);
+    element();
+}
 
 function searchnote(){
     $("#notelist").empty();
@@ -879,6 +939,9 @@ function searchnote(){
             }
           });
 }
+
+
+
 
 </script>
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	conn "man/ManNotes/conn"
+	object "man/ManNotes/object"
+	util "man/ManNotes/util"
 )
 
 // tbl_notes表
@@ -44,16 +46,79 @@ func (this *Notes) GetNotesPgs(uid string, pg int, size int) ([]*Notes,error){
 	return dataList,err
 }
 
-//这是一个测试
-func (this *Notes) TestDB() (err error) {
+//分页查询笔记本信息
+func (this *Notes) GetNotesPgsInfo(uid string, pg int, size int) ([]*object.NotesInfo,error){
 	orm := conn.NotesDB()
-	return orm.Create(this).Error
+	dataList := make([]*object.NotesInfo,0)
+	sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,a.n as note_number from (SELECT md_notes_id as id,count(*)"+
+		" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
+		"b.notes_id = a.id LIMIT %d,%d", uid, pg, size)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
 }
-//这是一个测试
-func TestNotes(){
-	u := &Notes{NotesName:"aaa",
-				NotesCreatetime:12345789123,
-			}
-	err := u.TestDB()
-	fmt.Println(err)
+
+type NotesMange struct{
+	Notes
+	N int
+}
+
+//分页查询笔记本信息
+func (this *Notes) GetNotesPgsInfoTest(uid string, pg int, size int) ([]*NotesMange,error){
+	orm := conn.NotesDB()
+	dataList := make([]*NotesMange,0)
+	sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,b.notes_des,b.notes_createtime,a.n as n from (SELECT md_notes_id as id,count(*)"+
+		" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
+		"b.notes_id = a.id LIMIT %d,%d", uid, pg, size)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
+}
+
+
+type Number struct{
+		N int
+	}
+
+//查询默认笔记本的笔记数量
+func (this *Notes) NotesNumber(uid string, notesid int) (int,error) {
+	orm := conn.NotesDB()
+
+	var number = &Number{}
+	sqlStr := fmt.Sprintf("SELECT count(*) as n FROM `tbl_md_info` where uid = '%s' and md_notes_id = %d", uid, notesid)
+	err := orm.Raw(sqlStr).Scan(&number).Error
+	return number.N,err
+}
+
+func (this *Notes) NotesAllNumber(uid string) (int,error) {
+	orm := conn.NotesDB()
+
+	var number = &Number{}
+	sqlStr := fmt.Sprintf("SELECT count(*) as n FROM `tbl_md_info` where uid = '%s'", uid)
+	err := orm.Raw(sqlStr).Scan(&number).Error
+	return number.N,err
+}
+
+func (this *Notes) UpdateInfo(datas *object.UpdateNotes,uid string) error {
+	orm := conn.NotesDB()
+	notesid,_ := new(util.Str).NumberToInt(datas.NotesID)
+	sqlStr := fmt.Sprintf("update tbl_notes set notes_name='%s',notes_des='%s' where notes_id=%d and uid = '%s'; ", 
+		datas.NotesName, datas.NotesDes, notesid, uid)
+	return orm.Exec(sqlStr).Error
+}
+
+func (this *Notes) DeleteInfo(nid int,uid string) error {
+	orm := conn.NotesDB().Begin()
+	sqlStrNotes := fmt.Sprintf("DELETE FROM tbl_notes where notes_id=%d and uid = '%s'; ", nid, uid)
+	//将某笔记本的笔记转移到默认笔记本
+	sqlMDInofStr := fmt.Sprintf("update tbl_md_info set md_notes_id=0 where md_notes_id=%d and uid = '%s'; ", nid, uid)
+	err := orm.Exec(sqlStrNotes).Error
+	if err != nil {
+		orm.Rollback()
+		return err
+	}
+	err = orm.Exec(sqlMDInofStr).Error
+	if err != nil {
+		orm.Rollback()
+		return err
+	}
+	return orm.Commit().Error
 }

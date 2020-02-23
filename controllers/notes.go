@@ -33,3 +33,31 @@ func (this *NotesController) GetNotesList(){
 	code,count,data := new(servers.NotesServers).AllNotes(uid)
 	this.RetuenJson(code,count,data)
 }
+
+//mange管理模块 获取所有笔记本信息
+func (this *NotesController) GetAllNotes(){
+	uid := this.GetUid()
+	count,data := new(servers.NotesServers).GetAllNotesInfo(uid)
+	this.MangeJson(0,"",count,data)
+}
+
+//mange管理模块 修改笔记本信息 UpdateNotesInfo
+func (this *NotesController) UpdateNotesInfo() {
+	uid := this.GetUid()
+	var obj object.UpdateNotes
+	
+	err := this.ResolvePostData(&obj)
+	if err != nil{
+		fmt.Println(err)
+	}
+	code,count,data := new(servers.NotesServers).UpdateNotesInfo(&obj,uid)
+	this.RetuenJson(code,count,data)
+}
+
+//删除笔记本  DelNotes
+func (this *NotesController) DelNotes(){
+	uid := this.GetUid()
+	notesid := this.Ctx.Input.Param(":notesid")
+	code,count,data := new(servers.NotesServers).DeleteNotes(notesid,uid)
+	this.RetuenJson(code,count,data)
+}

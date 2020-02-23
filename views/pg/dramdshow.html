@@ -80,7 +80,8 @@
 
   <div style="width: 100%;margin-bottom: 25px;">
     <div class="layui-btn-group" style="float: right;">
-      <a type="button" class="layui-btn" onclick="restore()">恢复到笔记本</a>
+      <a type="button" class="layui-btn" onclick="restore()">保存到笔记本</a>
+      <a onclick="window.parent.editNote('/editmdnote/<<<.MDID>>>?title=<<<.Title>>>');" type="button" class="layui-btn layui-btn-normal" target="_parent">编辑</a>
       <a onclick="del()" type="button" class="layui-btn" style="background-color: red;color: #fff;" onclick="window.parent.createNoet();">永久删除</a>
     </div>
   </div>
@@ -159,18 +160,16 @@ function notes(){
             async:true,//异步请求
             cache:false,
             success:function(rdata) {
-                console.log(rdata.data);
-                var thisdata = rdata.data.notes;
-                console.log(thisdata);
+                console.log(rdata);
                 $("#notes").empty();
                 $("#notes").append('<option value="0">默认笔记本</option>');
-                for(data in thisdata){
-                    console.log(thisdata[data]);
-                    var thisinfo = thisdata[data];
-                    console.log(thisinfo["notes_name"]);
+                for(data in rdata.data){
+                    console.log(rdata.data[data]);
+                    var thisdata = rdata.data[data];
+                    console.log(thisdata["notes_name"]);
                     //'+thisdata["notes_id"]+'
                     
-                    $("#notes").append('<option value="'+thisinfo["notes_id"]+'">'+thisinfo["notes_name"]+'</option>');
+                    $("#notes").append('<option value="'+thisdata["notes_id"]+'">'+thisdata["notes_name"]+'</option>');
 
                 }
                 //var aaa = '<option value="aaaa">aaa</option>';
@@ -211,7 +210,7 @@ function restore(){
                 var layer = layui.layer; 
                 restoreLayer = layer.open({
                   type: 1,
-                  title: '恢复到笔记本', 
+                  title: '保存到笔记本', 
                   maxmin: true,
                   area: ['550px', '380px'],
                   content: addDiv
@@ -233,10 +232,10 @@ function restoretoNotes(){
                 console.log(rdata);
                 
                 if(rdata.code == 1){
-                  alert("恢复成功")
+                  alert("保存成功")
                   window.parent.deletetab('<<<.MDID>>>');
                 }else if (rdata.code == 2 || rdata.code == 0){
-                  alert("恢复失败"+rdata.data)
+                  alert("保存失败"+rdata.data)
                 }else{
                   alert("未知错误")
                 }

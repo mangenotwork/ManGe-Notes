@@ -62,6 +62,15 @@ func (this *MDInof) GetRecycler(pg int, size int, uid string) ([]*MDInof,error) 
 	return dataList,err
 }
 
+//获取草稿笔记
+func (this *MDInof) DraftNote(pg int, size int, uid string) ([]*MDInof,error) {
+	orm := conn.NotesDB()
+	dataList := make([]*MDInof, 0)
+	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id = -2 LIMIT %d,%d", uid, pg, size)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
+}
+
 //按照笔记本和页数获取数据
 func (this *MDInof) GetNotesToPG(pg int, size int, uid string, notesid int) ([]*MDInof,error) {
 	orm := conn.NotesDB()
@@ -133,7 +142,7 @@ func (this *MDInof) ToDEL(mdid,uid string) error{
 //永久删除笔记
 func (this *MDInof) Schen(mdid,uid string) error{
 	orm := conn.NotesDB()
-	sqlStr := fmt.Sprintf("DELETE FROM tbl_md_info where md_id='%s' and uid = '%s' and md_notes_id=-1; ", mdid,uid)
+	sqlStr := fmt.Sprintf("DELETE FROM tbl_md_info where md_id='%s' and uid = '%s' and md_notes_id in (-1,-2) ; ", mdid,uid)
 	return orm.Exec(sqlStr).Error
 }
 
@@ -143,3 +152,4 @@ func (this *MDInof) NoteToNotes(mdid,uid string,notes int) error {
 	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=%d where md_id='%s' and uid = '%s'; ", notes,mdid,uid)
 	return orm.Exec(sqlStr).Error
 }
+

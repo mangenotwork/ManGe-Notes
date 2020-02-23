@@ -22,6 +22,12 @@ func (this *PGController) LoginPG() {
 func (this *PGController) IndexPG() {
 	//获取用户基本信息
 	uid := this.GetUid()
+
+	if uid == ""{
+		this.Redirect("/",301)
+		return
+	}
+
 	fmt.Println(fmt.Sprintf("uinfo:%s",uid))
 	userbinfoStr := new(rdb.RDB).HashGet(fmt.Sprintf("uinfo:%s",uid),"basis")
 	fmt.Println(userbinfoStr)
@@ -34,6 +40,7 @@ func (this *PGController) IndexPG() {
  	this.Data["userbinfo"] = &userbinfo
  	this.Data["IsShowNav"] = "index"
 	this.TplName = "index.html"
+	return
 }
 
 //MD编辑器
@@ -64,4 +71,10 @@ func (this *PGController) ToolPG(){
  	this.Data["userbinfo"] = &userbinfo
  	this.Data["IsShowNav"] = "tool"
 	this.TplName = "index.html"
+}
+
+//MangeNotes  笔记本管理
+func (this *PGController) MangeNotes(){
+	this.IsSession()
+	this.TplName = "pg/mange_notes.html"
 }

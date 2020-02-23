@@ -30,6 +30,23 @@ func (this *MDController) CreateMD(){
 	this.RetuenJson(code,count,data)
 }
 
+//笔记保存到草稿
+func (this *MDController) ToDraft(){
+	uid := this.GetUid()
+
+	var obj object.CMDData
+
+	err := this.ResolvePostData(&obj)
+	if err != nil{
+		fmt.Println(err)
+	}
+	fmt.Println(obj)
+
+	code,count,data := new(servers.MDServers).CreateMDToDraft(&obj,uid)
+
+	this.RetuenJson(code,count,data)
+}
+
 //获取所有笔记
 func (this *MDController) GetAllNote(){
 	uid := this.GetUid()
@@ -71,6 +88,8 @@ func (this *MDController) RMDShow(){
 	this.Data["MDTitle"] = title
 	this.TplName = "pg/delmdshow.html"
 }
+
+
 
 //MDEdit  修改MD笔记内容
 func (this *MDController) MDEditPG() {
@@ -164,6 +183,19 @@ func (this *MDController) NoteRecycler(){
 }
 
 
+//DraftList  草稿
+func (this *MDController) DraftList(){
+	uid := this.GetUid()
+	pg,err := this.GetInt("pg")
+	fmt.Println(pg,uid)
+	if err != nil || pg == 0{
+		fmt.Println("获取页数失败")
+		pg = 1
+	}
+	code,count,data := new(servers.MDServers).DraftNote(pg,uid)
+	this.RetuenJson(code,count,data)
+}
+
 //恢复到笔记本
 func (this *MDController) RestoreNote() {
 	uid := this.GetUid()
@@ -175,4 +207,22 @@ func (this *MDController) RestoreNote() {
 
 	code,count,data := new(servers.MDServers).RestoreToNotes(mdid,uid,notes)
 	this.RetuenJson(code,count,data)
+}
+
+//DraNoteShow  显示草稿笔记
+func (this *MDController) DraNoteShow() {
+	uid := this.GetUid()
+	mdid := this.Ctx.Input.Param(":mdid")
+	code,_,data,title := new(servers.MDServers).GetMDContent(uid,mdid,1)//1 查看请求的内容
+
+	this.Data["Error"] = code
+	this.Data["MDText"] = data
+	this.Data["MDID"] = mdid
+	this.Data["MDTitle"] = title
+	this.TplName = "pg/dramdshow.html"
+}
+
+//SaveToNotes   恢复到笔记本
+func (this *MDController) SaveToNotes() {
+	
 }

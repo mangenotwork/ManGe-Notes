@@ -16,27 +16,22 @@ import (
 
 type MDServers struct {}
 
-//创建MD笔记
-func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int, count int, data string) {
-	fmt.Println(datas)
+func (this *MDServers) CreateMDInfo(datas *object.CMDData) (mdid string,mdimglink string,mdisimg int,destxt string){
 	//创建笔记id
 	id,uidErr := util.Int64ID()
 	if uidErr != nil{
 		fmt.Println("生成 int64 ID错误")
-		return 0,1,"生成 int64 ID错误"
 	}
-	mdid := fmt.Sprintf("md_%d",id)
-	nowtime := time.Now().Unix()
-	tagsinfo := new(util.Str).Strip(datas.Tags," \n")
+	mdid = fmt.Sprintf("md_%d",id)
 
 	//判断笔记内容是否存在图片链接
-	mdimglink := new(util.Str).GetMDImgLink(datas.Detail)
-	mdisimg := 0
+	mdimglink = new(util.Str).GetMDImgLink(datas.Detail)
+
+	mdisimg = 0
 	if mdimglink != ""{
 		mdisimg = 1
 	}
 
-	var destxt string
 	fmt.Println(len(datas.Detail))
 	if len(datas.Detail) > 30{
 		destxt = new(util.Str).RepMDDesc(datas.Detail[0 : 30],30)
@@ -44,7 +39,15 @@ func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int
 		destxt = new(util.Str).RepMDDesc(datas.Detail[0 : len(datas.Detail)-1],len(datas.Detail)-1)
 	}
 	
-	
+	return 
+}
+
+//创建MD笔记
+func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int, count int, data string) {
+	fmt.Println(datas)
+	mdid,mdimglink,mdisimg,destxt := this.CreateMDInfo(datas)
+	nowtime := time.Now().Unix()
+	tagsinfo := new(util.Str).Strip(datas.Tags," \n")
 	notesid,_ := new(util.Str).NumberToInt(datas.NotesId)
 
 	mdinfos := &models.MDInof{
@@ -74,6 +77,44 @@ func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int
 	//如果创建成功将dm笔记缓存到redis
 }
 
+
+func (this *MDServers) CreateMDToDraft (datas *object.CMDData, uid string)(code int, count int, data string){
+	mdid,mdimglink,mdisimg,destxt := this.CreateMDInfo(datas)
+	nowtime := time.Now().Unix()
+	tagsinfo := new(util.Str).Strip(datas.Tags," \n")
+	notesid := -2
+
+	//如果存的草稿没有设置 title 那么就给添加一个
+	timeStr := time.Unix(nowtime, 0).Format("2006-01-02 15:04:05")
+	title := fmt.Sprintf("%s保存的草稿",timeStr)
+
+	mdinfos := &models.MDInof{
+		MDTitle : title,
+		MDDes : destxt,
+		MDIMG : mdimglink,
+		IsIMG : mdisimg,
+		MDId : mdid,
+		Uid : uid,
+		MDNotesid : notesid,
+		MDCreatetime : nowtime,
+		MDSavetime : nowtime,
+		MDTag :tagsinfo,
+	}
+	fmt.Println(mdinfos)
+	//存储笔记和笔记信息
+	mdText := &models.MDText{
+		MDId: mdid,
+		MDContent:datas.Detail,
+	}
+
+	err := mdinfos.InsertMDNote(mdText)
+	if err != nil {
+		fmt.Println("创建笔记错误",err)
+		return 0,1,"创建笔记错误"
+	}
+	return 1,1,"创建笔记成功"
+	//如果创建成功将dm笔记缓存到redis
+}
 
 //修改笔记内容
 func (this *MDServers) ModifyMDNote(datas *object.CMDData,uid string,mdid string) (code int, count int, data string) {
@@ -161,6 +202,19 @@ func (this *MDServers) GetAllNote(pg int,uid string) (code int, count int, data 
 func (this *MDServers) GetRecyclerNote(pg int,uid string) (code int, count int, data interface{}) {
 	pgsize := (pg-1)*20
 	datas,err := new(models.MDInof).GetRecycler(pgsize,20,uid)
+	if err != nil{
+		fmt.Println("获取所有笔记错误，后台错误",err)
+		return 0,1,"获取所有笔记错误"
+	}
+	rdata := this.NoteListFormat(datas)
+	
+	return 0,1,rdata
+}
+
+//DraftNote 获取草稿笔记
+func (this *MDServers) DraftNote(pg int,uid string) (code int, count int, data interface{}) {
+	pgsize := (pg-1)*20
+	datas,err := new(models.MDInof).DraftNote(pgsize,20,uid)
 	if err != nil{
 		fmt.Println("获取所有笔记错误，后台错误",err)
 		return 0,1,"获取所有笔记错误"

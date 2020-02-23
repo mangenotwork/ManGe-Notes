@@ -81,6 +81,7 @@
   <div style="width: 100%;margin-bottom: 25px;">
     <div class="layui-btn-group" style="float: right;">
       <button type="button" class="layui-btn">导出</button>
+      <a onclick="restore()" class="layui-btn">移动到指定笔记本</button>
       <!--<button type="button" class="layui-btn" onclick="openedit()">编辑</button>-->
       <a onclick="window.parent.editNote('/editmdnote/<<<.MDID>>>?title=<<<.Title>>>');" type="button" class="layui-btn layui-btn-normal" target="_parent">编辑</a>
       <a onclick="delmd()" type="button" class="layui-btn" style="background-color: red;color: #fff;" onclick="window.parent.createNoet();">删除</a>
@@ -145,6 +146,106 @@ function delmd(){
                   window.parent.deletetab('<<<.MDID>>>');
                 }else if (rdata.code == 2 || rdata.code == 0){
                   alert("删除失败"+rdata.data)
+                }else{
+                  alert("未知错误")
+                }
+               
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
+
+
+//笔记本下拉菜单
+function notes(){
+    
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/noteslist",
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata.data);
+                var thisdata = rdata.data.notes;
+                console.log(thisdata);
+                $("#notes").empty();
+                $("#notes").append('<option value="0">默认笔记本</option>');
+                for(data in thisdata){
+                    console.log(thisdata[data]);
+                    var thisinfo = thisdata[data];
+                    console.log(thisinfo["notes_name"]);
+                    //'+thisdata["notes_id"]+'
+                    
+                    $("#notes").append('<option value="'+thisinfo["notes_id"]+'">'+thisinfo["notes_name"]+'</option>');
+
+                }
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+}
+
+
+var restoreLayer;
+
+function restore(){
+  
+      
+
+        var addDiv='<div id="addnote" >\
+    <div class="layui-inline" style="margin-top: 50px;">\
+            <label class="layui-form-label">选择笔记本</label>\
+            <div class="layui-input-inline">\
+              <select id="notes" name="city" lay-verify="" lay-search class="layui-input" style="width: 290px;">\</select>     \
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 10px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="restoretoNotes()" class="layui-btn layui-btn-primary" style="width: 280px;">添加</a>\
+            </div>\
+          </div>';
+
+        
+
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                restoreLayer = layer.open({
+                  type: 1,
+                  title: '移动到指定笔记本', 
+                  maxmin: true,
+                  area: ['550px', '380px'],
+                  content: addDiv
+                });
+                notes();
+            });
+        });
+    }
+
+
+function restoretoNotes(){
+  var notes = $("#notes").val()
+  $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + '/restore/<<<.MDID>>>?notes='+notes,
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                
+                if(rdata.code == 1){
+                  alert("移动成功")
+                  window.parent.deletetab('<<<.MDID>>>');
+                }else if (rdata.code == 2 || rdata.code == 0){
+                  alert("移动失败"+rdata.data)
                 }else{
                   alert("未知错误")
                 }

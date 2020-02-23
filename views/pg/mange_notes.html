@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>table模块快速使用</title>
+  <link rel="stylesheet" href="../static/plugin/layui/css/layui.css" media="all">
+  <script src="../static/plugin/layui/layui.js?v=1"></script>
+  <script src="../static/js/jquery-3.3.1.min.js?v=1"></script>
+  <script src="../static/js/man.js?v=1"></script>
+</head>
+<body>
+ 
+
+
+<div style="width: 96%;margin-left: 2%;height: 680px;">
+	<table id="demo" lay-filter="test" ></table>
+</div>
+
+
+
+<script type="text/html" id="bar">
+    <button class="layui-btn layui-btn-sm" lay-event="update">修改</button>
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="rm">删除</button>
+</script>
+
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+  
+  //第一个实例
+  table.render({
+    elem: '#demo'
+    ,height: 680
+    ,url: '/getallnotes' //数据接口
+    ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+      layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+      ,curr: 5 //设定初始在第 5 页
+      ,groups: 1 //只显示 1 个连续页码
+      ,first: false //不显示首页
+      ,last: false //不显示尾页
+      
+    }
+    ,cols: [[ //表头
+      {field: 'notes_name', title: '笔记本'}
+      ,{field: 'notes_des', title: '描述', sort: true}
+      ,{field: 'note_number', title: '笔记数量'} 
+      ,{field: 'create', title: '创建日期', sort: true}
+      ,{field: 'wealth', title: '操作',width: 280,  toolbar: "#bar"}
+    ]]
+  });
+  
+
+  table.on('tool(test)', function(obj){
+     switch(obj.event){
+        case 'rm':
+          layer.msg('删除');
+          rm(obj.data.notes_id);
+        break;
+        case 'delete':
+          layer.msg('删除');
+        break;
+        case 'update':
+          layer.msg('修改');
+          update(obj.data);
+        break;
+      };
+  });
+
+});
+</script>
+
+
+
+</body>
+
+<script>
+
+function rm(id){
+  console.log(id)
+  $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/delnotes/"+id,
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+
+                console.log(rdata)
+                if (rdata.code == 1){
+                      alert(rdata.data);
+                  }else{
+                      alert("失败!"+rdata.data);
+                  }
+                  location.reload();
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+
+}
+
+var UpdataLayer;
+
+function update(data){
+  console.log(data.notes_id)
+  var addDiv='<div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">笔记本名称</label>\
+            <div class="layui-input-inline">\
+              <input id="notesname" type="text" name="" value="'+data.notes_name+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">笔记本描述</label>\
+            <div class="layui-input-inline">\
+              <input id="notesdes" type="text" name="" value="'+data.notes_des+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="Updatenotes(\''+data.notes_id+'\')" class="layui-btn layui-btn-primary" style="width: 280px;">提交修改</a>\
+            </div>\
+          </div>'
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                UpdataLayer = layer.open({
+                  type: 1,
+                  title: '修改笔记本-'+name, 
+                  maxmin: true,
+                  area: ['550px', '380px'],
+                  content: addDiv
+                });
+            });
+        });
+}
+
+
+function Success(rdata){
+  console.log(rdata)
+  if (rdata.code == 1){
+        alert(rdata.data);
+    }else{
+        alert("失败!"+rdata.data);
+    }
+    layer.close(UpdataLayer);
+    location.reload();
+}
+
+function Updatenotes(id){
+    var notesname = $("#notesname").val();
+    var notesdes = $("#notesdes").val();
+
+    if (notesname != ""){
+      var urlstr = "/updatenotes"
+      var data = {
+            "notes_id": id,
+            "notes_name": notesname,
+            "notes_des": notesdes,
+        }
+        pubAjaxPOST(urlstr,data,Success);
+    }else{
+      alert("笔记本名称不能为空")
+    }
+}
+
+//一般直接写在一个js文件中
+layui.use(['layer', 'form'], function(){
+  var layer = layui.layer
+  ,form = layui.form;
+  
+  layer.msg('加载完成！');
+});
+
+
+
+
+
+
+</script> 
+
+</html>

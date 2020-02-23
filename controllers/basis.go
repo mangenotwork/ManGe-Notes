@@ -28,7 +28,28 @@ type RetuenJsonData struct {
 	Datas interface{} `json:"data"`
 }
 
-//判断是否登录
+//接口返回的结构 RetuenJsonData
+func (this *Controller) RetuenJson(code int, count int, data interface{}) {
+	returndata := &RetuenJsonData{code, count, data}
+	this.Data["json"] = returndata
+	this.ServeJSON()
+}
+
+type MangeJsonData struct{
+	Code int `json:"code"`
+	Msg string `json:"msg"`
+	Count int `json:"count"`
+	Data interface{} `json:"data"`
+}
+
+//接口返回的结构 MangeJsonData
+func (this *Controller) MangeJson(code int, msg string, count int, data interface{}) {
+	returndata := &MangeJsonData{code, msg, count, data}
+	this.Data["json"] = returndata
+	this.ServeJSON()
+}
+
+//判断是否登录  只有登录时才会刷新 Token
 func (this *Controller) IsLogin() {
 	token := this.Ctx.GetCookie("token")
 	if token != "" &&  util.VerifyJwtToken(token){
@@ -62,13 +83,13 @@ func (this *Controller) IsLogin() {
 	}
 }
 
-//判断是否会话
+//判断是否会话  一般会话不用刷新token 便于请求的流畅性
 func (this *Controller) IsSession() bool {
 	token := this.Ctx.GetCookie("token")
 	uid,err := util.ParseJwtToken(token)
 	if err!=nil{
 		beego.Error("[Token]解析Token错误:", err.Error(), err)
-		this.Redirect("/",302)
+		//this.Redirect("/",302)
 		return false
 	}
 	//判断redis里的token
@@ -76,11 +97,12 @@ func (this *Controller) IsSession() bool {
 	isToken,_ := new(rdb.RDB).StringJudge(uidKey, token)
 	fmt.Println(isToken)
 	if isToken{
+		/*
 		//新的token
 		newToken,newTokenErr := util.CreateJwtToken(uid.Data)
 		if newTokenErr!=nil{
 			beego.Error("[Token]生成Token错误:", newTokenErr.Error(), newTokenErr)
-			this.Redirect("/",302)
+			//this.Redirect("/",302)
 			return false
 		}
 
@@ -88,18 +110,14 @@ func (this *Controller) IsSession() bool {
 		new(rdb.RDB).StringSet(uidKey, newToken)
 		//客户端设置新的token
 		this.SetToken(newToken)
+		*/
 		return true
 	}
-	this.Redirect("/",302)
+	//this.Redirect("/",302)
 	return false
 }
 
-//接口返回的结构 RetuenJsonData
-func (this *Controller) RetuenJson(code int, count int, data interface{}) {
-	returndata := &RetuenJsonData{code, count, data}
-	this.Data["json"] = returndata
-	this.ServeJSON()
-}
+
 
 //解析post接收的参数
 func (this *Controller) ResolvePostData(obj interface{}) error {
