@@ -511,7 +511,9 @@
                               </div>\
                         </div>\
                         <div class="layui-tab-item">\
-                        <h1>上传图片</h1>\
+                            <button type="button" class="layui-btn" id="test1" style="margin-left:30%;margin-top:20px;">\
+                              <i class="layui-icon">&#xe67c;</i>上传图片\
+                            </button>\
                         </div>\
                       </div>\
                     </div>';
@@ -527,7 +529,48 @@
                 });
             });
         });
+
+        //上传图片
+    layui.use('upload', function(){
+      var upload = layui.upload;
+       
+      //执行实例
+      var uploadInst = upload.render({
+        elem: '#test1' //绑定元素
+        ,url: '/imgupload' //上传接口
+        ,done: function(res){
+          //上传完毕回调
+          console.log(res)
+          if (res.code == 1){
+            alert("图片上传成功")
+              var imginfo = res.data;
+              var addimg = '!['+imginfo["name"]+']('+imginfo["url"]+')';
+
+              var contentVal = $("#content").val();
+                var i = $("#content").selection();
+                var t1 = contentVal.substring(0,i);
+                console.log(t1)
+                var t2 = contentVal.substring(i,contentVal.length);
+
+                $("#content").val(t1+"\r\n"+addimg+"\r\n"+t2);
+                $("#content").focusNumber(i+addimg.length+2);
+                mdToHml();
+                layer.close(AddImgLayer);
+            }else{
+                alert(res.data)
+            }
+        }
+        ,error: function(){
+          //请求异常回调
+          alert("上传图片错误")
+        }
+      });
+    });
+
     }
+
+    
+
     //添加图片
     function AddImg(){
         var imglink = $("#imglink").val();
@@ -737,9 +780,12 @@ function notes(){
                 console.log(rdata);
                 $("#notes").empty();
                 $("#notes").append('<option value="0">默认笔记本</option>');
-                for(data in rdata.data){
-                    console.log(rdata.data[data]);
-                    var thisdata = rdata.data[data];
+
+                var thisdata = rdata.data;
+                var thisnotes = thisdata["notes"];
+
+                for(data in thisnotes){
+                    var thisdata = thisnotes[data];
                     console.log(thisdata["notes_name"]);
                     //'+thisdata["notes_id"]+'
                     

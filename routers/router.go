@@ -15,10 +15,12 @@ func init() {
     beego.Router("/tool", &controllers.PGController{},"get:ToolPG")//工具页面
     beego.Router("/mangenotes", &controllers.PGController{},"get:MangeNotes")//笔记本管理
 
+
     //登录注册    LoginController
     beego.Router("/userreg", &controllers.LoginController{},"post:UserRegistered")//用户注册
     beego.Router("/userlogin", &controllers.LoginController{},"post:UserLogin")//用户登录
     beego.Router("/outlogin", &controllers.LoginController{},"get:OutLogin")//退出登录
+
 
     //笔记本    NotesController
     beego.Router("/cnotes", &controllers.NotesController{}, "post:CreateNotes")//创建笔记本
@@ -26,6 +28,7 @@ func init() {
     beego.Router("/getallnotes", &controllers.NotesController{}, "get:GetAllNotes")//mange 管理模块  获取所有笔记本数据
     beego.Router("/updatenotes", &controllers.NotesController{}, "post:UpdateNotesInfo")//mange 管理模块  修改笔记本信息
     beego.Router("/delnotes/:notesid:*", &controllers.NotesController{}, "get:DelNotes")//mange 管理模块  删除笔记本
+
 
     //MD笔记    MDController
     beego.Router("/cmd", &controllers.MDController{}, "post:CreateMD")//创建MD笔记
@@ -44,8 +47,6 @@ func init() {
     beego.Router("/draftlist", &controllers.MDController{}, "get:DraftList")//草稿笔记列表
     beego.Router("/dranoteshow/:mdid:*", &controllers.MDController{}, "get:DraNoteShow")//显示草稿笔记
 
-    
-
 
     //收藏（链与工具）   TandLController
     beego.Router("/collectlink", &controllers.TandLController{}, "post:AddCollectLink")//添加网络资源
@@ -55,4 +56,6 @@ func init() {
     beego.Router("/dellink", &controllers.TandLController{}, "get:DELLink")//删除收藏的链接
 
 
+    //上传功能
+     beego.Router("/imgupload", &controllers.UploadController{}, "post:UploadImg")//写笔记上传图片
 }

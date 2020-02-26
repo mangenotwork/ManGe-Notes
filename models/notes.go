@@ -38,16 +38,16 @@ func (this *Notes) IsNotesName(notesname,uid string) bool {
 }
 
 //分页查询
-func (this *Notes) GetNotesPgs(uid string, pg int, size int) ([]*Notes,error){
+func (this *Notes) GetNotesPgs(uid string, pg int, size int) ([]*object.NotesInfo,error){
 	orm := conn.NotesDB()
-	dataList := make([]*Notes, 0)
-	sqlStr := fmt.Sprintf("SELECT * FROM tbl_notes where uid='%s' LIMIT %d,%d", uid, pg, size)
+	dataList := make([]*object.NotesInfo, 0)
+	sqlStr := fmt.Sprintf("SELECT notes_id,notes_name FROM tbl_notes where uid='%s' LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
 	return dataList,err
 }
 
 //分页查询笔记本信息
-func (this *Notes) GetNotesPgsInfo(uid string, pg int, size int) ([]*object.NotesInfo,error){
+func (this *Notes) GetNotesPgsInfo1(uid string, pg int, size int) ([]*object.NotesInfo,error){
 	orm := conn.NotesDB()
 	dataList := make([]*object.NotesInfo,0)
 	sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,a.n as note_number from (SELECT md_notes_id as id,count(*)"+
@@ -63,12 +63,15 @@ type NotesMange struct{
 }
 
 //分页查询笔记本信息
-func (this *Notes) GetNotesPgsInfoTest(uid string, pg int, size int) ([]*NotesMange,error){
+func (this *Notes) GetNotesPgsInfo(uid string, pg int, size int) ([]*NotesMange,error){
 	orm := conn.NotesDB()
 	dataList := make([]*NotesMange,0)
-	sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,b.notes_des,b.notes_createtime,a.n as n from (SELECT md_notes_id as id,count(*)"+
-		" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
-		"b.notes_id = a.id LIMIT %d,%d", uid, pg, size)
+	//sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,b.notes_des,b.notes_createtime,a.n as n from (SELECT md_notes_id as id,count(*)"+
+	//	" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
+	//	"b.notes_id = a.id LIMIT %d,%d", uid, pg, size)
+	sqlStr := fmt.Sprintf("SELECT B.notes_id,B.notes_name,B.notes_des,B.notes_createtime,COUNT(A.md_notes_id) AS n from"+
+		" tbl_md_info AS A RIGHT JOIN tbl_notes AS B on A.md_notes_id=B.notes_id where B.uid = '%s' GROUP BY B.notes_id LIMIT %d,%d",
+		uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
 	return dataList,err
 }

@@ -11,7 +11,7 @@ type CNotes struct {
 type NotesInfo struct {
 	NotesID string `json:"notes_id"`
 	NotesName string `json:"notes_name"`
-	NoteNumber int `json:"note_number"`
+	//NoteNumber int `json:"note_number"`  如果是要连表查询会影响速度，后期可以考虑缓存
 }
 
 type ReturnNotes struct {

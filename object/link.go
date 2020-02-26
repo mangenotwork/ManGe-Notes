@@ -15,3 +15,4 @@ type EDLinks struct {
 	Link string `json:"link"`
 	LinkDes string `json:"link_des"`
 }
+

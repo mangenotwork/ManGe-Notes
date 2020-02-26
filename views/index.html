@@ -489,7 +489,7 @@ function GetNotesList(){
                     var thisdata = thisnotes[data];
                     console.log(thisdata["notes_name"]);
                     //'+thisdata["notes_id"]+'
-                    $("#fenleilist").append('<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/'+thisdata["notes_id"]+'\')" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe60a;</i>'+thisdata["notes_name"]+'('+thisdata["note_number"]+')</a></li>');
+                    $("#fenleilist").append('<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/'+thisdata["notes_id"]+'\')" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe60a;</i>'+thisdata["notes_name"]+'</a></li>');
                 }
                 $("#fenleilist").append('<li class="layui-nav-item"><a onclick="addFenlei()" style="cursor:pointer;"><i class="layui-icon fontsize17">&#xe654;</i>添加笔记本</a></li>')
             },

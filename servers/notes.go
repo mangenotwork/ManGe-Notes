@@ -43,7 +43,7 @@ func (this *NotesServers) AllNotes(uid string) (code int, count int, data interf
 	recnumber,_ := new(models.Notes).NotesNumber(uid,-1)
 	allnumber,_ := new(models.Notes).NotesAllNumber(uid)
 
-	allnotes,err := new(models.Notes).GetNotesPgsInfo(uid,0,20)
+	allnotes,err := new(models.Notes).GetNotesPgs(uid,0,20)
 	if err != nil {
 		fmt.Println(err)
 		return 1,1,"获取所有笔记本错误，后端错误"
@@ -63,7 +63,7 @@ func (this *NotesServers) AllNotes(uid string) (code int, count int, data interf
 //管理模块 获取所有笔记本信息
 func (this *NotesServers) GetAllNotesInfo(uid string) (count int,data interface{}) {
 	//allnotes,err := new(models.Notes).GetNotesPgs(uid,0,20)
-	allnotes,err := new(models.Notes).GetNotesPgsInfoTest(uid,0,20)
+	allnotes,err := new(models.Notes).GetNotesPgsInfo(uid,0,20)
 	if err != nil {
 		fmt.Println(err)
 		return 0,"获取所有笔记本错误，后端错误"

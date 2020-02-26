@@ -87,3 +87,11 @@ func (this *Str) NumberToInt(number string) (int,error) {
 	return strconv.Atoi(number)
 
 }
+
+//数组是否存在某元素  字符串
+func (this *Str) IsItemStr(array []string, val string) bool{
+	for _,k := range(array){
+		if k==val{return true}
+	}
+	return false
+}
