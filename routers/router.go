@@ -14,7 +14,10 @@ func init() {
     beego.Router("/home", &controllers.PGController{},"get:HomePG")//首页
     beego.Router("/tool", &controllers.PGController{},"get:ToolPG")//工具页面
     beego.Router("/mangenotes", &controllers.PGController{},"get:MangeNotes")//笔记本管理
-
+    beego.Router("/mangelinks", &controllers.PGController{}, "get:MangeLinks")//管理收藏的链接的管理页面
+    beego.Router("/chartnotes", &controllers.PGController{}, "get:ChartNotes")//图表模块 笔记本数量分布图
+    beego.Router("/mychart", &controllers.PGController{}, "get:MyChart")//图表模块 我的综合统计
+    beego.Router("/myusedspace", &controllers.PGController{}, "get:MyUsedSpace")//图表模块 我的使用空间
 
     //登录注册    LoginController
     beego.Router("/userreg", &controllers.LoginController{},"post:UserRegistered")//用户注册
@@ -54,7 +57,8 @@ func init() {
     beego.Router("/linkshow", &controllers.TandLController{}, "get:LinkShow")//收藏链接的显示页
     beego.Router("/edlink", &controllers.TandLController{}, "post:EDLink")//编辑收藏的链接
     beego.Router("/dellink", &controllers.TandLController{}, "get:DELLink")//删除收藏的链接
-
+    beego.Router("/getlinks", &controllers.TandLController{}, "get:GetLinks")//mange 管理模块 管理收藏链接，获取收藏链接信息
+    beego.Router("/mageedlink", &controllers.TandLController{}, "post:MageEDLink")//mange 管理模块 编辑收藏的链接
 
     //上传功能
      beego.Router("/imgupload", &controllers.UploadController{}, "post:UploadImg")//写笔记上传图片

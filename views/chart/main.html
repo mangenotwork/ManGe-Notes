@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>漫鸽笔记Markdown编辑器v0.1</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <script src="../static/plugin/layui/layui.js?v=3"></script>
+</head>
+<body style="background-color: #ddd;">
+	
+
+	<div class="layui-card" style="width: 80%;margin-left: 10%;margin-top: 35px;">
+	  <div class="layui-card-header">笔记容量</div>
+	  <div class="layui-card-body">
+	  	<h3>已创建笔记<<<.Data.NoteNow>>>条,上限<<<.Data.NoteMax>>>条</h3>
+	    <div class="layui-progress layui-progress-big" lay-showPercent="true" style="width: 60%;">
+		  <div class="layui-progress-bar layui-bg-blue" lay-percent="<<<.Data.NotePercent>>>%"></div>
+		</div>
+	  </div>
+	</div>
+
+	<div class="layui-card" style="width: 80%;margin-left: 10%;">
+	  <div class="layui-card-header">云空间(素材空间)</div>
+	  <div class="layui-card-body">
+	  	<h3>已使用<<<.Data.SpaceNow>>>,上限<<<.Data.SpaceMax>>></h3>
+	    <div class="layui-progress layui-progress-big" lay-showPercent="true" style="width: 60%;">
+		  <div class="layui-progress-bar layui-bg-blue" lay-percent="<<<.Data.SpacePercent>>>%"></div>
+		</div>
+	  </div>
+	</div>
+
+	<div class="layui-card" style="width: 80%;margin-left: 10%;">
+	  <div class="layui-card-header">笔记本数量</div>
+	  <div class="layui-card-body">
+	  	<h3>已创建<<<.Data.NotesNow>>>个笔记本,上限<<<.Data.NotesMax>>>个</h3>
+	    <div class="layui-progress layui-progress-big" lay-showPercent="true" style="width: 60%;">
+		  <div class="layui-progress-bar layui-bg-blue" lay-percent="<<<.Data.NotesPercent>>>%"></div>
+		</div>
+	  </div>
+	</div>
+
+	
+	
+<script>
+//注意进度条依赖 element 模块，否则无法进行正常渲染和功能性操作
+layui.use('element', function(){
+  var element = layui.element;
+});
+</script>
+      
+
+
+
+
+</body>
+</html>

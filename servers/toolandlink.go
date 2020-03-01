@@ -116,3 +116,59 @@ func (this *TandLServers) DELLink(uid string,linkid int) (code int, count int, d
 	}
 	return 1,1,"删除成功"
 }
+
+//GetAllLinksInfo mange管理模块  获取收藏链接列表
+func (this *TandLServers) GetAllLinksInfo(uid string) (count int,data interface{}) {
+	alldata,err := new(models.ToolandLink).GetAll(0,100,uid)
+	if err != nil{
+		fmt.Println("删除收藏的链接错误",err)
+		return 0,"删除收藏的链接错误"
+	}
+
+	linkslist := make([]*object.LinksInfo,0)
+
+	for _,k := range alldata{
+		var typeStr string 
+		if k.LinkType == 0{
+			typeStr = "网络链接"
+		}else if k.LinkType == 1{
+			typeStr = "网络工具地址"
+		}
+
+		linkslist = append(linkslist,&object.LinksInfo{
+			Id : k.Id,
+			Name : k.Name,
+			Des : k.Des,
+			Link : k.Link,
+			Ico : k.Ico,
+			Tag : k.Tag,
+			LinkTypeStr : typeStr,
+			})
+	}
+
+	return len(alldata),linkslist
+}
+
+//MangeEditLink 管理模块修改收藏链接
+func (this *TandLServers) MangeEditLink(datas *object.EDLinksInfo, uid string) (code int, count int, data string) {
+
+	idnumber,_ := new(util.Str).NumberToInt(datas.Id)
+	typenumber,_ := new(util.Str).NumberToInt(datas.LinkType)
+	linkinfos := &models.ToolandLink{
+		Id : idnumber,
+		UID : uid,
+		Name : datas.Name,
+		Des : datas.Des,
+		Link : datas.Link,
+		Ico : datas.Ico,
+		Tag : datas.Tag,
+		LinkType : typenumber,
+	}
+	err := linkinfos.EDLink()
+	if err != nil{
+		fmt.Println("修改收藏的链接错误",err)
+		return 0,1,"修改收藏的链接错误"
+	}
+	return 1,1,"修改成功"
+
+}

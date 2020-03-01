@@ -153,3 +153,18 @@ func (this *MDInof) NoteToNotes(mdid,uid string,notes int) error {
 	return orm.Exec(sqlStr).Error
 }
 
+type CountNumber struct{
+		Count int64
+	}
+
+//获取指定用户笔记数量
+func (this *MDInof) GetNoteCount(uid string) (int64,error){
+	orm := conn.NotesDB()
+	var count int64
+	err := orm.Model(&this).Where("uid = ?", uid).Count(&count).Error
+	if err != nil{
+		return 0,err
+	}
+
+	return count,nil
+}

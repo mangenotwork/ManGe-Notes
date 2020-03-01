@@ -6,6 +6,7 @@ import (
 
 	rdb "man/ManNotes/models/redis"
 	object "man/ManNotes/object"
+	servers "man/ManNotes/servers"
 )
 
 type PGController struct {
@@ -77,4 +78,50 @@ func (this *PGController) ToolPG(){
 func (this *PGController) MangeNotes(){
 	this.IsSession()
 	this.TplName = "pg/mange_notes.html"
+}
+
+
+//MangeLinks 收藏链接管理
+func (this *PGController) MangeLinks(){
+	this.IsSession()
+	this.TplName = "pg/mange_links.html"
+}
+
+
+// ChartNotes  图表模块  笔记本数量分布图
+func (this *PGController) ChartNotes(){
+	uid := this.GetUid()
+
+	code,namelist,data := new(servers.NotesServers).NotesChartData(uid)
+
+	this.Data["Code"] = code
+	this.Data["Name"] = namelist
+ 	this.Data["Data"] = data
+	this.TplName = "chart/notes.html"
+}
+
+//MyChart 图表模块  我的综合统计
+func (this *PGController) MyChart(){
+	uid := this.GetUid()
+
+	//code,namelist,data := new(servers.NotesServers).NotesChartData(uid)
+	new(servers.NotesServers).MyChartData(uid)
+
+	this.Data["Code"] = uid
+	//this.Data["Name"] = namelist
+ 	//this.Data["Data"] = data
+	this.TplName = "chart/zhonghe.html"
+}
+
+
+//MyUsedSpace 图表模块 我的使用空间
+func (this *PGController) MyUsedSpace(){
+	uid := this.GetUid()
+
+	//code,namelist,data := new(servers.NotesServers).NotesChartData(uid)
+	data := new(servers.NotesServers).UsedSpace(uid)
+	fmt.Println(data)
+
+ 	this.Data["Data"] = data
+	this.TplName = "chart/main.html"
 }

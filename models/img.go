@@ -1,7 +1,7 @@
 package models
 
 import (
-	_ "fmt"
+	"fmt"
 
 	conn "man/ManNotes/conn"
 )
@@ -26,4 +26,17 @@ func (this *IMGInfo) TableName() string {
 func (this *IMGInfo) CreateImg() error {
 	orm := conn.NotesDB()
 	return orm.Create(this).Error
+}
+
+//获取用户所有图片的大小
+func (this *IMGInfo) GetSize(uid string) (int64,error) {
+	
+	orm := conn.NotesDB()
+	type S struct{
+		Size int64
+	}
+	var size S
+	sqlStr := fmt.Sprintf("select sum(size) as size from tbl_img where uid = '%s'", uid)
+	err := orm.Raw(sqlStr).Scan(&size).Error
+	return size.Size,err
 }

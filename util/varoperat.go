@@ -70,12 +70,37 @@ func (this *Str) RepMDDesc(txt string,strlen int) string {
 	txt = strings.Replace(txt, "-", "", -1 )
 	txt = strings.Replace(txt, "\n", "   ", -1 )
 	if len(txt) > strlen {
-		return txt[0:strlen]
+		//return txt[0:strlen]
+		return ShowSubstr(txt,strlen)
 	}else{
-		return txt[0:len(txt)]
+		//return txt[0:len(txt)]
+		return ShowSubstr(txt,len(txt))
 	}
 	
 }
+
+//分割字符串，按指定长度
+func ShowSubstr(s string, l int) string {
+    if len(s) <= l {
+        return s
+    }
+    ss, sl, rl, rs := "", 0, 0, []rune(s)
+    for _, r := range rs {
+        rint := int(r)
+        if rint < 128 {
+            rl = 1
+        } else {
+            rl = 2
+        }
+        if sl + rl > l {
+            break
+        }
+        sl += rl
+        ss += string(r)
+    }
+    return ss
+}
+
 
 //字符串空格转换html空格
 func (this *Str) ToNbsp(txt string) string {

@@ -222,7 +222,3 @@ func (this *MDController) DraNoteShow() {
 	this.TplName = "pg/dramdshow.html"
 }
 
-//SaveToNotes   恢复到笔记本
-func (this *MDController) SaveToNotes() {
-	
-}

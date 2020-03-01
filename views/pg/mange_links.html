@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>table模块快速使用</title>
+  <link rel="stylesheet" href="../static/plugin/layui/css/layui.css" media="all">
+  <script src="../static/plugin/layui/layui.js?v=1"></script>
+  <script src="../static/js/jquery-3.3.1.min.js?v=1"></script>
+  <script src="../static/js/man.js?v=1"></script>
+</head>
+<body>
+ 
+
+
+<div style="width: 96%;margin-left: 2%;height: 680px;">
+	<table id="demo" lay-filter="test" ></table>
+</div>
+
+
+
+<script type="text/html" id="bar">
+    <button class="layui-btn layui-btn-sm" lay-event="update">修改</button>
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="rm">删除</button>
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="get">访问</button>
+</script>
+
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+  
+  //第一个实例
+  table.render({
+    elem: '#demo'
+    ,height: 680
+    ,url: '/getlinks' //数据接口
+    ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+      layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+      ,curr: 5 //设定初始在第 5 页
+      ,groups: 1 //只显示 1 个连续页码
+      ,first: false //不显示首页
+      ,last: false //不显示尾页
+      
+    }
+    ,cols: [[ //表头
+       {field: 'link_name', title: '链接名', sort: true}
+      ,{field: 'link_des', title: '链接描述'} 
+      ,{field: 'link_url', title: '链接地址', sort: true}
+      ,{field: 'link_ico', title: '链接图标', sort: true}
+      ,{field: 'link_tag', title: '链接标签', sort: true}
+      ,{field: 'link_type', title: '链接类型', sort: true}
+      ,{field: 'wealth', title: '操作',width: 280,  toolbar: "#bar"}
+    ]]
+  });
+  
+
+  table.on('tool(test)', function(obj){
+     switch(obj.event){
+        case 'rm':
+          layer.msg('删除');
+          rm(obj.data.link_id);
+        break;
+        case 'get':
+          window.open(obj.data.link_url);
+        break;
+        case 'update':
+          layer.msg('修改');
+          update(obj.data);
+        break;
+      };
+  });
+
+});
+</script>
+
+
+
+</body>
+
+<script>
+
+function rm(id){
+  console.log(id)
+  $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/dellink?linkid="+id,
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+
+                console.log(rdata)
+                if (rdata.code == 1){
+                      alert(rdata.data);
+                  }else{
+                      alert("失败!"+rdata.data);
+                  }
+                  location.reload();
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+
+}
+
+var UpdataLayer;
+
+function update(data){
+  console.log(data.link_id)
+
+  var xiala;
+
+  if(data.link_type == "网络链接"){
+    xiala = '<option value="0" selected="selected">网络链接</option>\
+                <option value="1">网络工具地址</option>\
+                <option value="2">网络图片地址</option>\
+                <option value="3">网络视频地址</option>\
+                <option value="4">网络音乐地址</option>'
+  }else if (data.link_type == "网络工具地址"){
+     xiala = '<option value="0">网络链接</option>\
+                <option value="1" selected="selected">网络工具地址</option>\
+                <option value="2">网络图片地址</option>\
+                <option value="3">网络视频地址</option>\
+                <option value="4">网络音乐地址</option>'
+  }
+
+  var addDiv='<div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接名</label>\
+            <div class="layui-input-inline">\
+              <input id="link_name" type="text" name="" value="'+data.link_name+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接描述</label>\
+            <div class="layui-input-inline">\
+              <input id="link_des" type="text" name="" value="'+data.link_des+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接地址</label>\
+            <div class="layui-input-inline">\
+              <input id="link_url" type="text" name="" value="'+data.link_url+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接图标</label>\
+            <div class="layui-input-inline">\
+              <input id="link_ico" type="text" name="" value="'+data.link_ico+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接标签</label>\
+            <div class="layui-input-inline">\
+              <input id="link_tag" type="text" name="" value="'+data.link_tag+'" autocomplete="off" class="layui-input" style="width: 280px;">\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label">链接类型</label>\
+            <div class="layui-input-inline">\
+              <select id="link_type" class="layui-input" value="0" style="width:280px;" lay-verify="required">\
+                '+xiala+'\
+              </select>\
+            </div>\
+          </div>\
+        <div class="layui-inline" style="margin-top: 20px;">\
+            <label class="layui-form-label"></label>\
+            <div class="layui-input-inline">\
+              <a onclick="Updatenotes(\''+data.link_id+'\')" class="layui-btn layui-btn-primary" style="width: 280px;">提交修改</a>\
+            </div>\
+          </div>'
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                UpdataLayer = layer.open({
+                  type: 1,
+                  title: '修改链接-'+data.link_name, 
+                  maxmin: true,
+                  area: ['550px', '480px'],
+                  content: addDiv
+                });
+            });
+        });
+}
+
+
+function Success(rdata){
+  console.log(rdata)
+  if (rdata.code == 1){
+        alert(rdata.data);
+    }else{
+        alert("失败!"+rdata.data);
+    }
+    layer.close(UpdataLayer);
+    location.reload();
+}
+
+function Updatenotes(id){
+    console.log(id)
+    var link_name = $("#link_name").val();
+    var link_des = $("#link_des").val();
+    var link_url = $("#link_url").val();
+    var link_ico = $("#link_ico").val();
+    var link_tag = $("#link_tag").val();
+    var link_type = $("#link_type").val();
+
+
+    if (link_name != "" && link_url != ""){
+      var urlstr = "/mageedlink"
+      var data = {
+            "link_id": id,
+            "link_name": link_name,
+            "link_des": link_des,
+            "link_url": link_url,
+            "link_ico": link_ico,
+            "link_tag": link_tag,
+            "link_type": link_type
+        }
+        pubAjaxPOST(urlstr,data,Success);
+    }else{
+      alert("链接名与链接地址不能为空")
+    }
+}
+
+//一般直接写在一个js文件中
+layui.use(['layer', 'form'], function(){
+  var layer = layui.layer
+  ,form = layui.form;
+  
+  layer.msg('加载完成！');
+});
+
+
+
+
+
+
+</script> 
+
+</html>

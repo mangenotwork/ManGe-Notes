@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 	_ "encoding/json"
+	"unicode/utf8"
 
 	object "man/ManNotes/object"
 	util "man/ManNotes/util"
@@ -32,15 +33,18 @@ func (this *MDServers) CreateMDInfo(datas *object.CMDData) (mdid string,mdimglin
 		mdisimg = 1
 	}
 
-	fmt.Println(len(datas.Detail))
+	fmt.Println("ASCII 字符串长度",len(datas.Detail))
+	fmt.Println("Unicode 字符串长度",utf8.RuneCountInString(datas.Detail))
 	if len(datas.Detail) > 30{
-		destxt = new(util.Str).RepMDDesc(datas.Detail[0 : 30],30)
+		//destxt = new(util.Str).RepMDDesc(datas.Detail[0 : 30],30)
+		destxt = new(util.Str).RepMDDesc(util.ShowSubstr(datas.Detail,30),30)
 	}else{
-		destxt = new(util.Str).RepMDDesc(datas.Detail[0 : len(datas.Detail)-1],len(datas.Detail)-1)
+		destxt = new(util.Str).RepMDDesc(util.ShowSubstr(datas.Detail,len(datas.Detail)-1),len(datas.Detail)-1)
 	}
 	
 	return 
 }
+
 
 //创建MD笔记
 func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int, count int, data string) {

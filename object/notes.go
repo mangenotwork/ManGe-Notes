@@ -37,3 +37,10 @@ type UpdateNotes struct{
     NotesName string `json:"notes_name"`
     NotesDes string `json:"notes_des"`
 }
+
+//图表笔记本笔记数量的data
+type NotesCount struct{
+	NotesName string `json:"name"`
+	Number int `json:"value"`
+}
+

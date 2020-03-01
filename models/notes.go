@@ -125,3 +125,15 @@ func (this *Notes) DeleteInfo(nid int,uid string) error {
 	}
 	return orm.Commit().Error
 }
+
+//获取指定用户笔记本数量
+func (this *Notes) GetNotesCount(uid string) (int64,error){
+	orm := conn.NotesDB()
+	var count int64
+	err := orm.Model(&this).Where("uid = ?", uid).Count(&count).Error
+	if err != nil{
+		return 0,err
+	}
+
+	return count,nil
+}

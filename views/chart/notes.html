@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>漫鸽笔记Markdown编辑器v0.1</title>
+    <script src="../static/js/echarts.js?v=1"></script> 
+</head>
+<body>
+	
+
+
+	<div id="task" style="width: 96%;height: 500px;margin-left: 2%;margin-top: 2%;background-color: #ddd;
+box-shadow: 12px 12px 5px #888888;float: left;">
+	
+	
+</div>
+<script type="text/javascript">
+
+		console.log("<<<.Code>>>")
+		console.log("<<<.Name>>>")
+		console.log("<<<.Data>>>")
+		console.log(JSON.parse("<<<.Data>>>"))
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('task'));
+
+        // 指定图表的配置项和数据
+        var option = {
+		    title: {
+		        text: '笔记本的笔记数量统计',
+		        subtext: '只统计笔记本的笔记数量',
+		        left: 'center'
+		    },
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: '{a} <br/>{b} : {c} ({d}%)'
+		    },
+		    legend: {
+		        orient: 'vertical',
+		        left: 'left',
+		        data: <<<.Name>>>
+		    },
+		    series: [
+		        {
+		            name: '笔记数量',
+		            type: 'pie',
+		            radius: '55%',
+		            center: ['50%', '60%'],
+		            data: JSON.parse("<<<.Data>>>"),
+		            emphasis: {
+		                itemStyle: {
+		                    shadowBlur: 10,
+		                    shadowOffsetX: 0,
+		                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+		                }
+		            }
+		        }
+		    ]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+
+
+
+</body>
+</html>

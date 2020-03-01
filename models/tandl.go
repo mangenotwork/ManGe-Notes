@@ -62,3 +62,18 @@ func (this *ToolandLink) DELLink(uid string, linkid int) error {
 	sqlStr := fmt.Sprintf("DELETE FROM tbl_tool_link where uid='%s' and id=%d and type=0; ",uid,linkid)
 	return orm.Exec(sqlStr).Error
 }
+
+//GetAll 获取所有收藏链接
+func (this *ToolandLink) GetAll(pg int, size int, uid string) ([]*ToolandLink,error){
+	orm := conn.NotesDB()
+	dataList := make([]*ToolandLink, 0)
+	sqlStr := fmt.Sprintf("SELECT id,name,des,link,ico,tag,type FROM tbl_tool_link where uid='%s' LIMIT %d,%d", uid, pg, size)
+	err := orm.Raw(sqlStr).Scan(&dataList).Error
+	return dataList,err
+}
+
+// EDLink  修改全部字段链接信息
+func (this *ToolandLink) EDLink() error {
+	orm := conn.NotesDB()
+	return orm.Save(&this).Error
+}
