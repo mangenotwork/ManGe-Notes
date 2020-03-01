@@ -109,7 +109,9 @@ func (this *MDInof) UpdateMDNote(mdcontent string,mid string) error {
 	orm := conn.NotesDB().Begin()
 	sqlMDInofStr := fmt.Sprintf("update tbl_md_info set md_title='%s',md_des='%s',md_img='%s',is_img=%d,md_opentime=%d,md_modifytimes=md_modifytimes+1 where md_id='%s'; ", 
 		this.MDTitle, this.MDDes, this.MDIMG, this.IsIMG, time.Now().Unix(), mid)
+	fmt.Println("[Sql] = ", sqlMDInofStr)
 	sqlMDTextStr := fmt.Sprintf("update tbl_md_text set md_content='%s' where md_id='%s'; ", mdcontent, mid)
+	fmt.Println("[Sql] = ", sqlMDTextStr)
 	err := orm.Exec(sqlMDInofStr).Error
 	if err != nil {
 		orm.Rollback()

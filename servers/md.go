@@ -18,6 +18,8 @@ import (
 type MDServers struct {}
 
 func (this *MDServers) CreateMDInfo(datas *object.CMDData) (mdid string,mdimglink string,mdisimg int,destxt string){
+	
+	mdTxt := new(util.Str).Escape(datas.Detail)
 	//创建笔记id
 	id,uidErr := util.Int64ID()
 	if uidErr != nil{
@@ -26,20 +28,20 @@ func (this *MDServers) CreateMDInfo(datas *object.CMDData) (mdid string,mdimglin
 	mdid = fmt.Sprintf("md_%d",id)
 
 	//判断笔记内容是否存在图片链接
-	mdimglink = new(util.Str).GetMDImgLink(datas.Detail)
+	mdimglink = new(util.Str).GetMDImgLink(mdTxt)
 
 	mdisimg = 0
 	if mdimglink != ""{
 		mdisimg = 1
 	}
 
-	fmt.Println("ASCII 字符串长度",len(datas.Detail))
-	fmt.Println("Unicode 字符串长度",utf8.RuneCountInString(datas.Detail))
-	if len(datas.Detail) > 30{
+	fmt.Println("ASCII 字符串长度",len(mdTxt))
+	fmt.Println("Unicode 字符串长度",utf8.RuneCountInString(mdTxt))
+	if len(mdTxt) > 30{
 		//destxt = new(util.Str).RepMDDesc(datas.Detail[0 : 30],30)
-		destxt = new(util.Str).RepMDDesc(util.ShowSubstr(datas.Detail,30),30)
+		destxt = new(util.Str).RepMDDesc(util.ShowSubstr(mdTxt,30),30)
 	}else{
-		destxt = new(util.Str).RepMDDesc(util.ShowSubstr(datas.Detail,len(datas.Detail)-1),len(datas.Detail)-1)
+		destxt = new(util.Str).RepMDDesc(util.ShowSubstr(mdTxt,len(mdTxt)-1),len(mdTxt)-1)
 	}
 	
 	return 
@@ -53,6 +55,8 @@ func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int
 	nowtime := time.Now().Unix()
 	tagsinfo := new(util.Str).Strip(datas.Tags," \n")
 	notesid,_ := new(util.Str).NumberToInt(datas.NotesId)
+
+	mdTxt := new(util.Str).Escape(datas.Detail)
 
 	mdinfos := &models.MDInof{
 		MDTitle : datas.Title,
@@ -69,7 +73,7 @@ func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int
 	//存储笔记和笔记信息
 	mdText := &models.MDText{
 		MDId: mdid,
-		MDContent:datas.Detail,
+		MDContent:mdTxt,
 	}
 
 	err := mdinfos.InsertMDNote(mdText)
@@ -87,6 +91,7 @@ func (this *MDServers) CreateMDToDraft (datas *object.CMDData, uid string)(code 
 	nowtime := time.Now().Unix()
 	tagsinfo := new(util.Str).Strip(datas.Tags," \n")
 	notesid := -2
+	mdTxt := new(util.Str).Escape(datas.Detail)
 
 	//如果存的草稿没有设置 title 那么就给添加一个
 	timeStr := time.Unix(nowtime, 0).Format("2006-01-02 15:04:05")
@@ -108,7 +113,7 @@ func (this *MDServers) CreateMDToDraft (datas *object.CMDData, uid string)(code 
 	//存储笔记和笔记信息
 	mdText := &models.MDText{
 		MDId: mdid,
-		MDContent:datas.Detail,
+		MDContent:mdTxt,
 	}
 
 	err := mdinfos.InsertMDNote(mdText)
@@ -129,20 +134,10 @@ func (this *MDServers) ModifyMDNote(datas *object.CMDData,uid string,mdid string
 		return 0,1,"判断查看MD权限错误，错误信息"
 	}
 	if ismd {
-		//2. 修改笔记的描述 取笔记内容前30个字符作为笔记的描述内容
-		var destxt string
-		if len(datas.Detail) > 30{
-			destxt = new(util.Str).RepMDDesc(datas.Detail[0 : 30],30)
-		}else{
-			destxt = new(util.Str).RepMDDesc(datas.Detail[0 : len(datas.Detail)-1],len(datas.Detail)-1)
-		}
 
-		//判断笔记内容是否存在图片链接
-		mdimglink := new(util.Str).GetMDImgLink(datas.Detail)
-		mdisimg := 0
-		if mdimglink != ""{
-			mdisimg = 1
-		}
+		mdTxt := new(util.Str).Escape(datas.Detail)
+		mdid,mdimglink,mdisimg,destxt := this.CreateMDInfo(datas)
+
 
 		mdinfos := &models.MDInof{
 			MDTitle : datas.Title,
@@ -152,7 +147,7 @@ func (this *MDServers) ModifyMDNote(datas *object.CMDData,uid string,mdid string
 		}
 
 		//3. 修改笔记内容
-		updateerr := mdinfos.UpdateMDNote(datas.Detail,mdid)
+		updateerr := mdinfos.UpdateMDNote(mdTxt,mdid)
 		if updateerr != nil{
 			fmt.Println("修改笔记错误:",updateerr)
 			return 0,1,"修改笔记错误"

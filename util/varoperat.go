@@ -120,3 +120,10 @@ func (this *Str) IsItemStr(array []string, val string) bool{
 	}
 	return false
 }
+
+
+// 将特殊字符转义
+func (this *Str) Escape(txt string) string {
+	newtxt := strings.Replace(txt, "'", "\\'", -1 )
+	return newtxt
+}
