@@ -12,10 +12,12 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
-	"time"
+	_ "time"
 
 	util "man/ManNotes/util"
-	models "man/ManNotes/models"
+	//models "man/ManNotes/models"
+	servers "man/ManNotes/servers"
+	object "man/ManNotes/object"
 
 	"github.com/nfnt/resize"
 	"github.com/astaxie/beego"
@@ -33,18 +35,31 @@ type UploadController struct {
 func (this *UploadController) UploadImg(){
 	uid := this.GetUid()
 
+	if uid == "" {
+		this.RetuenJson(-1,1,"请登录")
+		return
+	}
+
+
 	f, h, err := this.GetFile("file")
 	if err != nil{
 		fmt.Println("获取到上传的文件错误",err)
 		this.RetuenJson(0,1,"获取到上传的文件错误")
 		return 
 	}
-
 	fmt.Println(f)
 	fmt.Println(h.Filename)
 	fmt.Println(h.Size)
 	fileExt := filepath.Ext(h.Filename)
 	fmt.Println(fileExt)
+	
+
+	imgname := this.GetString("imgname")
+	imgnametag := this.GetString("imgnametag")
+	fmt.Println(imgname,imgnametag)
+	obj := &object.UpLoadImgData{imgname,imgnametag}
+	fmt.Println(obj)
+	
 	//1.验证图片类型
 	// v1 版本只支持 ".jpg", ".png", ".jpeg"   v2 版本开始支持 ".gif"
 	var ExtList = []string{".jpg", ".png", ".jpeg"}
@@ -58,6 +73,7 @@ func (this *UploadController) UploadImg(){
 	//图片命名
 	id := xid.New()
 	newimgName := fmt.Sprintf("%s%s",id.String(),fileExt)
+	//图片在服务器上的存储位置
 	savedir := beego.AppConfig.DefaultString("img::savepath", "")	
 	savepath := fmt.Sprintf("%s%s",savedir,newimgName)
 	fmt.Println(savepath)
@@ -105,6 +121,8 @@ func (this *UploadController) UploadImg(){
 	imgsize := fileSize(savepath)
 
 	//3.保存图片，并将图片名存入数据库
+	returnurl,imgname := new(servers.SUCai).UploadImg(uid,newimgName,imgsize,obj)
+	/*
 	nowtime := time.Now().Unix()
 	imginfo := &models.IMGInfo{
 		ImgName : newimgName,
@@ -116,13 +134,15 @@ func (this *UploadController) UploadImg(){
 		Imgtag : "",
 	}
 	imginfo.CreateImg()
+	*/
+
 	//5.返回图片访问链接
 
-	mainurl := beego.AppConfig.DefaultString("img::mainurl", "")	
-	returnurl := fmt.Sprintf("%s%s",mainurl,newimgName)
-	fmt.Println(returnurl)
+	//mainurl := beego.AppConfig.DefaultString("img::mainurl", "")	
+	//returnurl := fmt.Sprintf("%s%s",mainurl,newimgName)
+	//fmt.Println(returnurl)
 
-	this.RetuenJson(1,1,&ReturnImgInfo{newimgName,returnurl})
+	this.RetuenJson(1,1,&ReturnImgInfo{imgname,returnurl})
 }
 
 type ReturnImgInfo struct{

@@ -136,7 +136,7 @@ func (this *MDServers) ModifyMDNote(datas *object.CMDData,uid string,mdid string
 	if ismd {
 
 		mdTxt := new(util.Str).Escape(datas.Detail)
-		mdid,mdimglink,mdisimg,destxt := this.CreateMDInfo(datas)
+		_,mdimglink,mdisimg,destxt := this.CreateMDInfo(datas)
 
 
 		mdinfos := &models.MDInof{
@@ -147,6 +147,7 @@ func (this *MDServers) ModifyMDNote(datas *object.CMDData,uid string,mdid string
 		}
 
 		//3. 修改笔记内容
+		fmt.Println("\n\n\n****************修改笔记内容",mdTxt,"\n\n\n**************************")
 		updateerr := mdinfos.UpdateMDNote(mdTxt,mdid)
 		if updateerr != nil{
 			fmt.Println("修改笔记错误:",updateerr)

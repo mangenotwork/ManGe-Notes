@@ -107,6 +107,11 @@ func (this *Str) ToNbsp(txt string) string {
 	return strings.Replace(txt, " ", "&nbsp;", -1 )
 }
 
+//删除字符串两端的空格
+func (this *Str) DELNbsp(txt string) string {
+	return this.Strip(txt, " ")
+}
+
 //数字字符串转int
 func (this *Str) NumberToInt(number string) (int,error) {
 	return strconv.Atoi(number)

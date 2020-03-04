@@ -62,7 +62,7 @@ layui.define(['jquery','layer'],function(exports){
     ,spans = ''
     ,options = that.config
     ,span = document.createElement("span"),
-    spantext = $(span).text("获取全部数据").addClass('albtn');
+    spantext = $(span).text("").addClass('albtn1');
     if(options.aldaBtn){
       $('body').append(spantext)
     }
@@ -109,15 +109,37 @@ layui.define(['jquery','layer'],function(exports){
   Class.prototype.events = function(){
      var that = this
     ,options = that.config;
-    $('.albtn').on('click',function(){
+
+    $('.albtn1').on('click',function(){
       console.log(options.content)
     })
+
     $('#tags').on('click','.close',function(){
       var Thisremov = $(this).parent('span').remove(),
       ThisText = $(Thisremov).find('em').text();
       options.content.splice($.inArray(ThisText,options.content),1)
     })
+
+    $('#uploadimgtags').on('click','.close',function(){
+      var Thisremov = $(this).parent('span').remove(),
+      ThisText = $(Thisremov).find('em').text();
+      options.content.splice($.inArray(ThisText,options.content),1)
+    })
+
+    $('#linkimgtags').on('click','.close',function(){
+      var Thisremov = $(this).parent('span').remove(),
+      ThisText = $(Thisremov).find('em').text();
+      options.content.splice($.inArray(ThisText,options.content),1)
+    })
+
+    $('#uploadfiletags').on('click','.close',function(){
+      var Thisremov = $(this).parent('span').remove(),
+      ThisText = $(Thisremov).find('em').text();
+      options.content.splice($.inArray(ThisText,options.content),1)
+    })
+    
   };
+
 
   //核心入口
   inputTags.render = function(options){

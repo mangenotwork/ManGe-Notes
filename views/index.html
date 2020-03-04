@@ -28,7 +28,7 @@
 	.bjlist2{width: 88%;height: 120px;background-color: #282c34;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
 	span{word-break:normal; width:auto; display:block; white-space:pre-wrap;word-wrap : break-word ;overflow: hidden;}  
     .bjlistmange {width: 88%;height: 88px;background-color: #CC9966;border-bottom:1px solid #827f7f;padding: 10px;color: #ddd;margin-top: 10px;margin-bottom: 20px;}
-
+    .bjlistsc {width: 88%;height: 88px;background-color: #FF82AB;border-bottom:1px solid #827f7f;padding: 10px;color: #ddd;margin-top: 10px;margin-bottom: 20px;}
     .bjlistdel{width: 88%;height: 120px;background-color: #696969;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;}
     .bjlistdra{
         width: 88%;height: 100px;background-color: #006699;border-bottom:1px solid #827f7f;padding: 10px;color: #abb2bf;margin-top: 10px;margin-bottom: 20px;
@@ -456,7 +456,7 @@ function defaultnva(allnumber,defnumber,darnumber,recnumber){
             '<li class="layui-nav-item navid"><a onclick="GetToollist()"><i class="layui-icon fontsize17">&#xe7ae;</i>工具&链接</a></li>'+
             '<li class="layui-nav-item navid"><a onclick="mangeshow()"><i class="layui-icon fontsize17">&#xe656;</i>管理</a></li>'+
             '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/allnote\')"><i class="layui-icon fontsize17">&#xe705;</i>全部笔记('+allnumber+')</a></li>'+
-            '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/sucai\')"><i class="layui-icon fontsize17">&#xe64a;</i>全部素材(0)</a></li>'+
+            '<li class="layui-nav-item navid"><a onclick="sucai()"><i class="layui-icon fontsize17">&#xe64a;</i>我的素材</a></li>'+
             '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/notes/0\')"><i class="layui-icon fontsize17">&#xe655;</i>默认笔记本('+defnumber+')</a></li>'+
             '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/draftlist\',\'dra\')"><i class="layui-icon fontsize17">&#xe663;</i>草稿('+darnumber+')</a></li>'+
             '<li class="layui-nav-item navid"><a onclick="ShowDiv(\'/recycler\',\'del\')"><i class="layui-icon fontsize17">&#xe640;</i>回收站('+recnumber+')</a></li>'
@@ -895,6 +895,42 @@ function mangeshow(){
     $("#notelist").empty();
     console.log($("#indexlist").html());
     $("#notelist").append(mangelist);
+    element();
+}
+
+var sucailist = '<div class="bjlistsc bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a data-url="/addsc" data-id="addsc" data-title="添加素材" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">添加素材</a></h2>'+
+                    '<h3 style="margin-top:15px;">对所有笔记本进行管理操作，修改，删除等功能</h3>'+
+                '</div>'+
+            '</div>'+
+
+            '<div class="bjlistsc bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a data-url="/sucai" data-id="sucai" data-title="图片" href="javascript:void(0);" class="site-demo-active" data-type="tabAdd" style="color: #fff;">图片</a></h2>'+
+                    '<h3 style="margin-top:15px;">对收藏的链接进行管理操作，修改，删除等功能</h3>'+
+                '</div>'+
+            '</div>'+
+
+            '<div class="bjlistsc bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a href="#" style="color: #fff;">文件</a></h2>'+
+                    '<h3 style="margin-top:15px;">对收藏的网络工具进行管理操作，编辑，删除等功能</h3>'+
+                '</div>'+
+            '</div>'+
+            '<div class="bjlistsc bjlistbk">'+
+                '<div class="bjlisttitle">'+
+                    '<h2><a href="#" style="color: #fff;">漫鸽素材库</a></h2>'+
+                    '<h3 style="margin-top:15px;">对收藏的网络工具进行管理操作，编辑，删除等功能</h3>'+
+                '</div>'+
+            '</div>'
+            
+
+
+function sucai(){
+    $("#notelist").empty();
+    console.log($("#indexlist").html());
+    $("#notelist").append(sucailist);
     element();
 }
 

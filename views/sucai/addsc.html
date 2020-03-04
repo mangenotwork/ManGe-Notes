@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>素材</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <script src="../static/plugin/layui/layui.js?v=1"></script>
+    <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
+    <link rel="stylesheet" href="../static/plugin/inputtag/inputTags.css?v=8">
+    <script src="../static/plugin/inputtag/inputTags.js?v=7"></script>
+
+    <style type="text/css">
+    	.albtn {display: none;}
+    </style>
+</head>
+<body>
+	
+
+	<div class="layui-tab layui-tab-card" style="width: 900px;height: 560px;margin-left: 10%;margin-top: 50px;">
+	  <ul class="layui-tab-title">
+	    <li class="layui-this" style="width: 272px;">上传图片</li>
+	    <li style="width: 272px;">添加图片链接</li>
+	    <li style="width: 272px;">上传文件</li>
+	  </ul>
+	  <div class="layui-tab-content" style="height: 100px;">
+	    <div class="layui-tab-item layui-show" style="text-align: center;" >
+
+	    	<input type="text" id="imgname" name="title" required  lay-verify="required" placeholder="请输入图片名或描述" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
+
+
+        <div class="tags" id="uploadimgtags" style="width: 56%;margin-left: 20%;margin-top: 50px;padding:2%;">
+               <input id="notetagval" type="text" name="notetagval" placeholder="回车生成图片标签" autocomplete="off" style="width: 100%;height: 35px;">
+                </div>
+
+
+
+	    	<button type="button" id="updataimg" class="layui-btn" style="margin-top:48px;width: 60%;">
+                              <i class="layui-icon">&#xe67c;</i>上传图片
+                            </button>
+
+            <div id="upimg"></div>
+
+           
+
+	    </div>
+
+	    <div class="layui-tab-item" style="text-align: center;">
+
+	    	<input type="text" name="title" required  lay-verify="required" placeholder="请输入图片链接" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
+
+	    	<input type="text" id="linkimgname" name="title" required  lay-verify="required" placeholder="请输入图片名或描述" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
+
+
+        <div class="tags" id="linkimgtags" style="width: 56%;margin-left: 20%;margin-top: 50px;padding:2%;">
+               <input id="notetagval" type="text" name="notetagval" placeholder="回车生成图片标签" autocomplete="off" style="width: 100%;height: 35px;">
+                </div>
+                
+        <button type="button" class="layui-btn" id="test1" style="margin-top:48px;width: 60%;">
+                              提交
+                            </button>
+
+	    </div>
+
+	    <div class="layui-tab-item" style="text-align: center;">
+
+	    	<input type="text" name="title" required  lay-verify="required" placeholder="请输入文件名或描述" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
+
+
+        <div class="tags" id="tags" style="width: 56%;margin-left: 20%;margin-top: 50px;padding:2%;">
+               <input id="notetagval" type="text" name="notetagval" placeholder="回车生成文件素材标签" autocomplete="off" style="width: 100%;height: 35px;">
+                </div>
+
+
+
+	    	<button type="button" class="layui-btn" id="test1" style="margin-top:48px;width: 60%;">
+                              <i class="layui-icon">&#xe67c;</i>上传文件
+                            </button>
+
+
+	    </div>
+
+	  </div>
+	</div>
+
+<script>
+//注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+layui.use('element', function(){
+  var element = layui.element;
+  
+  
+
+  layui.use('upload', function(){
+	  var upload = layui.upload;
+	  
+	  var progressdiv = '<div class="layui-progress layui-progress-big" lay-filter="demo" style="width: 60%;margin-left: 20%;margin-top: 5px;">\
+			  <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>\
+			</div>'
+	  
+
+	  //执行实例
+	  var uploadInst = upload.render({
+	    elem: '#updataimg' //绑定元素
+	    ,url: '/imgupload' //上传接口
+	    ,data: {
+		  imgname: function(){
+		  	console.log($('#imgname').val())
+		    return $('#imgname').val();
+		  },
+		  imgnametag: function(){
+		  	var tags = $("#uploadimgtags").text();
+    		tags = tags.replace(/\×/g,"|")
+    		tags = tags.replace(/(^\s*)|(\s*$)/g, "");
+			console.log(tags)
+			return tags;
+		  }
+		}
+		,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+			$("#upimg").empty();
+		    $("#upimg").append(progressdiv)
+		  }
+		,progress: function(n, elem){
+		    var percent = n + '%' //获取进度百分比
+		    element.progress('demo', percent); //可配合 layui 进度条元素使用
+		    
+		    //以下系 layui 2.5.6 新增
+		    console.log(elem); //得到当前触发的元素 DOM 对象。可通过该元素定义的属性值匹配到对应的进度条。
+		  }
+	    ,done: function(res){
+	    	console.log(res)
+	      //上传完毕回调
+	       if (res.code == 1){
+            alert("图片上传成功")
+            location.reload();
+            }else{
+                alert(res.data)
+            }
+
+	    }
+	    ,error: function(){
+	      //请求异常回调
+	      alert("图片上传出现异常")
+	      location.reload();
+	    }
+	  });
+	});
+
+
+
+
+});
+
+//如果有依赖的css则是
+    layui.define(function(exports){ 
+      //插件内容
+      //输出test接口
+      exports('inputTags');
+    }).addcss('inputTags.css?v=6');
+
+    layui.config({  
+            base: '../static/plugin/inputtag/',  
+        }).use(['inputTags'], function() {  
+            var inputTags = layui.inputTags; 
+
+                inputTags.render({
+              elem:'#notetagval',//定义输入框input对象
+              content: [],//默认标签
+              aldaBtn: true,//是否开启获取所有数据的按钮
+              done: function(value){ //回车后的回调
+                console.log(value)
+              }
+            })      
+
+           
+        })  
+
+
+
+
+
+	
+	
+
+
+</script>
+
+
+</body>
+</html>

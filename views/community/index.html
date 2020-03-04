@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>漫鸽笔记</title>
+<!--导入-->
+<link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=3" media="all">
+<script src="../static/plugin/layui/layui.js?v=3"></script>
+<script src="../static/js/jquery-3.3.1.min.js?v=1"></script>
+<script src="../static/js/man.js?v=1"></script>
+</head>
+<body>
+	
+	<div class="layui-header" style="background-color: #000;">
+    <div class="layui-logo" style="color: #fff;">
+    	<h2>ManGe-Notes</h2>
+	</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+                 <div style="width: 60%;">
+                    <input id="word" type="text" name="keyword" class="layui-input" placeholder="搜索"/>
+                    <a onclick="searchnote()">
+                    <i class="layui-icon layui-icon-search"></i></a>
+
+         </div>
+
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="<<<.userbinfo.UAvatar>>>" class="layui-nav-img">
+          <<<.userbinfo.UName>>>
+        </a>
+        <dl class="layui-nav-child" style="position:static;">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+          <dd><a href="#"><span style="font-size: 6px;">上次登录：<<<.userbinfo.LastLogin>>></span></a></dd>
+          <dd><a href="#"><span style="font-size: 6px;">上次登录地址：<<<.userbinfo.LastLoginIp>>></span></a></dd>
+          <dd><a href="/outlogin">退出登录</a></dd>
+        </dl>
+      </li>
+      
+    </ul>
+  </div>
+
+
+</body>
+</html>

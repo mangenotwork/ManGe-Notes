@@ -125,3 +125,21 @@ func (this *PGController) MyUsedSpace(){
  	this.Data["Data"] = data
 	this.TplName = "chart/main.html"
 }
+
+//Shequ  漫鸽笔记社区主页
+func (this *PGController) Shequ(){
+
+	this.TplName = "community/index.html"
+}
+
+
+//素材 模块 主页
+func (this *PGController) SuCai(){
+	this.TplName = "sucai/sc.html"
+}
+
+
+//AddSuCai  素材模块 添加素材
+func (this *PGController) AddSuCai(){
+	this.TplName = "sucai/addsc.html"
+}

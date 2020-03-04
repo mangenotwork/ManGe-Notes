@@ -61,5 +61,14 @@ func init() {
     beego.Router("/mageedlink", &controllers.TandLController{}, "post:MageEDLink")//mange 管理模块 编辑收藏的链接
 
     //上传功能
-     beego.Router("/imgupload", &controllers.UploadController{}, "post:UploadImg")//写笔记上传图片
+    beego.Router("/imgupload", &controllers.UploadController{}, "post:UploadImg")//写笔记上传图片
+
+
+    //漫鸽笔记社区
+    beego.Router("/shequ", &controllers.PGController{}, "get:Shequ")//主页
+
+
+    //素材模块
+    beego.Router("/sucai", &controllers.PGController{}, "get:SuCai")//主页
+    beego.Router("/addsc", &controllers.PGController{}, "get:AddSuCai")//添加素材
 }

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>素材</title>
+    <link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=1" media="all">
+    <script src="../static/plugin/layui/layui.js?v=1"></script>
+    <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
+    <script type="text/javascript">
+        $(function () {
+            $(window).scroll(function () {
+                var nowTop = $(document).scrollTop();
+                if (nowTop > 50) {
+                    $('.menu').css({
+                        position: 'fixed',
+                        top: 0,
+                        //left: '50%',
+                        //marginLeft: -480
+                    });
+                    $('.totop').show()
+                } else {
+                    $('.menu').css({
+                        position: 'static',
+                        left: 0,
+                        margin: '0 auto'
+                    });
+                    $('.totop').hide()
+                }
+            });
+            $('.totop').click(function(){
+                $('html,body').animate({
+                    scrollTop: 0
+                })
+            });
+
+        })
+
+    </script>
+    <style type="text/css">
+        body {
+            margin-left: 0;
+        }
+
+        .logo_bar {
+            width: 100%;
+            height: 50px;
+            background-color: #f0f0f0;
+            margin: 0 auto;
+        }
+
+        .menu, .menu_pos {
+            width: 100%;
+            height: 60px;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .menu_pos {
+            display: none;
+        }
+
+        .down_con {
+            width: 96%;
+            margin-left: 2%;
+            height: 1800px;
+            margin: 0 auto;
+        }
+
+
+        .totop {
+            width: 50px;
+            height: 50px;
+            background: url(./up.jpg) center center no-repeat #000;
+            border-radius: 50%;
+            position: fixed;
+            right: 50px;
+            bottom: 50px;
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+<div class="logo_bar" style="text-align: center;padding-top: 25px;">
+    <a href="" style="font-size: 24px;margin-right: 20px;border-bottom: 6px solid red;border-radius: 6px;padding-bottom: 3px;">我的图片</a>
+    <a href="" style="font-size: 24px;margin-right: 20px;">漫鸽图片库</a>
+</div>
+<div class="menu">
+
+    <div class="layui-input-inline" style="width: 60%;">
+                    <input id="word" type="text" name="keyword" class="layui-input" placeholder="搜索" />
+                    <a href="#" >
+                    <i class="layui-icon layui-icon-search" style="position: absolute;top:-10px;right: 13px;"></i></a>
+                </div>
+
+</div>
+<div class="menu_pos"></div>
+<div class="down_con">
+    
+    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+        <img class="pimg" src="http://118.25.137.1/notes/bpb9ce47n060sb7pmisg.jpg" style="height:180px;border-radius:18px;">
+    </div>
+
+    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+        <img class="pimg" src="http://118.25.137.1/notes/bpdt6kk7n060v06hrd2g.jpg" style="height:180px;border-radius:18px;">
+    </div>
+
+    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+        <img class="pimg" src="http://118.25.137.1/notes/bpb9ce47n060sb7pmisg.jpg" style="height:180px;border-radius:18px;">
+    </div>
+
+    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+        <img class="pimg" src="http://118.25.137.1/notes/bpdt6kk7n060v06hrd2g.jpg" style="height:180px;border-radius:18px;">
+    </div><div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+        <img class="pimg" src="http://118.25.137.1/notes/bpb9ce47n060sb7pmisg.jpg" style="height:180px;border-radius:18px;">
+    </div>
+
+    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+        <img class="pimg" src="http://118.25.137.1/notes/bpdt6kk7n060v06hrd2g.jpg" style="height:180px;border-radius:18px;">
+    </div>
+
+</div>
+
+<div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
+    <div id="innerdiv" style="position:absolute; ">
+        <img id="bigimg" style="border:5px solid #fff;" src="" />
+    </div>
+</div>    
+
+
+<a href="javascript:" class="totop"></a>
+
+
+<script type="text/javascript">
+    
+    $(function(){  
+        $(".pimg").click(function(){  
+            var _this = $(this);//将当前的pimg元素作为_this传入函数  
+            console.log(_this)
+            imgShow("#outerdiv", "#innerdiv", "#bigimg", _this);  
+        });  
+    });  
+
+    function imgShow(outerdiv, innerdiv, bigimg, _this){
+
+        var src = _this.attr("src");//获取当前点击的pimg元素中的src属性 
+        var addDiv='\
+        <div style="margin:10px;">\
+        <img src="'+src+'" style="margin-bottom:10px;width:80%;height80%;margin-left:10%;"><br>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:10%;" href="#">复制图片地址</a>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:5px;" href="#">发布到漫鸽图片库</a>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" href="#">删除图片</a>\
+        </div>';
+
+        
+
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                restoreLayer = layer.open({
+                  type: 1,
+                  title: '移动到指定笔记本', 
+                  maxmin: true,
+                  area: ['550px'],
+                  content: addDiv
+                });
+
+            });
+        });
+
+
+        /*
+        var src = _this.attr("src");//获取当前点击的pimg元素中的src属性  
+        console.log(src)
+        
+        $("#bigimg").attr("src", src);//设置#bigimg元素的src属性  
+
+            $(innerdiv).css({"top":50, "left":50});//设置#innerdiv的top和left属性  
+            $(outerdiv).fadeIn("fast");//淡入显示#outerdiv及.pimg  
+
+        
+          
+        $(outerdiv).click(function(){//再次点击淡出消失弹出层  
+            $(this).fadeOut("fast");  
+        });  
+        */
+    }  
+
+</script>
+
+
+</body>
+</html>
