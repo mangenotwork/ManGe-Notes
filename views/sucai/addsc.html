@@ -8,6 +8,7 @@
     <script src="../static/js/jquery-3.3.1.min.js?v=1"></script> 
     <link rel="stylesheet" href="../static/plugin/inputtag/inputTags.css?v=8">
     <script src="../static/plugin/inputtag/inputTags.js?v=7"></script>
+    <script src="../static/js/man.js?v=1"></script>
 
     <style type="text/css">
     	.albtn {display: none;}
@@ -46,16 +47,16 @@
 
 	    <div class="layui-tab-item" style="text-align: center;">
 
-	    	<input type="text" name="title" required  lay-verify="required" placeholder="请输入图片链接" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
+	    	<input type="text" id="linkurl" name="title" required  lay-verify="required" placeholder="请输入图片链接" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
 
 	    	<input type="text" id="linkimgname" name="title" required  lay-verify="required" placeholder="请输入图片名或描述" autocomplete="off" class="layui-input" style="width: 60%;margin-left: 20%;margin-top: 50px;">
 
 
         <div class="tags" id="linkimgtags" style="width: 56%;margin-left: 20%;margin-top: 50px;padding:2%;">
-               <input id="notetagval" type="text" name="notetagval" placeholder="回车生成图片标签" autocomplete="off" style="width: 100%;height: 35px;">
+               <input id="notetagval2" type="text" name="notetagval2" placeholder="回车生成图片标签" autocomplete="off" style="width: 100%;height: 35px;">
                 </div>
                 
-        <button type="button" class="layui-btn" id="test1" style="margin-top:48px;width: 60%;">
+        <button type="button" class="layui-btn" onclick="addlinkimg()" style="margin-top:48px;width: 60%;">
                               提交
                             </button>
 
@@ -170,13 +171,53 @@ layui.use('element', function(){
               }
             })      
 
+            inputTags.render({
+              elem:'#notetagval2',//定义输入框input对象
+              content: [],//默认标签
+              aldaBtn: true,//是否开启获取所有数据的按钮
+              done: function(value){ //回车后的回调
+                console.log(value)
+              }
+            })      
+
            
         })  
 
 
 
+function addlinkimgShow(rdata){
+	console.log(rdata)
+	if(rdata.code == 1){
+		alert("添加成功")
+		location.reload();
+	}
+	else if(rdata.code == -1){
+		window.open('/');
+	}
+	else{
+		alert("添加失败"+rdata.data)
+	}
+}
 
+function addlinkimg(){
+	var urlstr = '/addlinkimg';
 
+    var linkurl = $("#linkurl").val();
+    var linkimgname = $("#linkimgname").val();
+    var linkimgtags = $("#linkimgtags").text();
+    linkimgtags = linkimgtags.replace(/\×/g,"|")
+    linkimgtags = linkimgtags.replace(/(^\s*)|(\s*$)/g, "");
+    if(linkurl != ""){
+        var data = {
+            "imglink": linkurl,
+            "imgname": linkimgname,
+            "imgnametag": linkimgtags
+        }
+        pubAjaxPOST(urlstr,data,addlinkimgShow);
+    }else{
+        alert("必须填写图片的链接地址");
+    }
+}
 	
 	
 

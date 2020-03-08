@@ -84,8 +84,18 @@
 </head>
 <body>
 <div class="logo_bar" style="text-align: center;padding-top: 25px;">
-    <a href="" style="font-size: 24px;margin-right: 20px;border-bottom: 6px solid red;border-radius: 6px;padding-bottom: 3px;">我的图片</a>
-    <a href="" style="font-size: 24px;margin-right: 20px;">漫鸽图片库</a>
+    <<<if .My>>>
+        <a href="/sucai" style="font-size: 24px;margin-right: 20px;border-bottom: 6px solid red;border-radius: 6px;padding-bottom: 3px;">我的图片</a>
+    <<<else>>>
+        <a href="/sucai" style="font-size: 24px;margin-right: 20px;">我的图片</a>
+    <<<end>>>
+    
+    <<<if .Mange>>>
+        <a href="/mangeimg" style="font-size: 24px;margin-right: 20px;border-bottom: 6px solid red;border-radius: 6px;padding-bottom: 3px;">漫鸽图片库</a>
+    <<<else>>>
+        <a href="/mangeimg" style="font-size: 24px;margin-right: 20px;">漫鸽图片库</a>
+    <<<end>>>
+    
 </div>
 <div class="menu">
 
@@ -97,29 +107,26 @@
 
 </div>
 <div class="menu_pos"></div>
-<div class="down_con">
-    
-    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
-        <img class="pimg" src="http://118.25.137.1/notes/bpb9ce47n060sb7pmisg.jpg" style="height:180px;border-radius:18px;">
-    </div>
+<div class="down_con" id="imglist">
 
-    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
-        <img class="pimg" src="http://118.25.137.1/notes/bpdt6kk7n060v06hrd2g.jpg" style="height:180px;border-radius:18px;">
-    </div>
 
-    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
-        <img class="pimg" src="http://118.25.137.1/notes/bpb9ce47n060sb7pmisg.jpg" style="height:180px;border-radius:18px;">
-    </div>
+    <<<if .My>>>
+        <<<range .Data>>>
+            <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+                
+                    <img class="pimg" id="<<<.ImgId>>>" src="<<<.ImgUrl>>>" title="<<<.ImgName>>>" tag="<<<.ImgTag>>>" date="<<<.ImgCreate>>>" style="height:180px;border-radius:18px;">
+            </div>
+        <<<end>>>
+    <<<end>>>
 
-    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
-        <img class="pimg" src="http://118.25.137.1/notes/bpdt6kk7n060v06hrd2g.jpg" style="height:180px;border-radius:18px;">
-    </div><div style="height: 180px;margin:15px;float: left;border-radius:18px;">
-        <img class="pimg" src="http://118.25.137.1/notes/bpb9ce47n060sb7pmisg.jpg" style="height:180px;border-radius:18px;">
-    </div>
-
-    <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
-        <img class="pimg" src="http://118.25.137.1/notes/bpdt6kk7n060v06hrd2g.jpg" style="height:180px;border-radius:18px;">
-    </div>
+    <<<if .Mange>>>
+        <<<range .Data>>>
+            <div style="height: 180px;margin:15px;float: left;border-radius:18px;">
+                
+                    <img class="mgimg" id="<<<.ImgId>>>" src="<<<.ImgUrl>>>" title="<<<.ImgName>>>" tag="<<<.ImgTag>>>" date="<<<.ImgCreate>>>" style="height:180px;border-radius:18px;">
+            </div>
+        <<<end>>>
+    <<<end>>>
 
 </div>
 
@@ -135,33 +142,86 @@
 
 <script type="text/javascript">
     
-    $(function(){  
+    
+
+
+function mangeimg(){
+    $("#imglist").empty();
+    $.ajax({
+            url:  document.location.protocol+ "//" + window.location.host + "/mangeimg",
+            type:'get',
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                console.log(rdata);
+                
+
+                if(JSON.stringify(rdata.data) === '[]'){
+                    $("#imglist").append("还未添加图片")
+                }
+
+                for(data in rdata.data){
+                    console.log(rdata.data[data]);
+                    var datainfo = rdata.data[data];
+                    var imgdiv = '<div style="height: 180px;margin:15px;float: left;border-radius:18px;">\
+                        <img class="pimg" id="'+datainfo.img_id+'" src="'+datainfo.img_url+'" title="'+datainfo.img_name+'" style="height:180px;border-radius:18px;">\
+                    </div>'
+                    $("#imglist").append(imgdiv)
+                }
+
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+            }
+          });
+
+}
+
+
+
+ $(function(){  
         $(".pimg").click(function(){  
             var _this = $(this);//将当前的pimg元素作为_this传入函数  
-            console.log(_this)
+            console.log(_this);
+            console.log(_this.attr("id"));
+            console.log(_this.attr("title"));
+            console.log(_this.attr("tag"));
+            console.log(_this.attr("date"));
             imgShow("#outerdiv", "#innerdiv", "#bigimg", _this);  
         });  
+        $(".mgimg").click(function(){
+            var _this = $(this);//将当前的pimg元素作为_this传入函数  
+            mgimgShow("#outerdiv", "#innerdiv", "#bigimg", _this);
+        })
     });  
 
+
+    
     function imgShow(outerdiv, innerdiv, bigimg, _this){
 
         var src = _this.attr("src");//获取当前点击的pimg元素中的src属性 
+        var id = _this.attr("id");
+        var imgtitle = _this.attr("title");
+        var tag = _this.attr("tag");
+        var date = _this.attr("date");
         var addDiv='\
         <div style="margin:10px;">\
+        <span class="layui-badge layui-bg-orange" style="font-size:8px;">'+date+'</span>\
+        <span class="layui-badge layui-bg-blue" style="font-size:8px;">'+tag+'</span><br><br>\
         <img src="'+src+'" style="margin-bottom:10px;width:80%;height80%;margin-left:10%;"><br>\
-        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:10%;" href="#">复制图片地址</a>\
-        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:5px;" href="#">发布到漫鸽图片库</a>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:10%;" href="'+src+'">复制图片地址</a>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:5px;" href="/tomangeimg?imgid='+id+'">分享到漫鸽图片库</a>\
         <a class="layui-btn layui-btn-radius layui-btn-danger" href="#">删除图片</a>\
         </div>';
-
-        
 
         layui.use("layer",function(){
             layer.ready(function(){
                 var layer = layui.layer; 
                 restoreLayer = layer.open({
                   type: 1,
-                  title: '移动到指定笔记本', 
+                  title: imgtitle, 
                   maxmin: true,
                   area: ['550px'],
                   content: addDiv
@@ -187,6 +247,40 @@
         });  
         */
     }  
+
+
+    function mgimgShow(outerdiv, innerdiv, bigimg, _this){
+
+        var src = _this.attr("src");//获取当前点击的pimg元素中的src属性 
+        var id = _this.attr("id");
+        var imgtitle = _this.attr("title");
+        var tag = _this.attr("tag");
+        var date = _this.attr("date");
+        var addDiv='\
+        <div style="margin:10px;">\
+        <span class="layui-badge layui-bg-orange" style="font-size:8px;">'+date+'</span>\
+        <span class="layui-badge layui-bg-blue" style="font-size:8px;">'+tag+'</span><br><br>\
+        <img src="'+src+'" style="margin-bottom:10px;width:80%;height80%;margin-left:10%;"><br>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:10%;" href="'+src+'">复制图片地址</a>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" style="margin-left:5px;" href="/tomangeimg?imgid='+id+'">点赞</a>\
+        <a class="layui-btn layui-btn-radius layui-btn-danger" href="#">收藏</a>\
+        </div>';
+
+        layui.use("layer",function(){
+            layer.ready(function(){
+                var layer = layui.layer; 
+                restoreLayer = layer.open({
+                  type: 1,
+                  title: imgtitle, 
+                  maxmin: true,
+                  area: ['550px'],
+                  content: addDiv
+                });
+
+            });
+        });
+    }
+
 
 </script>
 

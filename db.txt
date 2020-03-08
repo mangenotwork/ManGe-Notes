@@ -185,7 +185,7 @@ imgtag 图片标签
 
 CREATE TABLE tbl_img(
 	id INT UNSIGNED AUTO_INCREMENT,
-	imgname varchar(50) NOT NULL,
+	imgname varchar(120) NOT NULL,
 	imgdec varchar(100) NOT NULL DEFAULT "",
 	uid varchar(25) NOT NULL,
 	time BIGINT unsigned NOT NULL,
@@ -228,18 +228,18 @@ view 查看数
 
 CREATE TABLE tbl_sc_img(
 	id INT UNSIGNED AUTO_INCREMENT,
-	imgurl varchar(50) NOT NULL,
+	imgurl varchar(120) NOT NULL unique,
 	imgdec varchar(100) NOT NULL DEFAULT "",
 	uid varchar(25) NOT NULL,
 	time BIGINT unsigned NOT NULL,
 	date varchar(25) NOT NULL,
 	size INT NOT NULL,
 	imgtag varchar(100) NOT NULL DEFAULT "",
-	like int NOT NULL DEFAULT 0,
-	collection int NOT NULL DEFAULT 0,
-	usecount int NOT NULL DEFAULT 0,
-	view int NOT NULL DEFAULT 0,
-	
+	`like` INT NOT NULL,
+	collection INT NOT NULL,
+	usecount INT NOT NULL,
+	view INT NOT NULL,
+
 	PRIMARY KEY (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -247,7 +247,7 @@ CREATE TABLE tbl_sc_img(
 // tbl_sc_img
 type SCIMGInfo struct {
 	Id     int `gorm:"column:id;primary_key;AUTO_INCREMENT"`     //图片ID
-	ImgName string `gorm:"column:imgurl"` //图片地址
+	ImgName string `gorm:"column:imgurl;unique"` //图片地址
 	Imgdec     string `gorm:"column:imgdec"`     //图片描述or名称
 	Uid 	string `gorm:"column:uid"` //用户id
 	Time int64 `gorm:"column:time"`     //存储时间 时间戳
@@ -262,7 +262,7 @@ type SCIMGInfo struct {
 
 
 [====================]
-文件素材表
+8. 文件素材表
 
 id 临时id
 filename 文件名
@@ -275,6 +275,75 @@ size 大小
 filetag 图片标签
 ispassword 文件是否加密
 password 文件密码
+uploadcount 文件下载次数
 
 
+CREATE TABLE tbl_sc_file(
+	id INT UNSIGNED AUTO_INCREMENT,
+	filename varchar(50) NOT NULL,
+	fileurl varchar(100) NOT NULL,
+	fileext varchar(10) NOT NULL,
+	filedec varchar(100) NOT NULL DEFAULT "",
+	uid varchar(25) NOT NULL,
+	time BIGINT unsigned NOT NULL,
+	date varchar(25) NOT NULL,
+	size INT NOT NULL,
+	filetag varchar(100) NOT NULL DEFAULT "",
+	ispassword int NOT NULL DEFAULT 0,
+	password varchar(25) NOT NULL DEFAULT "",
+	uploadcount int NOT NULL DEFAULT 0,
+	
+	PRIMARY KEY (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+// tbl_sc_file
+type SCFileInfo struct {
+	Id     int `gorm:"column:id;primary_key;AUTO_INCREMENT"`     //图片ID
+	FileName string `gorm:"column:filename"` //文件名
+	FileUrl     string `gorm:"column:fileurl"`     //文件地址
+	FileExt 	string `gorm:"column:fileext"` //文件类型
+	FileDec string `gorm:"column:filedec"`     //文件描述
+	Uid string `gorm:"column:uid"`     //拥有者
+	FileTime int64 `gorm:"column:time"`     //添加时间戳
+	FileDate string `gorm:"column:date"`     //添加日期 
+	FileSize 	int64	`gorm:"column:size"` //大小
+	FileTag string `gorm:"column:filetag"` //图片标签
+	ISPassword int	`gorm:"column:ispassword"` //文件是否加密  0不加密  1加密
+	FilePassword string	`gorm:"column:password"` //文件密码
+	FileUploadCount int64 `gorm:"column:uploadcount"` //文件下载次数
+}
+
+
+
+[====================]
+
+9. 社区笔记信息 笔记列表
+
+
+[====================]
+10. 点赞信息
+
+
+[====================]
+11. 收藏信息
+
+
+[====================]
+12. 评论信息
+
+
+[====================]
+13. 推荐信息
+
+
+[====================]
+14. 用户操作记录
+
+
+[====================]
+15. 用户权限
+
+
+[====================]
 

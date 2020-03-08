@@ -135,6 +135,18 @@ func (this *PGController) Shequ(){
 
 //素材 模块 主页
 func (this *PGController) SuCai(){
+	uid := this.GetUid()
+	if uid == "" {
+		this.TplName = "pg/login.html"
+		return
+	}
+
+	code,count,data := new(servers.SUCai).GetMyImg(uid)
+
+	this.Data["My"] = true
+	this.Data["Code"] = code
+	this.Data["Count"] = count
+	this.Data["Data"] = data
 	this.TplName = "sucai/sc.html"
 }
 

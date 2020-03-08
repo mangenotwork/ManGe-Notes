@@ -71,4 +71,8 @@ func init() {
     //素材模块
     beego.Router("/sucai", &controllers.PGController{}, "get:SuCai")//主页
     beego.Router("/addsc", &controllers.PGController{}, "get:AddSuCai")//添加素材
+    beego.Router("/addlinkimg", &controllers.SucaiController{}, "post:AddLinkImg")//添加网络图片素材
+    beego.Router("/myimg", &controllers.SucaiController{}, "get:MyImg")//获取我的图片
+    beego.Router("/tomangeimg", &controllers.SucaiController{}, "get:ToMangeImg")//分享到图库
+    beego.Router("/mangeimg", &controllers.SucaiController{}, "get:MangeImg")//漫鸽图库
 }
