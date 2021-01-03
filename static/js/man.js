@@ -32,3 +32,31 @@ function pubAjaxPOST(urlstr,senddatas,Func){
 	//console.log(returnData,returnInfo);
 	//return returnData,returnInfo;
 }
+
+//公用Ajax Get 方法
+function pubAjaxGET(urlstr,Func){
+    urlstr = document.location.protocol+ "//" + window.location.host + urlstr;
+    console.log(urlstr);
+    $.ajax({
+            url: urlstr,
+            type:'get',
+            dataType:'json',
+            contentType:"application/x-www-form-urlencoded",
+            async:true,//异步请求
+            cache:false,
+            success:function(rdata) {
+                if(Func){
+                    Func(rdata);
+                }
+                else{
+                    console.log(rdata);
+                }
+            },
+            //执行失败或错误的回调函数
+            error:function(xhr) {
+                alert("后台请求出错！");
+                console.log(xhr);
+                location.reload();
+            }
+          });
+}

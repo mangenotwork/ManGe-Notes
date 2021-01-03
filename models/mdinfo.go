@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"time"
 
-	conn "man/ManNotes/conn"
+	conn "github.com/mangenotwork/ManGe-Notes/conn"
 )
 
 // tbl_md_info表
 type MDInof struct {
-	MDTempid     int `gorm:"column:md_tempid;primary_key;AUTO_INCREMENT"`     //临时自增id
-	MDTitle     string `gorm:"column:md_title"`     //title
-	MDDes 	string `gorm:"column:md_des"`     //前30个字符的内容
-	MDIMG   string `gorm:"column:md_img"`   //如果笔记内容有图片链接保存第一张图片的链接
-	IsIMG   int `gorm:"column:is_img"`    //是否有图片，如果有为1  没有为0
-	MDId     string    `gorm:"column:md_id"`     //内容id
-	Uid string `gorm:"column:uid"`     //用户id 
-	MDNotesid int `gorm:"column:md_notes_id"` //属于的笔记本分类
-	MDCreatetime        int64    `gorm:"column:md_createtime"`        //首次创建时间
-	MDSavetime       int64 `gorm:"column:md_savetime"`       //上次保存时间
-	MDTag      string `gorm:"column:md_tag"`      //标签
-	MDOpentime  int64 `gorm:"column:md_opentime"`  //上次打开时间
-	MDViewTimes   int  `gorm:"column:md_viewtimes"`   //查看次数
-	MDModifytimes int `gorm:"column:md_modifytimes"` //修改次数
+	MDTempid      int    `gorm:"column:md_tempid;primary_key;AUTO_INCREMENT"` //临时自增id
+	MDTitle       string `gorm:"column:md_title"`                             //title
+	MDDes         string `gorm:"column:md_des"`                               //前30个字符的内容
+	MDIMG         string `gorm:"column:md_img"`                               //如果笔记内容有图片链接保存第一张图片的链接
+	IsIMG         int    `gorm:"column:is_img"`                               //是否有图片，如果有为1  没有为0
+	MDId          string `gorm:"column:md_id"`                                //内容id
+	Uid           string `gorm:"column:uid"`                                  //用户id
+	MDNotesid     int    `gorm:"column:md_notes_id"`                          //属于的笔记本分类
+	MDCreatetime  int64  `gorm:"column:md_createtime"`                        //首次创建时间
+	MDSavetime    int64  `gorm:"column:md_savetime"`                          //上次保存时间
+	MDTag         string `gorm:"column:md_tag"`                               //标签
+	MDOpentime    int64  `gorm:"column:md_opentime"`                          //上次打开时间
+	MDViewTimes   int    `gorm:"column:md_viewtimes"`                         //查看次数
+	MDModifytimes int    `gorm:"column:md_modifytimes"`                       //修改次数
 }
 
 func (this *MDInof) TableName() string {
@@ -45,49 +45,49 @@ func (this *MDInof) InsertMDNote(mdtext *MDText) error {
 }
 
 //按照页数获取数据
-func (this *MDInof) GetToPG(pg int, size int, uid string) ([]*MDInof,error) {
+func (this *MDInof) GetToPG(pg int, size int, uid string) ([]*MDInof, error) {
 	orm := conn.NotesDB()
 	dataList := make([]*MDInof, 0)
 	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id != -1 LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
-	return dataList,err
+	return dataList, err
 }
 
 //获取回收站笔记
-func (this *MDInof) GetRecycler(pg int, size int, uid string) ([]*MDInof,error) {
+func (this *MDInof) GetRecycler(pg int, size int, uid string) ([]*MDInof, error) {
 	orm := conn.NotesDB()
 	dataList := make([]*MDInof, 0)
 	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id = -1 LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
-	return dataList,err
+	return dataList, err
 }
 
 //获取草稿笔记
-func (this *MDInof) DraftNote(pg int, size int, uid string) ([]*MDInof,error) {
+func (this *MDInof) DraftNote(pg int, size int, uid string) ([]*MDInof, error) {
 	orm := conn.NotesDB()
 	dataList := make([]*MDInof, 0)
 	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id = -2 LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
-	return dataList,err
+	return dataList, err
 }
 
 //按照笔记本和页数获取数据
-func (this *MDInof) GetNotesToPG(pg int, size int, uid string, notesid int) ([]*MDInof,error) {
+func (this *MDInof) GetNotesToPG(pg int, size int, uid string, notesid int) ([]*MDInof, error) {
 	orm := conn.NotesDB()
 	dataList := make([]*MDInof, 0)
 	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_notes_id = %d LIMIT %d,%d", uid, notesid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
-	return dataList,err
+	return dataList, err
 }
 
 //通过uid mid 判断是否存在数据
-func (this *MDInof) IsMD(uid,mid string) (bool,string,error) {
+func (this *MDInof) IsMD(uid, mid string) (bool, string, error) {
 	orm := conn.NotesDB()
-	err := orm.Where("uid = ? and md_id = ?", uid,mid).First(this).Error
-	if err != nil && err.Error() == "record not found"{
-		return false,"",err
+	err := orm.Where("uid = ? and md_id = ?", uid, mid).First(this).Error
+	if err != nil && err.Error() == "record not found" {
+		return false, "", err
 	}
-	return true,this.MDTitle,nil
+	return true, this.MDTitle, nil
 }
 
 //增加查看次数
@@ -105,9 +105,9 @@ func (this *MDInof) AddMDModifytimes(mid string) error {
 }
 
 //修改笔记名
-func (this *MDInof) UpdateMDNote(mdcontent string,mid string) error {
+func (this *MDInof) UpdateMDNote(mdcontent string, mid string) error {
 	orm := conn.NotesDB().Begin()
-	sqlMDInofStr := fmt.Sprintf("update tbl_md_info set md_title='%s',md_des='%s',md_img='%s',is_img=%d,md_opentime=%d,md_modifytimes=md_modifytimes+1 where md_id='%s'; ", 
+	sqlMDInofStr := fmt.Sprintf("update tbl_md_info set md_title='%s',md_des='%s',md_img='%s',is_img=%d,md_opentime=%d,md_modifytimes=md_modifytimes+1 where md_id='%s'; ",
 		this.MDTitle, this.MDDes, this.MDIMG, this.IsIMG, time.Now().Unix(), mid)
 	fmt.Println("[Sql] = ", sqlMDInofStr)
 	sqlMDTextStr := fmt.Sprintf("update tbl_md_text set md_content='%s' where md_id='%s'; ", mdcontent, mid)
@@ -126,47 +126,47 @@ func (this *MDInof) UpdateMDNote(mdcontent string,mid string) error {
 }
 
 //通过title 模糊查询笔记信息
-func (this *MDInof) SearchTitle(word,uid string) ([]*MDInof,error) {
+func (this *MDInof) SearchTitle(word, uid string) ([]*MDInof, error) {
 	orm := conn.NotesDB()
 	dataList := make([]*MDInof, 0)
 	sqlStr := fmt.Sprintf("SELECT * FROM tbl_md_info where uid = '%s' and md_title like '%%%s%%' LIMIT %d,%d", uid, word, 0, 100)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
-	return dataList,err
+	return dataList, err
 }
 
 //删除笔记到回收站 md_notes_id = -1
-func (this *MDInof) ToDEL(mdid,uid string) error{
+func (this *MDInof) ToDEL(mdid, uid string) error {
 	orm := conn.NotesDB()
-	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=-1 where md_id='%s' and uid = '%s'; ", mdid,uid)
+	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=-1 where md_id='%s' and uid = '%s'; ", mdid, uid)
 	return orm.Exec(sqlStr).Error
 }
 
 //永久删除笔记
-func (this *MDInof) Schen(mdid,uid string) error{
+func (this *MDInof) Schen(mdid, uid string) error {
 	orm := conn.NotesDB()
-	sqlStr := fmt.Sprintf("DELETE FROM tbl_md_info where md_id='%s' and uid = '%s' and md_notes_id in (-1,-2) ; ", mdid,uid)
+	sqlStr := fmt.Sprintf("DELETE FROM tbl_md_info where md_id='%s' and uid = '%s' and md_notes_id in (-1,-2) ; ", mdid, uid)
 	return orm.Exec(sqlStr).Error
 }
 
 //笔记转移到指定笔记本
-func (this *MDInof) NoteToNotes(mdid,uid string,notes int) error {
+func (this *MDInof) NoteToNotes(mdid, uid string, notes int) error {
 	orm := conn.NotesDB()
-	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=%d where md_id='%s' and uid = '%s'; ", notes,mdid,uid)
+	sqlStr := fmt.Sprintf("update tbl_md_info set md_notes_id=%d where md_id='%s' and uid = '%s'; ", notes, mdid, uid)
 	return orm.Exec(sqlStr).Error
 }
 
-type CountNumber struct{
-		Count int64
-	}
+type CountNumber struct {
+	Count int64
+}
 
 //获取指定用户笔记数量
-func (this *MDInof) GetNoteCount(uid string) (int64,error){
+func (this *MDInof) GetNoteCount(uid string) (int64, error) {
 	orm := conn.NotesDB()
 	var count int64
 	err := orm.Model(&this).Where("uid = ?", uid).Count(&count).Error
-	if err != nil{
-		return 0,err
+	if err != nil {
+		return 0, err
 	}
 
-	return count,nil
+	return count, nil
 }

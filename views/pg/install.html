@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>漫鸽笔记</title>
+<!--导入-->
+<link rel="stylesheet" href="../static/plugin/layui/css/layui.css?v=3" media="all">
+<script src="../static/plugin/layui/layui.js?v=3"></script>
+<script src="../static/js/jquery-3.3.1.min.js?v=1"></script>
+<script src="../static/js/man.js?v=1"></script>
+
+<style type="text/css">
+	 .bk{box-shadow: 6px 6px 10px #888888;border-radius:10px;height: 480px;width: 66%;background-color: #fff;margin: 0 auto;
+	 	padding: 8px;}
+</style>
+
+</head>
+<body style="background-color: #ddd;">
+	<br><br>
+	<div class="bk">
+		<div style="text-align: center;">
+			<h1>ManGe云笔记 安装向导</h1>
+		</div>
+		<br>
+
+
+		<div id="step1" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2>
+				欢迎使用ManGe云笔记<br>
+				Gthab地址 : https://github.com/mangenotwork/ManGe-Notes<br>
+				下载地址  ： 1060290526（加qq群下载最新版本）<br>
+				QQ交流群  ： 1060290526
+			</h2>
+			<br>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg" onclick="Start();">开始安装</a>
+		</div>
+
+		<div id="step2" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 创建数据库（选择如下一种）</h2>
+			<br>
+			<a type="button" onclick="ToStep('mysql')" class="layui-btn layui-btn-radius layui-btn-lg">已有Mysql 数据库</a>
+			<a type="button" onclick="ToStep('pgsql')" class="layui-btn layui-btn-radius layui-btn-lg">已有Postgresql 数据库</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">没有 数据库</a>
+		</div>
+
+		<div id="step2_mysql" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 在Mysql 数据库创建数据</h2>
+			<br>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> host</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> port</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> user</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> password</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 数据库</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">（输入mysql服务已有数据库）
+			    </div>
+			  </div>
+			<br>
+			<a type="button" onclick="ToStep('2')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">测试连接</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
+		</div>
+
+		<div id="step2_pgsql" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 在PostgreSQL 数据库创建数据</h2>
+			<br>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> host</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> user</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> password</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 数据库</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">（输入PostgreSQL服务已有数据库）
+			    </div>
+			  </div>
+			<br>
+			<a type="button" onclick="ToStep('2')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">测试连接</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
+		</div>
+
+		<div id="step3" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 媒体资源存放位置（选择如下一种）</h2>
+			<br>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">本地磁盘</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">阿里云对象存储</a>
+			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">腾讯云对象存储</a>
+		</div>
+
+		<div id="step4" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 设置原始账号 </h2>
+			<br>
+			
+		</div>
+
+	</div>
+</body>
+
+<script type="text/javascript">
+	var step = "<<<.step>>>";
+	console.log(step);
+
+	function Show(){
+		switch(step) {
+	    	case "1":
+	 			$("#step1").show();
+	    		break;
+	    	case "2":
+	 			$("#step2").show();
+	    		break;
+	    	case "3":
+	 			$("#step3").show();
+	    		break;
+	    	case "4":
+	 			$("#step4").show();
+	    		break;
+	    	default:
+	    		console.log("step");
+		} 
+	}
+
+	Show();
+
+	function HideAll(){
+		$("#step1").hide();
+		$("#step2").hide();
+		$("#step2_mysql").hide();
+		$("#step2_pgsql").hide();
+		$("#step3").hide();
+		$("#step4").hide();
+	}
+
+	function ToStep(id){
+		HideAll()
+		switch(id) {
+	    	case "1":
+	 			$("#step1").show();
+	    		break;
+	    	case "2":
+	 			$("#step2").show();
+	    		break;
+	    	case "3":
+	 			$("#step3").show();
+	    		break;
+	    	case "4":
+	 			$("#step4").show();
+	    		break;
+	    	case "mysql":
+	    		$("#step2_mysql").show();
+	    		break;
+	    	case "pgsql":
+	    		$("#step2_pgsql").show();
+	    		break;
+	    	default:
+	    		console.log("step");
+		} 
+	}
+
+	function Start(){
+		pubAjaxGET("/api/install/start",function(datas){
+			console.log(datas);
+		})
+	}
+
+	function MysqlTest(){
+		//   /api/install/mysqltset
+	}
+
+	function Mysql(){
+		//   /api/install/mysql
+	}
+
+	function PgsqlTest(){
+		//   /api/install/pgsqltset
+	}
+
+	function Pgsql(){
+		//   /api/install/pgsql
+	}
+
+	function Localsql(){
+		//   /api/install/localsql
+	}
+
+
+</script>
+
+</html>
