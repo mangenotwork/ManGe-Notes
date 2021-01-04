@@ -58,7 +58,7 @@ type InstallInfo struct {
 	Step          int    `json:"step"`     //安装进度
 	DBType        string `json:"db_type"`  //数据存放类型， mysql,pgsql,sqlite
 	MysqlHost     string `json:"mysql_host"`
-	MysqlPort     int    `json:"mysql_port"`
+	MysqlPort     string `json:"mysql_port"`
 	MysqlUser     string `json:"mysql_user"`
 	MysqlPassword string `json:"mysql_password"`
 	MysqlDBName   string `json:"mysql_dbname"`
@@ -66,11 +66,25 @@ type InstallInfo struct {
 	PgsqlUser     string `json:"pgsql_user"`
 	PgsqlPassword string `json:"pgsql_password"`
 	PgsqlDBName   string `json:"pgsql_dbname"`
-	cPath         string `json:"sqlite_path"`
+	SqlitePath    string `json:"sqlite_path"`
 	MediaType     string `json:"media_type"` //多媒体资源存放位置
 	MediaPath     string `json:"media_path"`
 	Aliyun        string `json:"aliyun"`     //阿里云对象存储
 	Tencentyun    string `json:"tencentyun"` //腾讯云对象存储
+}
+
+//写入数据到install
+func WriteInstallInfo(installInfo string) error {
+	f, err := os.Create("./install.json")
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteString(installInfo)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //开始安装
@@ -151,26 +165,115 @@ func (this *LoginController) InstallMysql() {
 	//mysql 连接测试
 	isconn, _ := conn.MysqlConnTest(host, port, user, password, dbname)
 	if !isconn {
-		this.RetuenJson(0, 0, "连接不上mysql.")
+		this.RetuenJson(1, 0, "连接不上mysql.")
 		return
 	}
 
 	//将信息写入 install.json
+	infodata := OpenInstallFile()
+	infodata.Step = 3
+	infodata.DBType = "mysql"
+	infodata.MysqlHost = host
+	infodata.MysqlPort = port
+	infodata.MysqlUser = user
+	infodata.MysqlPassword = password
+	infodata.MysqlDBName = dbname
+
+	installInfo, err := json.Marshal(infodata)
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
+	err = WriteInstallInfo(string(installInfo))
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
 
 	this.RetuenJson(0, 0, "ok")
 }
 
 //测试pgsql连接
 func (this *LoginController) InstallPgsqlTset() {
-	this.RetuenJson(0, 0, "ok")
+	host := this.GetString("host")
+	user := this.GetString("user")
+	password := this.GetString("password")
+	dbname := this.GetString("dbname")
+	log.Println(host, user, password, dbname)
+
+	if host == "" || user == "" || password == "" || dbname == "" {
+		this.RetuenJson(1, 0, "pgsql连接信息不全")
+	}
+
+	//pgsql 测试
+	isconn, err := conn.PgsqlConnTest(host, user, password, dbname)
+	if isconn {
+		this.RetuenJson(0, 0, "连接成功")
+		return
+	}
+	this.RetuenJson(1, 0, err)
 }
 
 //pgsql
 func (this *LoginController) InstallPgsql() {
+	host := this.GetString("host")
+	user := this.GetString("user")
+	password := this.GetString("password")
+	dbname := this.GetString("dbname")
+	log.Println(host, user, password, dbname)
+
+	if host == "" || user == "" || password == "" || dbname == "" {
+		this.RetuenJson(1, 0, "pgsql连接信息不全")
+	}
+
+	//pgsql 测试
+	isconn, _ := conn.PgsqlConnTest(host, user, password, dbname)
+	if !isconn {
+		this.RetuenJson(1, 0, "连接不上pgsql.")
+		return
+	}
+
+	//将信息写入 install.json
+	infodata := OpenInstallFile()
+	infodata.Step = 3
+	infodata.DBType = "pgsql"
+	infodata.PgsqlHost = host
+	infodata.PgsqlUser = user
+	infodata.PgsqlPassword = password
+	infodata.PgsqlDBName = dbname
+
+	installInfo, err := json.Marshal(infodata)
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
+	err = WriteInstallInfo(string(installInfo))
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
+
 	this.RetuenJson(0, 0, "ok")
 }
 
 //sqlite
 func (this *LoginController) InstallSqlite() {
-	this.RetuenJson(0, 0, "ok")
+	isconn, err := conn.CreateSqliteDB()
+	log.Println("sqlite 连接 = ", isconn, err)
+	if isconn {
+
+		//将信息写入 install.json
+		infodata := OpenInstallFile()
+		infodata.Step = 3
+		infodata.DBType = "sqlite"
+		infodata.SqlitePath = "./db/base.db"
+		installInfo, err := json.Marshal(infodata)
+		if err != nil {
+			this.RetuenJson(1, 0, err)
+		}
+		err = WriteInstallInfo(string(installInfo))
+		if err != nil {
+			this.RetuenJson(1, 0, err)
+		}
+		this.RetuenJson(0, 0, "创建成功")
+		return
+	}
+
+	this.RetuenJson(1, 0, err)
 }

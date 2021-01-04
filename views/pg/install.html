@@ -11,13 +11,13 @@
 <script src="../static/js/man.js?v=1"></script>
 
 <style type="text/css">
-	 .bk{box-shadow: 6px 6px 10px #888888;border-radius:10px;height: 480px;width: 66%;background-color: #fff;margin: 0 auto;
+	 .bk{box-shadow: 6px 6px 10px #888888;border-radius:10px;height: 520px;width: 66%;background-color: #fff;margin: 0 auto;
 	 	padding: 8px;}
 </style>
 
 </head>
 <body style="background-color: #ddd;">
-	<br><br>
+	<br><br><br><br>
 	<div class="bk">
 		<div style="text-align: center;">
 			<h1>ManGe云笔记 安装向导</h1>
@@ -41,7 +41,7 @@
 			<br>
 			<a type="button" onclick="ToStep('mysql')" class="layui-btn layui-btn-radius layui-btn-lg">已有Mysql 数据库</a>
 			<a type="button" onclick="ToStep('pgsql')" class="layui-btn layui-btn-radius layui-btn-lg">已有Postgresql 数据库</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">没有 数据库</a>
+			<a type="button" onclick="Localsql()" class="layui-btn layui-btn-radius layui-btn-lg">没有 数据库</a>
 		</div>
 
 		<div id="step2_mysql" style="margin-top: 24px;margin-left: 24px;display: none;">
@@ -50,37 +50,37 @@
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> host</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="mysql_host" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> port</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="mysql_port" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> user</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="mysql_user" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> password</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="mysql_password" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> 数据库</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">（输入mysql服务已有数据库）
+			      <input type="text" id="mysql_dbname" placeholder="" class="layui-input" style="width: 350px;">（输入mysql服务已有数据库）
 			    </div>
 			  </div>
 			<br>
 			<a type="button" onclick="ToStep('2')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">测试连接</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
+			<a type="button" onclick="MysqlTest()" class="layui-btn layui-btn-radius layui-btn-lg">测试连接</a>
+			<a type="button" onclick="Mysql()" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
 		</div>
 
 		<div id="step2_pgsql" style="margin-top: 24px;margin-left: 24px;display: none;">
@@ -89,31 +89,31 @@
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> host</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="pgsql_host" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> user</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="pgsql_user" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> password</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">
+			      <input type="text" id="pgsql_password" placeholder="" class="layui-input" style="width: 350px;">
 			    </div>
 			  </div>
 			<div class="layui-form-item">
 			    <label class="layui-form-label"> 数据库</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="title" placeholder="" class="layui-input" style="width: 350px;">（输入PostgreSQL服务已有数据库）
+			      <input type="text" id="pgsql_dnname" placeholder="" class="layui-input" style="width: 350px;">（输入PostgreSQL服务已有数据库）
 			    </div>
 			  </div>
 			<br>
 			<a type="button" onclick="ToStep('2')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">测试连接</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
+			<a type="button" onclick="PgsqlTest()" class="layui-btn layui-btn-radius layui-btn-lg">测试连接</a>
+			<a type="button" onclick="Pgsql()" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
 		</div>
 
 		<div id="step3" style="margin-top: 24px;margin-left: 24px;display: none;">
@@ -201,22 +201,59 @@
 
 	function MysqlTest(){
 		//   /api/install/mysqltset
+		var host = $("#mysql_host").val();
+		var port = $("#mysql_port").val();
+		var user = $("#mysql_user").val();
+		var password = $("#mysql_password").val();
+		var dbname = $("#mysql_dbname").val();
+		var url = "/api/install/mysqltset?host="+host+"&port="+port+"&user="+user+"&password="+password+"&dbname="+dbname;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+		})
 	}
 
 	function Mysql(){
 		//   /api/install/mysql
+		var host = $("#mysql_host").val();
+		var port = $("#mysql_port").val();
+		var user = $("#mysql_user").val();
+		var password = $("#mysql_password").val();
+		var dbname = $("#mysql_dbname").val();
+		var url = "/api/install/mysql?host="+host+"&port="+port+"&user="+user+"&password="+password+"&dbname="+dbname;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+		})
 	}
 
 	function PgsqlTest(){
 		//   /api/install/pgsqltset
+		var host = $("#pgsql_host").val();
+		var user = $("#pgsql_user").val();
+		var password = $("#pgsql_password").val();
+		var dbname = $("#pgsql_dbname").val();
+		var url = "/api/install/pgsqltset?host="+host+"&user="+user+"&password="+password+"&dbname="+dbname;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+		})
 	}
 
 	function Pgsql(){
 		//   /api/install/pgsql
+		var host = $("#pgsql_host").val();
+		var user = $("#pgsql_user").val();
+		var password = $("#pgsql_password").val();
+		var dbname = $("#pgsql_dbname").val();
+		var url = "/api/install/pgsql?host="+host+"&user="+user+"&password="+password+"&dbname="+dbname;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+		})
 	}
 
 	function Localsql(){
 		//   /api/install/localsql
+		pubAjaxGET("/api/install/localsql",function(datas){
+			console.log(datas);
+		})
 	}
 
 
