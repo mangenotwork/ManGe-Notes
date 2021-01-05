@@ -119,9 +119,81 @@
 		<div id="step3" style="margin-top: 24px;margin-left: 24px;display: none;">
 			<h2> > 媒体资源存放位置（选择如下一种）</h2>
 			<br>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">本地磁盘</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">阿里云对象存储</a>
-			<a type="button" class="layui-btn layui-btn-radius layui-btn-lg">腾讯云对象存储</a>
+			<a type="button" onclick="ToStep('step3_local')" class="layui-btn layui-btn-radius layui-btn-lg">本地磁盘</a>
+			<a type="button" onclick="ToStep('step3_oss')" class="layui-btn layui-btn-radius layui-btn-lg">阿里云对象存储</a>
+			<a type="button" onclick="ToStep('step3_cos')" class="layui-btn layui-btn-radius layui-btn-lg">腾讯云对象存储</a>
+		</div>
+
+		<div id="step3_local" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 多媒体资源存放到本地</h2>
+			<br>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 本地路径</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="media_local_path" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<br>
+			<a type="button" onclick="ToStep('3')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
+			<a type="button" onclick="LocalMedia()" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
+		</div>
+
+		<div id="step3_oss" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 多媒体资源存放到阿里云OSS</h2>
+			<br>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> oss_access_keyid</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="oss_access_keyid" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> oss_secret</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="oss_secret" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> oss_endpoint</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="oss_endpoint" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> oss_bucketName</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="oss_bucketName" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<br>
+			<a type="button" onclick="ToStep('3')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
+			<a type="button" onclick="AliMedia()" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
+		</div>
+
+		<div id="step3_cos" style="margin-top: 24px;margin-left: 24px;display: none;">
+			<h2> > 多媒体资源存放到腾讯云COS</h2>
+			<br>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> cos_url</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="cos_url" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> cos_secretid</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="cos_secretid" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> cos_secretkey</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="cos_secretkey" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<br>
+			<a type="button" onclick="ToStep('3')" class="layui-btn layui-btn-radius layui-btn-lg">返回上一步</a>
+			<a type="button" onclick="TencentMedia()" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
 		</div>
 
 		<div id="step4" style="margin-top: 24px;margin-left: 24px;display: none;">
@@ -165,6 +237,9 @@
 		$("#step2_pgsql").hide();
 		$("#step3").hide();
 		$("#step4").hide();
+		$("#step3_local").hide();
+		$("#step3_oss").hide();
+		$("#step3_cos").hide();
 	}
 
 	function ToStep(id){
@@ -187,6 +262,15 @@
 	    		break;
 	    	case "pgsql":
 	    		$("#step2_pgsql").show();
+	    		break;
+	    	case "step3_local":
+	    		$("#step3_local").show();
+	    		break;
+	    	case "step3_oss":
+	    		$("#step3_oss").show();
+	    		break;
+	    	case "step3_cos":
+	    		$("#step3_cos").show();
 	    		break;
 	    	default:
 	    		console.log("step");
@@ -252,6 +336,38 @@
 	function Localsql(){
 		//   /api/install/localsql
 		pubAjaxGET("/api/install/localsql",function(datas){
+			console.log(datas);
+		})
+	}
+
+	function LocalMedia(){
+		//		/install/localmedia
+		var path = $("#media_local_path").val();
+		var url = "/api/install/localmedia?path="+path;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+		})
+	}
+
+	function AliMedia(){
+		//		/install/alimedia
+		var oss_access_keyid = $("#oss_access_keyid").val();
+		var oss_secret = $("#oss_secret").val();
+		var oss_endpoint = $("#oss_endpoint").val();
+		var oss_bucketName = $("#oss_bucketName").val();
+		var url = "/api/install/alimedia?oss_access_keyid="+oss_access_keyid+"&oss_secret="+oss_secret+"&oss_endpoint="+oss_endpoint+"&oss_bucketName="+oss_bucketName;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+		})
+	}
+
+	function TencentMedia(){
+		//		/install/tencentmedia
+		var cos_url = $("#cos_url").val();
+		var cos_secretid = $("#cos_secretid").val();
+		var cos_secretkey = $("#cos_secretkey").val();
+		var url = "/api/install/tencentmedia?cos_url="+cos_url+"&cos_secretid="+cos_secretid+"&cos_secretkey="+cos_secretkey;
+		pubAjaxGET(url,function(datas){
 			console.log(datas);
 		})
 	}

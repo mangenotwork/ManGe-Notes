@@ -39,12 +39,16 @@ func init() {
 	//api
 	api := beego.NewNamespace("/api",
 		//install
-		beego.NSRouter("/install/start", &controllers.LoginController{}, "get:InstallStart"),         //开始安装
-		beego.NSRouter("/install/mysqltset", &controllers.LoginController{}, "get:InstallMysqlTset"), //测试mysql连接
-		beego.NSRouter("/install/mysql", &controllers.LoginController{}, "get:InstallMysql"),         // mysql
-		beego.NSRouter("/install/pgsqltset", &controllers.LoginController{}, "get:InstallPgsqlTset"), //测试pgsql连接
-		beego.NSRouter("/install/pgsql", &controllers.LoginController{}, "get:InstallPgsql"),         // pgsql
-		beego.NSRouter("/install/localsql", &controllers.LoginController{}, "get:InstallSqlite"),     // sqlite
+		beego.NSRouter("/install/start", &controllers.InstallController{}, "get:InstallStart"),               //开始安装
+		beego.NSRouter("/install/mysqltset", &controllers.InstallController{}, "get:InstallMysqlTset"),       //测试mysql连接
+		beego.NSRouter("/install/mysql", &controllers.InstallController{}, "get:InstallMysql"),               // mysql
+		beego.NSRouter("/install/pgsqltset", &controllers.InstallController{}, "get:InstallPgsqlTset"),       //测试pgsql连接
+		beego.NSRouter("/install/pgsql", &controllers.InstallController{}, "get:InstallPgsql"),               // pgsql
+		beego.NSRouter("/install/localsql", &controllers.InstallController{}, "get:InstallSqlite"),           // sqlite
+		beego.NSRouter("/install/localmedia", &controllers.InstallController{}, "get:InstallLocalMedia"),     //本地磁盘存储多媒体资源
+		beego.NSRouter("/install/alimedia", &controllers.InstallController{}, "get:InstallAliyunMedia"),      //阿里云存储多媒体资源
+		beego.NSRouter("/install/tencentmedia", &controllers.InstallController{}, "get:InstallTencentMedia"), //腾讯云存储多媒体资源
+		//创建账号
 	)
 
 	beego.AddNamespace(api)

@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	object "github.com/mangenotwork/ManGe-Notes/object"
+	"github.com/mangenotwork/ManGe-Notes/object"
 	//util "man/ManNotes/util"
-	models "github.com/mangenotwork/ManGe-Notes/models"
-	//rdb "man/ManNotes/models/redis"
+	"github.com/mangenotwork/ManGe-Notes/dao"
+	"github.com/mangenotwork/ManGe-Notes/models"
 
 	"github.com/astaxie/beego"
 	"github.com/rs/xid"
@@ -46,7 +46,7 @@ func (this *SUCai) UploadImg(uid string, imgpath string, imgsize int64, imgdatas
 		Size:    imgsize,
 		Imgtag:  tags,
 	}
-	imginfo.CreateImg()
+	new(dao.DaoIMGInfo).CreateImg(imginfo)
 
 	//2.返回图片访问链接
 
@@ -78,7 +78,7 @@ func (this *SUCai) ADDLinkImg(uid string, datas *object.LinkImgData) (code int, 
 		Size:    0,
 		Imgtag:  tags,
 	}
-	err := imginfo.CreateImg()
+	err := new(dao.DaoIMGInfo).CreateImg(imginfo)
 	if err != nil {
 		fmt.Println("添加网络图片链接错误")
 		return 0, 1, "添加网络图片链接错误"
@@ -89,7 +89,7 @@ func (this *SUCai) ADDLinkImg(uid string, datas *object.LinkImgData) (code int, 
 
 //获取我的图片 GetMyImg
 func (this *SUCai) GetMyImg(uid string) (code int, count int, data interface{}) {
-	rdata, err := new(models.IMGInfo).GetMyImg(uid)
+	rdata, err := new(dao.DaoIMGInfo).GetMyImg(uid)
 	if err != nil {
 		fmt.Println("获取我的图片错误 : ", err)
 		return 0, 1, "获取我的图片错误"
@@ -113,7 +113,7 @@ func (this *SUCai) GetMyImg(uid string) (code int, count int, data interface{}) 
 //分享到 图片库 ToMangeImg
 func (this *SUCai) ToMangeImg(uid string, imgid int) (code int, count int, data interface{}) {
 	//图片权限验证
-	ismyImg, imginfo := new(models.IMGInfo).IsMyImg(imgid, uid)
+	ismyImg, imginfo := new(dao.DaoIMGInfo).IsMyImg(imgid, uid)
 	fmt.Println(ismyImg, imginfo)
 	if !ismyImg {
 
@@ -127,7 +127,7 @@ func (this *SUCai) ToMangeImg(uid string, imgid int) (code int, count int, data 
 			Size:    imginfo.Size,
 			Imgtag:  imginfo.Imgtag,
 		}
-		addmangeimg.AddSCImg()
+		new(dao.DaoSCIMGInfo).AddSCImg(addmangeimg)
 		return 1, 1, "感谢你的分享"
 	}
 	return 0, 1, "你没有权限操作此图片"
@@ -136,7 +136,7 @@ func (this *SUCai) ToMangeImg(uid string, imgid int) (code int, count int, data 
 
 // GetMangeImg 获取漫鸽图库
 func (this *SUCai) GetMangeImg(uid string) (code int, count int, data interface{}) {
-	rdata, err := new(models.SCIMGInfo).MangeImgList()
+	rdata, err := new(dao.DaoSCIMGInfo).MangeImgList()
 	if err != nil {
 		fmt.Println("获取我的图片错误 : ", err)
 		return 0, 1, "获取我的图片错误"

@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	rdb "github.com/mangenotwork/ManGe-Notes/models/redis"
-	object "github.com/mangenotwork/ManGe-Notes/object"
-	servers "github.com/mangenotwork/ManGe-Notes/servers"
+	"github.com/mangenotwork/ManGe-Notes/object"
+	rdb "github.com/mangenotwork/ManGe-Notes/redis"
+	"github.com/mangenotwork/ManGe-Notes/servers"
 )
 
 type PGController struct {
@@ -21,26 +21,14 @@ func (this *PGController) LoginPG() {
 	this.TplName = "pg/login.html"
 }
 
-func OpenInstallFile() InstallInfo {
-	file, _ := os.Open("./install.json")
-	defer file.Close()
-	decoder := json.NewDecoder(file)
-	installInfo := InstallInfo{}
-	err := decoder.Decode(&installInfo)
-	if err != nil {
-		log.Println("Error:", err)
-	}
-	return installInfo
-}
-
 //Install  安装页面
 func (this *PGController) Install() {
 	step := 1
 	//检查安装文件
-	isInstall := FileExist("./install.json")
+	isInstall := FileExist(object.InstallJsonPath)
 	if isInstall {
 		//读取文件
-		installInfo := OpenInstallFile()
+		installInfo := object.OpenInstallFile()
 		log.Println("masterconf = ", installInfo)
 		step = installInfo.Step
 	}

@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
-	models "github.com/mangenotwork/ManGe-Notes/models"
-	object "github.com/mangenotwork/ManGe-Notes/object"
-	util "github.com/mangenotwork/ManGe-Notes/util"
-	//rdb "man/ManNotes/models/redis"
+	"github.com/mangenotwork/ManGe-Notes/dao"
+	"github.com/mangenotwork/ManGe-Notes/models"
+	"github.com/mangenotwork/ManGe-Notes/object"
+	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
 type NotesServers struct{}
@@ -26,8 +26,8 @@ func (this *NotesServers) CreateNotes(datas *object.CNotes, uid string) (code in
 		NotesCreatetime: time.Now().Unix(),
 	}
 	//1. 检查笔记本命名是否存在
-	if notesdatas.IsNotesName(datas.NotesName, uid) {
-		notesdatas.AddNotes()
+	if new(dao.DaoNotes).IsNotesName(datas.NotesName, uid) {
+		new(dao.DaoNotes).AddNotes(notesdatas)
 		return 1, 1, "创建成功"
 	}
 	return 2, 2, "笔记本命名已存在"
@@ -36,13 +36,12 @@ func (this *NotesServers) CreateNotes(datas *object.CNotes, uid string) (code in
 //获取所有笔记本
 func (this *NotesServers) AllNotes(uid string) (code int, count int, data interface{}) {
 
-	defnumber, _ := new(models.Notes).NotesNumber(uid, 0)
+	defnumber, _ := new(dao.DaoNotes).NotesNumber(uid, 0)
 	fmt.Println("默认笔记本笔记数量=", defnumber)
-	darnumber, _ := new(models.Notes).NotesNumber(uid, -2)
-	recnumber, _ := new(models.Notes).NotesNumber(uid, -1)
-	allnumber, _ := new(models.Notes).NotesAllNumber(uid)
-
-	allnotes, err := new(models.Notes).GetNotesPgs(uid, 0, 20)
+	darnumber, _ := new(dao.DaoNotes).NotesNumber(uid, -2)
+	recnumber, _ := new(dao.DaoNotes).NotesNumber(uid, -1)
+	allnumber, _ := new(dao.DaoNotes).NotesAllNumber(uid)
+	allnotes, err := new(dao.DaoNotes).GetNotesPgs(uid, 0, 20)
 	if err != nil {
 		fmt.Println(err)
 		return 1, 1, "获取所有笔记本错误，后端错误"
@@ -62,7 +61,7 @@ func (this *NotesServers) AllNotes(uid string) (code int, count int, data interf
 //管理模块 获取所有笔记本信息
 func (this *NotesServers) GetAllNotesInfo(uid string) (count int, data interface{}) {
 	//allnotes,err := new(models.Notes).GetNotesPgs(uid,0,20)
-	allnotes, err := new(models.Notes).GetNotesPgsInfo(uid, 0, 20)
+	allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
 	if err != nil {
 		fmt.Println(err)
 		return 0, "获取所有笔记本错误，后端错误"
@@ -87,7 +86,7 @@ func (this *NotesServers) GetAllNotesInfo(uid string) (count int, data interface
 
 //修改笔记本信息
 func (this *NotesServers) UpdateNotesInfo(datas *object.UpdateNotes, uid string) (code int, count int, data string) {
-	err := new(models.Notes).UpdateInfo(datas, uid)
+	err := new(dao.DaoNotes).UpdateInfo(datas, uid)
 	if err != nil {
 		fmt.Println("修改笔记信息失败", err)
 		return 0, 1, "修改笔记信息失败"
@@ -98,7 +97,7 @@ func (this *NotesServers) UpdateNotesInfo(datas *object.UpdateNotes, uid string)
 //删除笔记本
 func (this *NotesServers) DeleteNotes(notesid string, uid string) (code int, count int, data string) {
 	nid, _ := new(util.Str).NumberToInt(notesid)
-	err := new(models.Notes).DeleteInfo(nid, uid)
+	err := new(dao.DaoNotes).DeleteInfo(nid, uid)
 	if err != nil {
 		fmt.Println("修改笔记信息失败", err)
 		return 0, 1, "修改笔记信息失败"
@@ -109,7 +108,7 @@ func (this *NotesServers) DeleteNotes(notesid string, uid string) (code int, cou
 
 //NotesChartData  图表模块 获取笔记本笔记数量分部
 func (this *NotesServers) NotesChartData(uid string) (code int, namelist []string, data interface{}) {
-	allnotes, err := new(models.Notes).GetNotesPgsInfo(uid, 0, 20)
+	allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
 	if err != nil {
 		fmt.Println(err)
 		return 0, make([]string, 0), "获取所有笔记本错误，后端错误"
@@ -154,16 +153,16 @@ func (this *NotesServers) MyChartData(uid string) {
 //UsedSpace  图表模块 我的使用空间
 func (this *NotesServers) UsedSpace(uid string) (data interface{}) {
 	//笔记总数
-	notecount, noteErr := new(models.MDInof).GetNoteCount(uid)
+	notecount, noteErr := new(dao.DaoMDInof).GetNoteCount(uid)
 	fmt.Println(notecount, noteErr)
 	//素材存储空间
-	sizeSpace, sizeErr := new(models.IMGInfo).GetSize(uid)
+	sizeSpace, sizeErr := new(dao.DaoIMGInfo).GetSize(uid)
 	fmt.Println(sizeSpace, sizeErr)
 	var sizeValue float64
 	sizeValue = float64(sizeSpace) / 1024 / 1024
 	sizeStr := fmt.Sprintf("%fM", sizeValue)
 	//笔记本数量
-	notesNumber, notesErr := new(models.Notes).GetNotesCount(uid)
+	notesNumber, notesErr := new(dao.DaoNotes).GetNotesCount(uid)
 	fmt.Println(notesNumber, notesErr)
 
 	fmt.Println(int((float32(notecount) / 100) * 100))

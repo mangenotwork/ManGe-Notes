@@ -1,11 +1,5 @@
 package models
 
-import (
-	"fmt"
-
-	conn "github.com/mangenotwork/ManGe-Notes/conn"
-)
-
 // tbl_sc_img
 type SCIMGInfo struct {
 	Id         int    `gorm:"column:id;primary_key;AUTO_INCREMENT"` //图片ID
@@ -24,18 +18,4 @@ type SCIMGInfo struct {
 
 func (this *SCIMGInfo) TableName() string {
 	return "tbl_sc_img"
-}
-
-func (this *SCIMGInfo) AddSCImg() error {
-	orm := conn.NotesDB()
-	return orm.Create(this).Error
-}
-
-//获取漫鸽图库
-func (this *SCIMGInfo) MangeImgList() ([]*SCIMGInfo, error) {
-	orm := conn.NotesDB()
-	dataList := make([]*SCIMGInfo, 0)
-	sqlStr := fmt.Sprintf("SELECT * FROM tbl_sc_img LIMIT %d,%d", 0, 100)
-	err := orm.Raw(sqlStr).Scan(&dataList).Error
-	return dataList, err
 }

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	rdb "github.com/mangenotwork/ManGe-Notes/models/redis"
+	rdb "github.com/mangenotwork/ManGe-Notes/redis"
 	util "github.com/mangenotwork/ManGe-Notes/util"
 
 	"github.com/astaxie/beego"

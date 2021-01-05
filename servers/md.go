@@ -10,10 +10,11 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/mangenotwork/ManGe-Notes/dao"
+
 	models "github.com/mangenotwork/ManGe-Notes/models"
 	object "github.com/mangenotwork/ManGe-Notes/object"
 	util "github.com/mangenotwork/ManGe-Notes/util"
-	//rdb "man/ManNotes/models/redis"
 )
 
 type MDServers struct{}
@@ -76,7 +77,7 @@ func (this *MDServers) CreateMDNote(datas *object.CMDData, uid string) (code int
 		MDContent: mdTxt,
 	}
 
-	err := mdinfos.InsertMDNote(mdText)
+	err := new(dao.DaoMDInof).InsertMDNote(mdText, mdinfos)
 	if err != nil {
 		fmt.Println("创建笔记错误", err)
 		return 0, 1, "创建笔记错误"
@@ -115,7 +116,7 @@ func (this *MDServers) CreateMDToDraft(datas *object.CMDData, uid string) (code 
 		MDContent: mdTxt,
 	}
 
-	err := mdinfos.InsertMDNote(mdText)
+	err := new(dao.DaoMDInof).InsertMDNote(mdText, mdinfos)
 	if err != nil {
 		fmt.Println("创建笔记错误", err)
 		return 0, 1, "创建笔记错误"
@@ -127,7 +128,7 @@ func (this *MDServers) CreateMDToDraft(datas *object.CMDData, uid string) (code 
 //修改笔记内容
 func (this *MDServers) ModifyMDNote(datas *object.CMDData, uid string, mdid string) (code int, count int, data string) {
 	//1. 权限判断
-	ismd, _, err := new(models.MDInof).IsMD(uid, mdid)
+	ismd, _, err := new(dao.DaoMDInof).IsMD(uid, mdid)
 	if err != nil && err.Error() != "record not found" {
 		fmt.Println("判断查看MD权限错误，错误信息:", err)
 		return 0, 1, "判断查看MD权限错误，错误信息"
@@ -146,7 +147,7 @@ func (this *MDServers) ModifyMDNote(datas *object.CMDData, uid string, mdid stri
 
 		//3. 修改笔记内容
 		fmt.Println("\n\n\n****************修改笔记内容", mdTxt, "\n\n\n**************************")
-		updateerr := mdinfos.UpdateMDNote(mdTxt, mdid)
+		updateerr := new(dao.DaoMDInof).UpdateMDNote(mdinfos, mdTxt, mdid)
 		if updateerr != nil {
 			fmt.Println("修改笔记错误:", updateerr)
 			return 0, 1, "修改笔记错误"
@@ -185,7 +186,7 @@ func (this *MDServers) NoteListFormat(datas []*models.MDInof) (returndatas []*ob
 //获取所有笔记
 func (this *MDServers) GetAllNote(pg int, uid string) (code int, count int, data interface{}) {
 	pgsize := (pg - 1) * 20
-	datas, err := new(models.MDInof).GetToPG(pgsize, 20, uid)
+	datas, err := new(dao.DaoMDInof).GetToPG(pgsize, 20, uid)
 	if err != nil {
 		fmt.Println("获取所有笔记错误，后台错误", err)
 		return 0, 1, "获取所有笔记错误"
@@ -198,7 +199,7 @@ func (this *MDServers) GetAllNote(pg int, uid string) (code int, count int, data
 //获取回收站的笔记
 func (this *MDServers) GetRecyclerNote(pg int, uid string) (code int, count int, data interface{}) {
 	pgsize := (pg - 1) * 20
-	datas, err := new(models.MDInof).GetRecycler(pgsize, 20, uid)
+	datas, err := new(dao.DaoMDInof).GetRecycler(pgsize, 20, uid)
 	if err != nil {
 		fmt.Println("获取所有笔记错误，后台错误", err)
 		return 0, 1, "获取所有笔记错误"
@@ -211,7 +212,7 @@ func (this *MDServers) GetRecyclerNote(pg int, uid string) (code int, count int,
 //DraftNote 获取草稿笔记
 func (this *MDServers) DraftNote(pg int, uid string) (code int, count int, data interface{}) {
 	pgsize := (pg - 1) * 20
-	datas, err := new(models.MDInof).DraftNote(pgsize, 20, uid)
+	datas, err := new(dao.DaoMDInof).DraftNote(pgsize, 20, uid)
 	if err != nil {
 		fmt.Println("获取所有笔记错误，后台错误", err)
 		return 0, 1, "获取所有笔记错误"
@@ -224,7 +225,7 @@ func (this *MDServers) DraftNote(pg int, uid string) (code int, count int, data 
 //GetNoteList 获取笔记本下的笔记
 func (this *MDServers) GetNoteList(notesid int, pg int, uid string) (code int, count int, data interface{}) {
 	pgsize := (pg - 1) * 20
-	datas, err := new(models.MDInof).GetNotesToPG(pgsize, 20, uid, notesid)
+	datas, err := new(dao.DaoMDInof).GetNotesToPG(pgsize, 20, uid, notesid)
 	if err != nil {
 		fmt.Println("获取笔记本笔记列表错误，后台错误", err)
 		return 0, 1, "获取笔记本笔记列表错误"
@@ -236,13 +237,13 @@ func (this *MDServers) GetNoteList(notesid int, pg int, uid string) (code int, c
 //通过用户id mdid查找MD笔记内容
 func (this *MDServers) GetMDContent(uid string, mid string, types int) (code int, count int, data interface{}, title string) {
 	//1. 判断uid用户是否拥有这个mid,如果拥有则返回md内容，不拥有则提示你没有权限访问此MD内容
-	ismd, title, err := new(models.MDInof).IsMD(uid, mid)
+	ismd, title, err := new(dao.DaoMDInof).IsMD(uid, mid)
 	if err != nil && err.Error() != "record not found" {
 		fmt.Println("判断查看MD权限错误，错误信息:", err)
 		return 0, 1, "判断查看MD权限错误，错误信息", ""
 	}
 	if ismd {
-		mdtxt, err := new(models.MDText).GetMDTxt(mid)
+		mdtxt, err := new(dao.DaoMDText).GetMDTxt(mid)
 		if err != nil {
 			fmt.Println("查询MD内容错误，错误信息:", err)
 			return 0, 1, "查询MD内容错误，错误信息", ""
@@ -250,10 +251,10 @@ func (this *MDServers) GetMDContent(uid string, mid string, types int) (code int
 
 		if types == 1 {
 			//2. 增加查看次数
-			go new(models.MDInof).AddMDViewTimes(mid)
+			go new(dao.DaoMDInof).AddMDViewTimes(mid)
 		} else if types == 2 {
 			//2. 增加修改次数
-			go new(models.MDInof).AddMDModifytimes(mid)
+			go new(dao.DaoMDInof).AddMDModifytimes(mid)
 		}
 
 		return 1, 1, mdtxt, title
@@ -264,7 +265,7 @@ func (this *MDServers) GetMDContent(uid string, mid string, types int) (code int
 
 //通过笔记名模糊搜索查询笔记
 func (this *MDServers) SearchNoteinfo(word, uid string) (code int, count int, data interface{}) {
-	datas, err := new(models.MDInof).SearchTitle(word, uid)
+	datas, err := new(dao.DaoMDInof).SearchTitle(word, uid)
 	if err != nil {
 		fmt.Println("获取所有笔记错误，后台错误", err)
 		return 0, 1, "获取所有笔记错误"
@@ -276,13 +277,13 @@ func (this *MDServers) SearchNoteinfo(word, uid string) (code int, count int, da
 
 //删除笔记到回收站
 func (this *MDServers) DeleteNote(mdid, uid string) (code int, count int, data interface{}) {
-	ismd, _, err := new(models.MDInof).IsMD(uid, mdid)
+	ismd, _, err := new(dao.DaoMDInof).IsMD(uid, mdid)
 	if err != nil && err.Error() != "record not found" {
 		fmt.Println("判断查看MD权限错误，错误信息:", err)
 		return 0, 1, "判断查看MD权限错误，错误信息"
 	}
 	if ismd {
-		err := new(models.MDInof).ToDEL(mdid, uid)
+		err := new(dao.DaoMDInof).ToDEL(mdid, uid)
 		if err != nil {
 			fmt.Println("删除笔记错误", err)
 			return 0, 1, "删除笔记错误"
@@ -294,13 +295,13 @@ func (this *MDServers) DeleteNote(mdid, uid string) (code int, count int, data i
 
 //SchenNote 永久删除笔记
 func (this *MDServers) SchenNote(mdid, uid string) (code int, count int, data interface{}) {
-	ismd, _, err := new(models.MDInof).IsMD(uid, mdid)
+	ismd, _, err := new(dao.DaoMDInof).IsMD(uid, mdid)
 	if err != nil && err.Error() != "record not found" {
 		fmt.Println("判断查看MD权限错误，错误信息:", err)
 		return 0, 1, "判断查看MD权限错误，错误信息"
 	}
 	if ismd {
-		err := new(models.MDInof).Schen(mdid, uid)
+		err := new(dao.DaoMDInof).Schen(mdid, uid)
 		if err != nil {
 			fmt.Println("删除笔记错误", err)
 			return 0, 1, "删除笔记错误"
@@ -312,7 +313,7 @@ func (this *MDServers) SchenNote(mdid, uid string) (code int, count int, data in
 
 //恢复笔记到笔记本
 func (this *MDServers) RestoreToNotes(mdid, uid string, notes int) (code int, count int, data interface{}) {
-	err := new(models.MDInof).NoteToNotes(mdid, uid, notes)
+	err := new(dao.DaoMDInof).NoteToNotes(mdid, uid, notes)
 	if err != nil {
 		fmt.Println("恢复笔记错误", err)
 		return 0, 1, "恢复笔记错误"

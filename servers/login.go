@@ -9,10 +9,11 @@ import (
 	"fmt"
 	"time"
 
-	models "github.com/mangenotwork/ManGe-Notes/models"
-	rdb "github.com/mangenotwork/ManGe-Notes/models/redis"
-	object "github.com/mangenotwork/ManGe-Notes/object"
-	util "github.com/mangenotwork/ManGe-Notes/util"
+	"github.com/mangenotwork/ManGe-Notes/dao"
+	"github.com/mangenotwork/ManGe-Notes/models"
+	"github.com/mangenotwork/ManGe-Notes/object"
+	rdb "github.com/mangenotwork/ManGe-Notes/redis"
+	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
 //默认头像
@@ -28,7 +29,7 @@ func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code in
 	}
 
 	//检查账号是否存在
-	if !new(models.ACC).ACCIsAccount(datas.Acc) {
+	if !new(dao.DaoACC).ACCIsAccount(datas.Acc) {
 		return 0, 1, "账号已存在", ""
 	}
 
@@ -55,7 +56,7 @@ func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code in
 		Logintime:  0,
 		LoginIP:    ip,
 	}
-	err := newuser.CreateUser()
+	err := new(dao.DaoACC).CreateUser(newuser)
 	if err != nil {
 		fmt.Println("注册失败", err)
 		return 0, 1, fmt.Sprintf("注册失败:%s", err), ""
@@ -78,7 +79,7 @@ func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code in
 func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code int, count int, data string, jwtStr string) {
 	//用过账号查询用户信息
 	userinfo := &models.ACC{}
-	if err := userinfo.GetACCinfo(datas.LoginAcc); err != nil {
+	if err := new(dao.DaoACC).GetACCinfo(datas.LoginAcc); err != nil {
 		fmt.Println("后台错误，获取账号信息错误：", err)
 		return 0, 1, fmt.Sprintf("后台错误，获取账号信息错误:%s", err), ""
 	} else if err != nil && err.Error() == "record not found" {
@@ -108,7 +109,7 @@ func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code
 
 		//更新用户本次登陆的时间和ip
 		nowtime := time.Now().Unix()
-		go userinfo.UpdateLastLogin(userinfo.UserId, nowtime, ip)
+		go new(dao.DaoACC).UpdateLastLogin(userinfo.UserId, nowtime, ip)
 
 		//设置token
 		jwtStr, jwtStrErr := util.CreateJwtToken(userinfo.UserId)

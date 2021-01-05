@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/mangenotwork/ManGe-Notes/models"
 )
 
 func CreateSqliteDB() (bool, error) {
@@ -27,5 +28,37 @@ func CreateSqliteDB() (bool, error) {
 	if err != nil {
 		return false, err
 	}
+
+	//检查table
+	//如果没有就创建
+	if !db.HasTable(&models.ACC{}) {
+		log.Println("ACC 不存在")
+		db.CreateTable(&models.ACC{})
+	}
+	if !db.HasTable(&models.IMGInfo{}) {
+		log.Println("IMGInfo 不存在")
+		db.CreateTable(&models.IMGInfo{})
+	}
+	if !db.HasTable(&models.MDInof{}) {
+		log.Println("MDInof 不存在")
+		db.CreateTable(&models.MDInof{})
+	}
+	if !db.HasTable(&models.MDText{}) {
+		log.Println("MDText 不存在")
+		db.CreateTable(&models.MDText{})
+	}
+	if !db.HasTable(&models.Notes{}) {
+		log.Println("Notes 不存在")
+		db.CreateTable(&models.Notes{})
+	}
+	if !db.HasTable(&models.SCIMGInfo{}) {
+		log.Println("SCIMGInfo 不存在")
+		db.CreateTable(&models.SCIMGInfo{})
+	}
+	if !db.HasTable(&models.ToolandLink{}) {
+		log.Println("ToolandLink 不存在")
+		db.CreateTable(&models.ToolandLink{})
+	}
+
 	return true, nil
 }

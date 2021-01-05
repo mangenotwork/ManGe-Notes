@@ -9,10 +9,11 @@ import (
 	"fmt"
 	_ "time"
 
+	"github.com/mangenotwork/ManGe-Notes/dao"
+
 	models "github.com/mangenotwork/ManGe-Notes/models"
 	object "github.com/mangenotwork/ManGe-Notes/object"
 	util "github.com/mangenotwork/ManGe-Notes/util"
-	//rdb "man/ManNotes/models/redis"
 )
 
 type TandLServers struct{}
@@ -50,7 +51,7 @@ func (this *TandLServers) AddTandL(datas *object.AddLink, uid string) (code int,
 		Ico:      linkico,
 		LinkType: linktype,
 	}
-	err := linkinfos.Create()
+	err := new(dao.DaoToolandLink).Create(linkinfos)
 	if err != nil {
 		fmt.Println("添加收藏错误", err)
 		return 0, 1, "添加收藏链接错误"
@@ -61,7 +62,7 @@ func (this *TandLServers) AddTandL(datas *object.AddLink, uid string) (code int,
 
 //获取网络工具列表
 func (this *TandLServers) GetToolList(uid string) (code int, count int, data interface{}) {
-	toollist, err := new(models.ToolandLink).GeTools(0, 20, uid)
+	toollist, err := new(dao.DaoToolandLink).GeTools(0, 20, uid)
 	if err != nil {
 		fmt.Println(err)
 		return 1, 1, "获取工具列表错误，后端错误"
@@ -71,7 +72,7 @@ func (this *TandLServers) GetToolList(uid string) (code int, count int, data int
 
 //获取链接列表
 func (this *TandLServers) GetLinks(uid string) (code int, count int, data interface{}) {
-	toollist, err := new(models.ToolandLink).GetLinks(0, 20, uid)
+	toollist, err := new(dao.DaoToolandLink).GetLinks(0, 20, uid)
 	if err != nil {
 		fmt.Println(err)
 		return 1, 1, "获取工具列表错误，后端错误"
@@ -98,7 +99,7 @@ func (this *TandLServers) EditLink(datas *object.EDLinks, uid string) (code int,
 		Link: datas.Link,
 		Ico:  linkico,
 	}
-	err := linkinfos.UpdateLink()
+	err := new(dao.DaoToolandLink).UpdateLink(linkinfos)
 	if err != nil {
 		fmt.Println("修改收藏的链接错误", err)
 		return 0, 1, "修改收藏的链接错误"
@@ -109,7 +110,7 @@ func (this *TandLServers) EditLink(datas *object.EDLinks, uid string) (code int,
 
 //删除收藏的链接
 func (this *TandLServers) DELLink(uid string, linkid int) (code int, count int, data string) {
-	err := new(models.ToolandLink).DELLink(uid, linkid)
+	err := new(dao.DaoToolandLink).DELLink(uid, linkid)
 	if err != nil {
 		fmt.Println("删除收藏的链接错误", err)
 		return 0, 1, "删除收藏的链接错误"
@@ -119,7 +120,7 @@ func (this *TandLServers) DELLink(uid string, linkid int) (code int, count int, 
 
 //GetAllLinksInfo mange管理模块  获取收藏链接列表
 func (this *TandLServers) GetAllLinksInfo(uid string) (count int, data interface{}) {
-	alldata, err := new(models.ToolandLink).GetAll(0, 100, uid)
+	alldata, err := new(dao.DaoToolandLink).GetAll(0, 100, uid)
 	if err != nil {
 		fmt.Println("删除收藏的链接错误", err)
 		return 0, "删除收藏的链接错误"
@@ -164,7 +165,7 @@ func (this *TandLServers) MangeEditLink(datas *object.EDLinksInfo, uid string) (
 		Tag:      datas.Tag,
 		LinkType: typenumber,
 	}
-	err := linkinfos.EDLink()
+	err := new(dao.DaoToolandLink).EDLink(linkinfos)
 	if err != nil {
 		fmt.Println("修改收藏的链接错误", err)
 		return 0, 1, "修改收藏的链接错误"
