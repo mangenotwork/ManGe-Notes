@@ -11,7 +11,7 @@ type DaoSCIMGInfo struct{}
 
 func (this *DaoSCIMGInfo) AddSCImg(scimgInfo *models.SCIMGInfo) error {
 	orm := conn.NotesDB()
-	return orm.Create(this).Error
+	return orm.Create(scimgInfo).Error
 }
 
 //获取漫鸽图库

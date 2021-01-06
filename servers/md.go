@@ -12,9 +12,9 @@ import (
 
 	"github.com/mangenotwork/ManGe-Notes/dao"
 
-	models "github.com/mangenotwork/ManGe-Notes/models"
-	object "github.com/mangenotwork/ManGe-Notes/object"
-	util "github.com/mangenotwork/ManGe-Notes/util"
+	"github.com/mangenotwork/ManGe-Notes/models"
+	"github.com/mangenotwork/ManGe-Notes/object"
+	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
 type MDServers struct{}

@@ -7,11 +7,13 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/mangenotwork/ManGe-Notes/models"
+	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
 func CreateSqliteDB() (bool, error) {
 	dbFile := "./db/base.db"
 	//判断是否存在db目录
+	util.CreateMutiDir("./db")
 
 	_, err := os.Lstat(dbFile)
 	//没有则创建

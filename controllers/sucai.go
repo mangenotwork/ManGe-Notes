@@ -4,7 +4,6 @@ import (
 	_ "encoding/json"
 	"fmt"
 
-	//rdb "man/ManNotes/models/redis"
 	object "github.com/mangenotwork/ManGe-Notes/object"
 	servers "github.com/mangenotwork/ManGe-Notes/servers"
 )

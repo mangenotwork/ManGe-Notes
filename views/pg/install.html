@@ -197,8 +197,34 @@
 		</div>
 
 		<div id="step4" style="margin-top: 24px;margin-left: 24px;display: none;">
-			<h2> > 设置原始账号 </h2>
+			<h2> > 设置管理账号 </h2>
 			<br>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 账号*</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="account" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 密码*</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="password" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 手机</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="phone" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label"> 邮箱</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="mail" placeholder="" class="layui-input" style="width: 350px;">
+			    </div>
+			  </div>
+			<br>
+			<a type="button" onclick="CreateAdmin()" class="layui-btn layui-btn-radius layui-btn-lg">提交</a>
 			
 		</div>
 
@@ -280,6 +306,7 @@
 	function Start(){
 		pubAjaxGET("/api/install/start",function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -293,6 +320,7 @@
 		var url = "/api/install/mysqltset?host="+host+"&port="+port+"&user="+user+"&password="+password+"&dbname="+dbname;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -306,6 +334,7 @@
 		var url = "/api/install/mysql?host="+host+"&port="+port+"&user="+user+"&password="+password+"&dbname="+dbname;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -318,6 +347,7 @@
 		var url = "/api/install/pgsqltset?host="+host+"&user="+user+"&password="+password+"&dbname="+dbname;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -330,6 +360,7 @@
 		var url = "/api/install/pgsql?host="+host+"&user="+user+"&password="+password+"&dbname="+dbname;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -337,6 +368,7 @@
 		//   /api/install/localsql
 		pubAjaxGET("/api/install/localsql",function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -346,6 +378,7 @@
 		var url = "/api/install/localmedia?path="+path;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -358,6 +391,7 @@
 		var url = "/api/install/alimedia?oss_access_keyid="+oss_access_keyid+"&oss_secret="+oss_secret+"&oss_endpoint="+oss_endpoint+"&oss_bucketName="+oss_bucketName;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
@@ -369,9 +403,22 @@
 		var url = "/api/install/tencentmedia?cos_url="+cos_url+"&cos_secretid="+cos_secretid+"&cos_secretkey="+cos_secretkey;
 		pubAjaxGET(url,function(datas){
 			console.log(datas);
+			location.reload();
 		})
 	}
 
+	function CreateAdmin(){
+		// /install/admin
+		var account = $("#account").val();
+		var password = $("#password").val();
+		var phone = $("#phone").val();
+		var mail = $("#mail").val();
+		var url = "/api/install/admin?account="+account+"&password="+password+"&phone="+phone+"&mail="+mail;
+		pubAjaxGET(url,function(datas){
+			console.log(datas);
+			location.reload();
+		})
+	}
 
 </script>
 

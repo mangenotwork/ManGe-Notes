@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"time"
+
+	"github.com/mangenotwork/ManGe-Notes/dao"
 
 	"github.com/mangenotwork/ManGe-Notes/conn"
+	"github.com/mangenotwork/ManGe-Notes/models"
 	"github.com/mangenotwork/ManGe-Notes/object"
 	"github.com/mangenotwork/ManGe-Notes/util"
 )
@@ -292,6 +296,32 @@ func (this *InstallController) InstallTencentMedia() {
 		this.RetuenJson(1, 0, err)
 	}
 	err = object.WriteInstallInfo(string(installInfo))
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
+	this.RetuenJson(0, 0, "成功")
+}
+
+//创建管理账号
+func (this *InstallController) InstallAdmin() {
+	account := this.GetString("account")
+	password := this.GetString("password")
+	phone := this.GetString("phone")
+	mail := this.GetString("mail")
+
+	if account == "" || password == "" {
+		this.RetuenJson(1, 0, "账号或密码为空")
+	}
+
+	admin := &models.ACC{
+		UserId:     "admin",
+		Account:    account,
+		Password:   password,
+		Phone:      phone,
+		Mail:       mail,
+		Createtime: time.Now().Unix(),
+	}
+	err := new(dao.DaoACC).CreateUser(admin)
 	if err != nil {
 		this.RetuenJson(1, 0, err)
 	}

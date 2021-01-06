@@ -48,7 +48,7 @@ func init() {
 		beego.NSRouter("/install/localmedia", &controllers.InstallController{}, "get:InstallLocalMedia"),     //本地磁盘存储多媒体资源
 		beego.NSRouter("/install/alimedia", &controllers.InstallController{}, "get:InstallAliyunMedia"),      //阿里云存储多媒体资源
 		beego.NSRouter("/install/tencentmedia", &controllers.InstallController{}, "get:InstallTencentMedia"), //腾讯云存储多媒体资源
-		//创建账号
+		beego.NSRouter("/install/admin", &controllers.InstallController{}, "get:InstallAdmin"),               //创建账号
 	)
 
 	beego.AddNamespace(api)

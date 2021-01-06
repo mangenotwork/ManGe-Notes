@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/mangenotwork/ManGe-Notes/object"
-	rdb "github.com/mangenotwork/ManGe-Notes/redis"
 	"github.com/mangenotwork/ManGe-Notes/servers"
 )
 
@@ -52,7 +51,8 @@ func (this *PGController) IndexPG() {
 	}
 
 	fmt.Println(fmt.Sprintf("uinfo:%s", uid))
-	userbinfoStr := new(rdb.RDB).HashGet(fmt.Sprintf("uinfo:%s", uid), "basis")
+	//TODO 在缓冲获取用户信息
+	userbinfoStr := "" //new(rdb.RDB).HashGet(fmt.Sprintf("uinfo:%s", uid), "basis")
 	fmt.Println(userbinfoStr)
 
 	var userbinfo object.UserBasisInfo
@@ -83,7 +83,8 @@ func (this *PGController) ToolPG() {
 	//获取用户基本信息
 	uid := this.GetUid()
 	fmt.Println(fmt.Sprintf("uinfo:%s", uid))
-	userbinfoStr := new(rdb.RDB).HashGet(fmt.Sprintf("uinfo:%s", uid), "basis")
+	//TODO 在缓存获取用户信息
+	userbinfoStr := "" //new(rdb.RDB).HashGet(fmt.Sprintf("uinfo:%s", uid), "basis")
 	fmt.Println(userbinfoStr)
 
 	var userbinfo object.UserBasisInfo

@@ -5,14 +5,13 @@ package servers
 */
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/mangenotwork/ManGe-Notes/dao"
 	"github.com/mangenotwork/ManGe-Notes/models"
 	"github.com/mangenotwork/ManGe-Notes/object"
-	rdb "github.com/mangenotwork/ManGe-Notes/redis"
 	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
@@ -67,8 +66,8 @@ func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code in
 		return 0, 1, fmt.Sprintf("生成Token失败:%s", jwtStrErr), ""
 	}
 
-	//将token 保存到Redis
-	go new(rdb.RDB).StringSet(fmt.Sprintf("login:%s", uid), jwtStr)
+	//TODO 将token 保存到缓冲
+	//go new(rdb.RDB).StringSet(fmt.Sprintf("login:%s", uid), jwtStr)
 
 	return 1, 1, "注册成功", jwtStr
 
@@ -91,21 +90,22 @@ func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code
 	inputPwd := util.Md5Crypt(datas.LoginPassword, userinfo.Createtime)
 	fmt.Println(datas.LoginPassword, userinfo.Createtime, inputPwd, userinfo.Password)
 	if inputPwd == userinfo.Password {
-		//将登陆的用户信息写入redis  uinfo:uid hash
-		var lasttime string = "首次登陆"
-		if userinfo.Logintime != 0 {
-			lasttime = time.Unix(userinfo.Logintime, 0).Format("2006-01-02 15:04:05")
-		}
-		ukeys := fmt.Sprintf("uinfo:%s", userinfo.UserId)
-		ubasisInfo := &object.UserBasisInfo{
-			UName:       userinfo.Account,
-			UAvatar:     userinfo.Avatar,
-			LastLogin:   lasttime,
-			LastLoginIp: userinfo.LoginIP,
-		}
-		uvalue, _ := json.Marshal(ubasisInfo)
-		ufield := "basis"
-		new(rdb.RDB).HashSet(ukeys, ufield, uvalue)
+		//TODO 将登陆的用户信息写入redis  uinfo:uid hash
+		// var lasttime string = "首次登陆"
+		// if userinfo.Logintime != 0 {
+		// 	lasttime = time.Unix(userinfo.Logintime, 0).Format("2006-01-02 15:04:05")
+		// }
+		//ukeys := fmt.Sprintf("uinfo:%s", userinfo.UserId)
+		// ubasisInfo := &object.UserBasisInfo{
+		// 	UName:       userinfo.Account,
+		// 	UAvatar:     userinfo.Avatar,
+		// 	LastLogin:   lasttime,
+		// 	LastLoginIp: userinfo.LoginIP,
+		// }
+		//TODO 将用户token存入缓冲
+		//uvalue, _ := json.Marshal(ubasisInfo)
+		//ufield := "basis"
+		//new(rdb.RDB).HashSet(ukeys, ufield, uvalue)
 
 		//更新用户本次登陆的时间和ip
 		nowtime := time.Now().Unix()
@@ -119,7 +119,7 @@ func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code
 		}
 
 		//将token 保存到Redis
-		go new(rdb.RDB).StringSet(fmt.Sprintf("login:%s", userinfo.UserId), jwtStr)
+		//go new(rdb.RDB).StringSet(fmt.Sprintf("login:%s", userinfo.UserId), jwtStr)
 		return 1, 1, "登陆成功", jwtStr
 	}
 
