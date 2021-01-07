@@ -64,3 +64,23 @@ func CreateSqliteDB() (bool, error) {
 
 	return true, nil
 }
+
+//获取Sqlite 连接
+func GetSqliteConn() (*gorm.DB, error) {
+	dbFile := "./db/base.db"
+	//判断是否存在db目录
+	util.CreateMutiDir("./db")
+
+	_, err := os.Lstat(dbFile)
+	//没有则创建
+	if os.IsNotExist(err) {
+		f, err := os.Create(dbFile)
+		defer f.Close()
+		if err != nil {
+			log.Println("创建文件 err = ", err.Error())
+		}
+	}
+	db, err := gorm.Open("sqlite3", dbFile)
+	db.LogMode(true)
+	return db, err
+}

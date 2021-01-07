@@ -4,19 +4,33 @@ import (
 	"log"
 	"strings"
 
-	"github.com/astaxie/beego/context"
-
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/mangenotwork/ManGe-Notes/controllers"
+	"github.com/mangenotwork/ManGe-Notes/object"
+	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
 //Check Install
 var Check_Install = func(ctx *context.Context) {
 	log.Println("中间件")
 	log.Println(ctx.Request.RequestURI)
-	if strings.Index(ctx.Request.RequestURI, "install") == -1 {
-		ctx.Redirect(302, "/install")
+
+	flag := false
+
+	if util.FileExist(object.InstallJsonPath) {
+		infodata := object.OpenInstallFile()
+		if infodata.Step == -1 {
+			flag = true
+		}
 	}
+
+	if !flag && strings.Index(ctx.Request.RequestURI, "install") == -1 {
+		ctx.Redirect(302, "/install")
+	} else if flag && strings.Index(ctx.Request.RequestURI, "install") == 1 {
+		ctx.Redirect(302, "/")
+	}
+
 }
 
 func init() {

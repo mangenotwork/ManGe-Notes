@@ -3,7 +3,6 @@ package dao
 import (
 	"fmt"
 
-	"github.com/mangenotwork/ManGe-Notes/conn"
 	"github.com/mangenotwork/ManGe-Notes/models"
 )
 
@@ -11,7 +10,10 @@ type DaoMDText struct{}
 
 //通过mid查询MD内容
 func (this *DaoMDText) GetMDTxt(mid string) (string, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.MDText).TableName())
+	defer orm.Close()
+
 	data := &models.MDText{}
 	err := orm.Where("md_id = ?", mid).First(this).Error
 	if err != nil {

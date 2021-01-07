@@ -313,15 +313,27 @@ func (this *InstallController) InstallAdmin() {
 		this.RetuenJson(1, 0, "账号或密码为空")
 	}
 
+	now := time.Now().Unix()
 	admin := &models.ACC{
 		UserId:     "admin",
 		Account:    account,
-		Password:   password,
+		Password:   util.Md5Crypt(password, now),
 		Phone:      phone,
 		Mail:       mail,
-		Createtime: time.Now().Unix(),
+		Createtime: now,
 	}
 	err := new(dao.DaoACC).CreateUser(admin)
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
+
+	infodata := object.OpenInstallFile()
+	infodata.Step = -1
+	installInfo, err := json.Marshal(infodata)
+	if err != nil {
+		this.RetuenJson(1, 0, err)
+	}
+	err = object.WriteInstallInfo(string(installInfo))
 	if err != nil {
 		this.RetuenJson(1, 0, err)
 	}

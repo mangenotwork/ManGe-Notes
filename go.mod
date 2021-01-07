@@ -12,6 +12,7 @@ require (
 	github.com/imroc/req v0.3.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rs/xid v1.2.1
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.17
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad

@@ -9,20 +9,22 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/mangenotwork/ManGe-Notes/models"
+	"github.com/mangenotwork/ManGe-Notes/object"
 )
 
 var (
-	user     = beego.AppConfig.DefaultString("mysql::user", "")
-	password = beego.AppConfig.DefaultString("mysql::password", "")
-	host     = beego.AppConfig.DefaultString("mysql::host", "")
-	port     = beego.AppConfig.DefaultString("mysql::port", "")
+	user     = object.GlobalMysqlUser
+	password = object.GlobalMysqlPassword
+	host     = object.GlobalMysqlHost
+	port     = object.GlobalMysqlPort
+	dbName   = object.GlobalMysqlDBName
 	dbs      map[string]*gorm.DB
 )
 
-func init() {
+func MysqlInit() {
 
 	dbs = make(map[string]*gorm.DB)
-	SetDBConn("notes")
+	SetDBConn()
 }
 
 /*
@@ -35,7 +37,7 @@ var (
 )
 */
 
-func MysqlDB(dbName string) *gorm.DB {
+func MysqlDB() *gorm.DB {
 	fmt.Println(user, password, host, port)
 	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, dbName) + "?parseTime=true"
 	db, err := gorm.Open("mysql", connStr)
@@ -46,7 +48,7 @@ func MysqlDB(dbName string) *gorm.DB {
 	return db
 }
 
-func SetDBConn(dbName string) {
+func SetDBConn() {
 
 	var (
 		db  *gorm.DB
@@ -67,7 +69,7 @@ func SetDBConn(dbName string) {
 	dbs[dbName] = db
 }
 
-func GetDBConns(dbName string) *gorm.DB {
+func GetDBConns() *gorm.DB {
 	return dbs[dbName]
 }
 

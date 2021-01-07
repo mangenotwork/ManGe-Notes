@@ -77,8 +77,8 @@ func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code in
 //用户登录 账号密码登录
 func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code int, count int, data string, jwtStr string) {
 	//用过账号查询用户信息
-	userinfo := &models.ACC{}
-	if err := new(dao.DaoACC).GetACCinfo(datas.LoginAcc); err != nil {
+	userinfo, err := new(dao.DaoACC).GetACCinfo(datas.LoginAcc)
+	if err != nil {
 		fmt.Println("后台错误，获取账号信息错误：", err)
 		return 0, 1, fmt.Sprintf("后台错误，获取账号信息错误:%s", err), ""
 	} else if err != nil && err.Error() == "record not found" {

@@ -8,12 +8,13 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mangenotwork/ManGe-Notes/models"
+	"github.com/mangenotwork/ManGe-Notes/object"
 )
 
 //Pgsql 测试连接
 func PgsqlConnTest(host, user, password, dbname string) (bool, error) {
 	connStr := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", host, user, password, dbname)
-	db, err := gorm.Open("postgres", "host=myhost user=gorm dbname=gorm sslmode=disable password=mypassword")
+	db, err := gorm.Open("postgres", connStr)
 	defer db.Close()
 	if err != nil {
 		beego.Error("[pgsql]连接异常:", err.Error(), connStr)
@@ -25,7 +26,7 @@ func PgsqlConnTest(host, user, password, dbname string) (bool, error) {
 //Pgsql 连接并创建
 func CreatePgsqlDB(host, user, password, dbname string) (bool, error) {
 	connStr := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", host, user, password, dbname)
-	db, err := gorm.Open("postgres", "host=myhost user=gorm dbname=gorm sslmode=disable password=mypassword")
+	db, err := gorm.Open("postgres", connStr)
 	defer db.Close()
 	if err != nil {
 		beego.Error("[pgsql]连接异常:", err.Error(), connStr)
@@ -64,4 +65,18 @@ func CreatePgsqlDB(host, user, password, dbname string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+//获取Pgsql连接
+func GetPgsqlConn() (*gorm.DB, error) {
+
+	connStr := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", object.GlobalPgsqlHost,
+		object.GlobalPgsqlUser, object.GlobalPgsqlPassword, object.GlobalPgsqlDBName)
+	db, err := gorm.Open("postgres", connStr)
+	if err != nil {
+		beego.Error("[pgsql]连接异常:", err.Error(), connStr)
+		return nil, err
+	}
+	db.LogMode(true)
+	return db, nil
 }

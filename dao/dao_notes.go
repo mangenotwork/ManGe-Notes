@@ -3,7 +3,6 @@ package dao
 import (
 	"fmt"
 
-	"github.com/mangenotwork/ManGe-Notes/conn"
 	"github.com/mangenotwork/ManGe-Notes/models"
 	"github.com/mangenotwork/ManGe-Notes/object"
 	"github.com/mangenotwork/ManGe-Notes/util"
@@ -13,13 +12,18 @@ type DaoNotes struct{}
 
 //新增
 func (this *DaoNotes) AddNotes(notes *models.Notes) (err error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	defer orm.Close()
+
 	return orm.Create(notes).Error
 }
 
 //查询笔记本名是否存在
 func (this *DaoNotes) IsNotesName(notesname, uid string) bool {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+
 	err := orm.Where("notes_name = ? and uid = ?", notesname, uid).First(this).Error
 	if err != nil && err.Error() == "record not found" {
 		return true
@@ -29,7 +33,10 @@ func (this *DaoNotes) IsNotesName(notesname, uid string) bool {
 
 //分页查询
 func (this *DaoNotes) GetNotesPgs(uid string, pg int, size int) ([]*object.NotesInfo, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+
 	dataList := make([]*object.NotesInfo, 0)
 	sqlStr := fmt.Sprintf("SELECT notes_id,notes_name FROM tbl_notes where uid='%s' LIMIT %d,%d", uid, pg, size)
 	err := orm.Raw(sqlStr).Scan(&dataList).Error
@@ -38,7 +45,10 @@ func (this *DaoNotes) GetNotesPgs(uid string, pg int, size int) ([]*object.Notes
 
 //分页查询笔记本信息
 func (this *DaoNotes) GetNotesPgsInfo1(uid string, pg int, size int) ([]*object.NotesInfo, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+
 	dataList := make([]*object.NotesInfo, 0)
 	sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,a.n as note_number from (SELECT md_notes_id as id,count(*)"+
 		" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
@@ -54,7 +64,10 @@ type NotesMange struct {
 
 //分页查询笔记本信息
 func (this *DaoNotes) GetNotesPgsInfo(uid string, pg int, size int) ([]*NotesMange, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+
 	dataList := make([]*NotesMange, 0)
 	//sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,b.notes_des,b.notes_createtime,a.n as n from (SELECT md_notes_id as id,count(*)"+
 	//	" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
@@ -72,7 +85,9 @@ type Number struct {
 
 //查询默认笔记本的笔记数量
 func (this *DaoNotes) NotesNumber(uid string, notesid int) (int, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
 
 	var number = &Number{}
 	sqlStr := fmt.Sprintf("SELECT count(*) as n FROM `tbl_md_info` where uid = '%s' and md_notes_id = %d", uid, notesid)
@@ -81,7 +96,9 @@ func (this *DaoNotes) NotesNumber(uid string, notesid int) (int, error) {
 }
 
 func (this *DaoNotes) NotesAllNumber(uid string) (int, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
 
 	var number = &Number{}
 	sqlStr := fmt.Sprintf("SELECT count(*) as n FROM `tbl_md_info` where uid = '%s'", uid)
@@ -90,7 +107,10 @@ func (this *DaoNotes) NotesAllNumber(uid string) (int, error) {
 }
 
 func (this *DaoNotes) UpdateInfo(datas *object.UpdateNotes, uid string) error {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+
 	notesid, _ := new(util.Str).NumberToInt(datas.NotesID)
 	sqlStr := fmt.Sprintf("update tbl_notes set notes_name='%s',notes_des='%s' where notes_id=%d and uid = '%s'; ",
 		datas.NotesName, datas.NotesDes, notesid, uid)
@@ -98,7 +118,10 @@ func (this *DaoNotes) UpdateInfo(datas *object.UpdateNotes, uid string) error {
 }
 
 func (this *DaoNotes) DeleteInfo(nid int, uid string) error {
-	orm := conn.NotesDB().Begin()
+	orm := GetConn()
+	orm = orm.Begin()
+	defer orm.Close()
+
 	sqlStrNotes := fmt.Sprintf("DELETE FROM tbl_notes where notes_id=%d and uid = '%s'; ", nid, uid)
 	//将某笔记本的笔记转移到默认笔记本
 	sqlMDInofStr := fmt.Sprintf("update tbl_md_info set md_notes_id=0 where md_notes_id=%d and uid = '%s'; ", nid, uid)
@@ -117,7 +140,10 @@ func (this *DaoNotes) DeleteInfo(nid int, uid string) error {
 
 //获取指定用户笔记本数量
 func (this *DaoNotes) GetNotesCount(uid string) (int64, error) {
-	orm := conn.NotesDB()
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+
 	var count int64
 	err := orm.Model(&this).Where("uid = ?", uid).Count(&count).Error
 	if err != nil {
