@@ -109,7 +109,7 @@ func (this *NotesServers) DeleteNotes(notesid string, uid string) (code int, cou
 
 //NotesChartData  图表模块 获取笔记本笔记数量分部
 func (this *NotesServers) NotesChartData(uid string) (code int, namelist []string, data interface{}) {
-
+	//获取所有笔记本
 	allnotes, err := new(dao.DaoNotes).GetAllNotes(uid)
 	log.Println("allnotes = ", allnotes, err)
 	if err != nil {
@@ -117,9 +117,9 @@ func (this *NotesServers) NotesChartData(uid string) (code int, namelist []strin
 		return 0, make([]string, 0), "获取所有笔记本错误，后端错误"
 	}
 
-	allNotesId := make([]int, 0)
-	notesname := make(map[int]string)
-	notesNameList := make([]string, 0)
+	allNotesId := make([]int, 0)       //记录笔记本id
+	notesname := make(map[int]string)  //记录笔记本id 对应笔记本名
+	notesNameList := make([]string, 0) //记录笔记本名列表
 	for _, notesdata := range allnotes {
 		allNotesId = append(allNotesId, notesdata.NotesId)
 		notesname[notesdata.NotesId] = notesdata.NotesName
@@ -127,6 +127,7 @@ func (this *NotesServers) NotesChartData(uid string) (code int, namelist []strin
 	}
 	log.Println("allNotesId = ", allNotesId)
 
+	//获取所有笔记
 	allnote, err := new(dao.DaoMDInof).GetData2Census(allNotesId)
 	log.Println("allnotes = ", allnote, err)
 	if err != nil {
@@ -135,21 +136,15 @@ func (this *NotesServers) NotesChartData(uid string) (code int, namelist []strin
 	}
 	log.Println(allnote)
 
-	// allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return 0, make([]string, 0), "获取所有笔记本错误，后端错误"
-	// }
-
+	//记录笔记本笔记对应个数
 	notesmap := make(map[string]int, 0)
-
 	for _, v := range allnote {
 		notes := notesname[v.MDNotesid]
 		notesmap[notes]++
 	}
-
 	log.Println("notesmap = ", notesmap)
 
+	//整理输出
 	notesdata := make([]*object.NotesCount, 0)
 	for k, v := range notesmap {
 		notesdata = append(notesdata, &object.NotesCount{
@@ -158,20 +153,8 @@ func (this *NotesServers) NotesChartData(uid string) (code int, namelist []strin
 		})
 	}
 
-	// fmt.Println(allnotes)
-	// for k, v := range allnotes {
-	// 	fmt.Println(k, v)
-	// 	notesNameList = append(notesNameList, v.NotesName)
-	// 	notesdata = append(notesdata, &object.NotesCount{
-	// 		NotesName: v.NotesName,
-	// 		Number:    v.N,
-	// 	})
-	// }
-	// fmt.Println(notesNameList)
-	// fmt.Println(notesdata)
-
+	//输出结果序列化成json
 	jsondata, err := json.Marshal(notesdata)
-
 	if err != nil {
 		fmt.Println("json.marshal failed, err:", err)
 		return
