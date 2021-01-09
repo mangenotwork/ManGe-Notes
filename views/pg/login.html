@@ -60,6 +60,7 @@
 
 
 <script type="text/javascript">
+
 	//<!--添加分类-->
 function registered(){
 
@@ -139,6 +140,8 @@ function SuccessShow(data){
 function loginshow(datas){
 	if (datas.code == 1){
         alert("登录成功!");
+        window.location.href="/";
+        return
     }
     else if (datas.code == 2){
     	alert("账号不存在或密码错误!");

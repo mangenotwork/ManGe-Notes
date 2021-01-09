@@ -38,7 +38,9 @@ func init() {
 	beego.InsertFilter("/*", beego.BeforeRouter, Check_Install)
 
 	//pg 页面请求   PGController
-	beego.Router("/", &controllers.PGController{}, "get:LoginPG")                //登录页面
+	beego.Router("/", &controllers.PGController{}, "get:IndexPG") //登录页面
+	beego.Router("/login", &controllers.PGController{}, "get:Login")
+	beego.Router("/islogin", &controllers.PGController{}, "get:GetIsLogin")
 	beego.Router("/install", &controllers.PGController{}, "get:Install")         //安装页面
 	beego.Router("/index", &controllers.PGController{}, "get:IndexPG")           //主页
 	beego.Router("/mdeditor", &controllers.PGController{}, "get:MdEditorPG")     //MD编辑器

@@ -195,3 +195,13 @@ func (this *DaoMDInof) GetNoteCount(uid string) (int64, error) {
 
 	return count, nil
 }
+
+//统计模块 获取笔记本数量
+func (this *DaoMDInof) GetData2Census(notesids []int) (datas []*models.MDInof, err error) {
+	orm := GetConn()
+	orm = orm.Table(new(models.MDInof).TableName())
+	defer orm.Close()
+
+	err = orm.Where("md_notes_id in (?)", notesids).Find(&datas).Error
+	return
+}

@@ -13,7 +13,6 @@ type LoginController struct {
 
 //用户注册  账号密码注册
 func (this *LoginController) UserRegistered() {
-	this.IsLogin()
 	ip := this.GetIP()
 
 	var obj object.UserRegInfo

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/mangenotwork/ManGe-Notes/conn"
 	"github.com/mangenotwork/ManGe-Notes/dao"
 	"github.com/mangenotwork/ManGe-Notes/models"
 	"github.com/mangenotwork/ManGe-Notes/object"
@@ -22,10 +23,10 @@ type LoginServers struct{}
 
 //用户注册 账号密码注册
 func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code int, count int, data string, jwtStr string) {
-	//验证邀请码
-	if datas.InviteCode != "mangenotes2020" {
-		return 0, 1, "邀请码错误！需要邀请码请加qq群:1060290526", ""
-	}
+	// TODO: 验证邀请码功能重构
+	// if datas.InviteCode != "mangenotes2020" {
+	// 	return 0, 1, "邀请码错误！需要邀请码请加qq群:1060290526", ""
+	// }
 
 	//检查账号是否存在
 	if !new(dao.DaoACC).ACCIsAccount(datas.Acc) {
@@ -66,8 +67,9 @@ func (this *LoginServers) UserReg(datas *object.UserRegInfo, ip string) (code in
 		return 0, 1, fmt.Sprintf("生成Token失败:%s", jwtStrErr), ""
 	}
 
-	//TODO 将token 保存到缓冲
-	//go new(rdb.RDB).StringSet(fmt.Sprintf("login:%s", uid), jwtStr)
+	//将用户token存入缓冲
+	tokenKey := "user:" + uid
+	conn.CachesSet(tokenKey, jwtStr)
 
 	return 1, 1, "注册成功", jwtStr
 
@@ -90,22 +92,6 @@ func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code
 	inputPwd := util.Md5Crypt(datas.LoginPassword, userinfo.Createtime)
 	fmt.Println(datas.LoginPassword, userinfo.Createtime, inputPwd, userinfo.Password)
 	if inputPwd == userinfo.Password {
-		//TODO 将登陆的用户信息写入redis  uinfo:uid hash
-		// var lasttime string = "首次登陆"
-		// if userinfo.Logintime != 0 {
-		// 	lasttime = time.Unix(userinfo.Logintime, 0).Format("2006-01-02 15:04:05")
-		// }
-		//ukeys := fmt.Sprintf("uinfo:%s", userinfo.UserId)
-		// ubasisInfo := &object.UserBasisInfo{
-		// 	UName:       userinfo.Account,
-		// 	UAvatar:     userinfo.Avatar,
-		// 	LastLogin:   lasttime,
-		// 	LastLoginIp: userinfo.LoginIP,
-		// }
-		//TODO 将用户token存入缓冲
-		//uvalue, _ := json.Marshal(ubasisInfo)
-		//ufield := "basis"
-		//new(rdb.RDB).HashSet(ukeys, ufield, uvalue)
 
 		//更新用户本次登陆的时间和ip
 		nowtime := time.Now().Unix()
@@ -118,8 +104,10 @@ func (this *LoginServers) UserAccLogin(datas *object.Logininfo, ip string) (code
 			return 0, 1, fmt.Sprintf("生成Token失败:%s", jwtStrErr), ""
 		}
 
-		//将token 保存到Redis
-		//go new(rdb.RDB).StringSet(fmt.Sprintf("login:%s", userinfo.UserId), jwtStr)
+		//将用户token存入缓冲
+		tokenKey := "user:" + userinfo.UserId
+		conn.CachesSet(tokenKey, jwtStr)
+
 		return 1, 1, "登陆成功", jwtStr
 	}
 

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 
 	object "github.com/mangenotwork/ManGe-Notes/object"
 	servers "github.com/mangenotwork/ManGe-Notes/servers"
@@ -29,7 +30,14 @@ func (this *NotesController) CreateNotes() {
 
 //获取当前笔记本列表
 func (this *NotesController) GetNotesList() {
+	log.Println("GetNotesList")
 	uid := this.GetUid()
+	log.Println("uid = ", uid)
+	if uid == "" {
+		this.RetuenJson(-1, 0, "")
+		return
+	}
+	log.Println("AllNotes")
 	code, count, data := new(servers.NotesServers).AllNotes(uid)
 	this.RetuenJson(code, count, data)
 }

@@ -57,6 +57,15 @@ func (this *DaoNotes) GetNotesPgsInfo1(uid string, pg int, size int) ([]*object.
 	return dataList, err
 }
 
+//统计模块使用 获取笔记本数据
+func (this *DaoNotes) GetAllNotes(uid string) (datas []*models.Notes, err error) {
+	orm := GetConn()
+	orm = orm.Table(new(models.Notes).TableName())
+	defer orm.Close()
+	err = orm.Where("uid=?", uid).Group("notes_id").Find(&datas).Error
+	return
+}
+
 type NotesMange struct {
 	models.Notes
 	N int
@@ -69,9 +78,9 @@ func (this *DaoNotes) GetNotesPgsInfo(uid string, pg int, size int) ([]*NotesMan
 	defer orm.Close()
 
 	dataList := make([]*NotesMange, 0)
-	//sqlStr := fmt.Sprintf("SELECT b.notes_id,b.notes_name,b.notes_des,b.notes_createtime,a.n as n from (SELECT md_notes_id as id,count(*)"+
-	//	" as n FROM `tbl_md_info` where uid = '%s' GROUP BY md_notes_id) as a,`tbl_notes` as b where "+
-	//	"b.notes_id = a.id LIMIT %d,%d", uid, pg, size)
+	//SELECT B.notes_id,B.notes_name,B.notes_des,B.notes_createtime,
+	//COUNT(A.md_notes_id) AS n
+	//from tbl_md_info AS A RIGHT JOIN tbl_notes AS B on A.md_notes_id=B.notes_id where B.uid = 'admin' GROUP BY B.notes_id LIMIT 0,20
 	sqlStr := fmt.Sprintf("SELECT B.notes_id,B.notes_name,B.notes_des,B.notes_createtime,COUNT(A.md_notes_id) AS n from"+
 		" tbl_md_info AS A RIGHT JOIN tbl_notes AS B on A.md_notes_id=B.notes_id where B.uid = '%s' GROUP BY B.notes_id LIMIT %d,%d",
 		uid, pg, size)

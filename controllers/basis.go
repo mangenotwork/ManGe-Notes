@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/mangenotwork/ManGe-Notes/util"
+	"github.com/mangenotwork/ManGe-Notes/conn"
 
 	"github.com/astaxie/beego"
+	"github.com/mangenotwork/ManGe-Notes/util"
 )
 
 type Controller struct {
@@ -48,72 +49,40 @@ func (this *Controller) MangeJson(code int, msg string, count int, data interfac
 	this.ServeJSON()
 }
 
-//判断是否登录  只有登录时才会刷新 Token
-func (this *Controller) IsLogin() {
-	token := this.Ctx.GetCookie("token")
-	if token != "" && util.VerifyJwtToken(token) {
-		fmt.Println(token)
-		uid, err := util.ParseJwtToken(token)
-		if err != nil {
-			beego.Error("[Token]解析Token错误:", err.Error(), err)
-		}
-		fmt.Println(uid.Data)
-
-		//判断redis里的token
-		//uidKey := fmt.Sprintf("login:%s", uid.Data)
-		//TODO 跟缓冲的token做对比
-		isToken := true //new(rdb.RDB).StringJudge(uidKey, token)
-		fmt.Println(isToken)
-		if isToken {
-			fmt.Println("Token 匹配成功")
-			//新的token
-			newToken, newTokenErr := util.CreateJwtToken(uid.Data)
-			if newTokenErr != nil {
-				beego.Error("[Token]生成Token错误:", newTokenErr.Error(), newTokenErr)
-			}
-
-			//TODO 缓存保存新的token
-			//new(rdb.RDB).StringSet(uidKey, newToken)
-			//客户端设置新的token
-			this.SetToken(newToken)
-
-			this.Redirect("/index", 302)
-		}
-
-	}
-}
-
 //判断是否会话  一般会话不用刷新token 便于请求的流畅性
 func (this *Controller) IsSession() bool {
-	//token := this.Ctx.GetCookie("token")
-	//uid, err := util.ParseJwtToken(token)
-	// if err != nil {
-	// 	beego.Error("[Token]解析Token错误:", err.Error(), err)
-	// 	//this.Redirect("/",302)
-	// 	return false
-	// }
-	//TODO 判断缓存里的token
-	//uidKey := fmt.Sprintf("login:%s", uid.Data)
-	isToken := true //new(rdb.RDB).StringJudge(uidKey, token)
+	token := this.Ctx.GetCookie("token")
+	uid, err := util.ParseJwtToken(token)
+	if err != nil {
+		beego.Error("[Token]解析Token错误:", err.Error(), err)
+		this.Redirect("/login", 302)
+		return false
+	}
+	//判断缓存里的token
+	uidKey := fmt.Sprintf("user:%s", uid.Data)
+	isToken := conn.CachesGetStr(uidKey)
 	fmt.Println(isToken)
-	if isToken {
-		/*
-			//新的token
-			newToken,newTokenErr := util.CreateJwtToken(uid.Data)
-			if newTokenErr!=nil{
-				beego.Error("[Token]生成Token错误:", newTokenErr.Error(), newTokenErr)
-				//this.Redirect("/",302)
-				return false
-			}
-
-			//Redis保存新的token
-			new(rdb.RDB).StringSet(uidKey, newToken)
-			//客户端设置新的token
-			this.SetToken(newToken)
-		*/
+	if token == isToken {
 		return true
 	}
-	//this.Redirect("/",302)
+	this.Redirect("/login", 302)
+	return false
+}
+
+func (this *Controller) IsLogin() bool {
+	token := this.Ctx.GetCookie("token")
+	uid, err := util.ParseJwtToken(token)
+	if err != nil {
+		beego.Error("[Token]解析Token错误:", err.Error(), err)
+		return false
+	}
+	//判断缓存里的token
+	uidKey := fmt.Sprintf("user:%s", uid.Data)
+	isToken := conn.CachesGetStr(uidKey)
+	fmt.Println(isToken)
+	if token == isToken {
+		return true
+	}
 	return false
 }
 
@@ -143,13 +112,12 @@ func (this *Controller) GetIP() string {
 
 //设置 Token
 func (this *Controller) SetToken(token string) {
-
 	this.Ctx.SetCookie("token", token, 3600*24*7, "/")
 }
 
 //解析Token 获取到Uid
 func (this *Controller) GetUid() (uid string) {
-	if this.IsSession() {
+	if this.IsLogin() {
 		token := this.Ctx.GetCookie("token")
 		jwtobj, _ := util.ParseJwtToken(token)
 		uid = jwtobj.Data
@@ -157,13 +125,13 @@ func (this *Controller) GetUid() (uid string) {
 	return
 }
 
-//TODO ClearToken 清空Token
+//ClearToken 清空Token
 func (this *Controller) ClearToken() {
 	fmt.Println("退出登录")
-	//token := this.Ctx.GetCookie("token")
-	//jwtobj, _ := util.ParseJwtToken(token)
-	//uid := jwtobj.Data
-	//new(rdb.RDB).DELKey(fmt.Sprintf("login:%s", uid))
+	token := this.Ctx.GetCookie("token")
+	jwtobj, _ := util.ParseJwtToken(token)
+	uidKey := fmt.Sprintf("user:%s", jwtobj.Data)
+	conn.CachesSet(uidKey, "")
 	this.Ctx.SetCookie("token", "")
 	return
 }

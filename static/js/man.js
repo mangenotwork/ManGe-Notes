@@ -60,3 +60,12 @@ function pubAjaxGET(urlstr,Func){
             }
           });
 }
+
+
+function Islogin(b){
+  console.log("Islogin -- ");
+  console.log(b);
+  if(!b){
+    top.location.reload();
+  }
+}

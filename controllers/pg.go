@@ -15,9 +15,17 @@ type PGController struct {
 }
 
 //登录页面
-func (this *PGController) LoginPG() {
-	this.IsLogin()
+func (this *PGController) Login() {
 	this.TplName = "pg/login.html"
+}
+
+func (this *PGController) GetIsLogin() {
+	if this.IsLogin() {
+		this.RetuenJson(0, 0, "")
+	} else {
+		this.RetuenJson(1, 0, "")
+	}
+
 }
 
 //Install  安装页面
@@ -42,6 +50,9 @@ func FileExist(path string) bool {
 
 //主页
 func (this *PGController) IndexPG() {
+
+	this.IsSession()
+
 	//获取用户基本信息
 	uid := this.GetUid()
 
@@ -62,24 +73,26 @@ func (this *PGController) IndexPG() {
 
 	this.Data["userbinfo"] = &userbinfo
 	this.Data["IsShowNav"] = "index"
+
 	this.TplName = "index.html"
 	return
 }
 
 //MD编辑器
 func (this *PGController) MdEditorPG() {
-	this.IsSession()
+	this.Data["IsLogin"] = this.IsLogin()
 	this.TplName = "pg/createmd.html"
 }
 
 //首页
 func (this *PGController) HomePG() {
-	this.IsSession()
+	this.Data["IsLogin"] = this.IsLogin()
 	this.TplName = "pg/home.html"
 }
 
 //PC端页面渲染
 func (this *PGController) ToolPG() {
+
 	//获取用户基本信息
 	uid := this.GetUid()
 	fmt.Println(fmt.Sprintf("uinfo:%s", uid))
@@ -99,13 +112,11 @@ func (this *PGController) ToolPG() {
 
 //MangeNotes  笔记本管理
 func (this *PGController) MangeNotes() {
-	this.IsSession()
 	this.TplName = "pg/mange_notes.html"
 }
 
 //MangeLinks 收藏链接管理
 func (this *PGController) MangeLinks() {
-	this.IsSession()
 	this.TplName = "pg/mange_links.html"
 }
 
@@ -114,6 +125,7 @@ func (this *PGController) ChartNotes() {
 	uid := this.GetUid()
 
 	code, namelist, data := new(servers.NotesServers).NotesChartData(uid)
+	log.Println(code, namelist, data)
 
 	this.Data["Code"] = code
 	this.Data["Name"] = namelist
@@ -129,18 +141,17 @@ func (this *PGController) MyChart() {
 	new(servers.NotesServers).MyChartData(uid)
 
 	this.Data["Code"] = uid
-	//this.Data["Name"] = namelist
-	//this.Data["Data"] = data
 	this.TplName = "chart/zhonghe.html"
 }
 
 //MyUsedSpace 图表模块 我的使用空间
 func (this *PGController) MyUsedSpace() {
 	uid := this.GetUid()
+	log.Println("uid  = ", uid)
 
 	//code,namelist,data := new(servers.NotesServers).NotesChartData(uid)
 	data := new(servers.NotesServers).UsedSpace(uid)
-	fmt.Println(data)
+	fmt.Println("data = ", data)
 
 	this.Data["Data"] = data
 	this.TplName = "chart/main.html"

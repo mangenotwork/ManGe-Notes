@@ -246,6 +246,14 @@ function element2(){
 }
 
 
+function IsLogin(datas){
+  console.log("is login");
+  console.log(datas);
+  if (datas.code == 1){
+       window.location.href="/login";
+    }
+}
+
 function element(){
 layui.use('element', function() {
         var element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
@@ -262,7 +270,10 @@ layui.use('element', function() {
                         '" style="width:98%;height:100%;margin-left: 2%;"></iframe>',
                     id: id //规定好的id
                 })
-                console.log("新增",id,url)
+                console.log("新增",id,url);
+                //检查登录
+                pubAjaxGET("/islogin",IsLogin);
+
                 //通过鼠标mouseover事件  动态将新增的tab下的li标签绑定鼠标右键功能的菜单   
                 //下面的json.id是动态新增Tab的id，一定要传入这个id,避免重复加载mouseover数据
                 $(".layui-tab-title li[lay-id=" + id + "]").mouseover(function() {
@@ -472,10 +483,15 @@ function GetNotesList(){
     $.ajax({
             url:  document.location.protocol+ "//" + window.location.host + "/noteslist",
             type:'get',
-            async:true,//异步请求
+            async:false,//异步请求
             cache:false,
             success:function(rdata) {
                 console.log(rdata);
+
+                if (rdata.code == -1){
+                    window.location.href="/login";
+                }
+
                 var thisdata = rdata.data
 
                 $("#fenleilist").append(defaultnva(thisdata["notes_all"],thisdata["notes_def"],thisdata["notes_dar"],thisdata["notes_rec"]));
@@ -495,8 +511,9 @@ function GetNotesList(){
             },
             //执行失败或错误的回调函数
             error:function(xhr) {
-                alert("后台请求出错！");
+                //alert("后台请求出错！");
                 console.log(xhr);
+                location.reload();
             }
           });
     
@@ -783,6 +800,10 @@ function ShowDiv(ids,typeshow){
             success:function(rdata) {
                 console.log(rdata);
                 
+                if (rdata.code == -1){
+                    window.location.href="/login";
+                }
+
                 if(JSON.stringify(rdata.data) === '[]'){
                     $("#notelist").append("还未创建笔记")
                 }

@@ -21,17 +21,26 @@ func CachesInit() {
 	log.Println("初始化Caches")
 }
 
-func Set(key string, value interface{}) {
+func CachesSet(key string, value interface{}) {
 	caches.C.Set(key, value, cache.DefaultExpiration)
 	return
 }
 
-func SetAlways(key string, value interface{}) {
+func CachesSetAlways(key string, value interface{}) {
 	caches.C.Set(key, value, -1)
 	return
 }
 
-func Get(key string) (value interface{}, isOk bool) {
+func CachesGet(key string) (value interface{}, isOk bool) {
 	value, isOk = caches.C.Get(key)
+	return
+}
+
+func CachesGetStr(key string) (value string) {
+	v, isOk := caches.C.Get(key)
+	value = ""
+	if isOk {
+		value = v.(string)
+	}
 	return
 }

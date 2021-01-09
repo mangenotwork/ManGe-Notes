@@ -6,6 +6,7 @@ package servers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/mangenotwork/ManGe-Notes/dao"
@@ -108,26 +109,66 @@ func (this *NotesServers) DeleteNotes(notesid string, uid string) (code int, cou
 
 //NotesChartData  图表模块 获取笔记本笔记数量分部
 func (this *NotesServers) NotesChartData(uid string) (code int, namelist []string, data interface{}) {
-	allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
+
+	allnotes, err := new(dao.DaoNotes).GetAllNotes(uid)
+	log.Println("allnotes = ", allnotes, err)
 	if err != nil {
 		fmt.Println(err)
 		return 0, make([]string, 0), "获取所有笔记本错误，后端错误"
 	}
 
-	var notesNameList []string
-	notesdata := make([]*object.NotesCount, 0)
+	allNotesId := make([]int, 0)
+	notesname := make(map[int]string)
+	notesNameList := make([]string, 0)
+	for _, notesdata := range allnotes {
+		allNotesId = append(allNotesId, notesdata.NotesId)
+		notesname[notesdata.NotesId] = notesdata.NotesName
+		notesNameList = append(notesNameList, notesdata.NotesName)
+	}
+	log.Println("allNotesId = ", allNotesId)
 
-	fmt.Println(allnotes)
-	for k, v := range allnotes {
-		fmt.Println(k, v)
-		notesNameList = append(notesNameList, v.NotesName)
+	allnote, err := new(dao.DaoMDInof).GetData2Census(allNotesId)
+	log.Println("allnotes = ", allnote, err)
+	if err != nil {
+		fmt.Println(err)
+		return 0, make([]string, 0), "获取所有笔记本错误，后端错误"
+	}
+	log.Println(allnote)
+
+	// allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return 0, make([]string, 0), "获取所有笔记本错误，后端错误"
+	// }
+
+	notesmap := make(map[string]int, 0)
+
+	for _, v := range allnote {
+		notes := notesname[v.MDNotesid]
+		notesmap[notes]++
+	}
+
+	log.Println("notesmap = ", notesmap)
+
+	notesdata := make([]*object.NotesCount, 0)
+	for k, v := range notesmap {
 		notesdata = append(notesdata, &object.NotesCount{
-			NotesName: v.NotesName,
-			Number:    v.N,
+			NotesName: k,
+			Number:    v,
 		})
 	}
-	fmt.Println(notesNameList)
-	fmt.Println(notesdata)
+
+	// fmt.Println(allnotes)
+	// for k, v := range allnotes {
+	// 	fmt.Println(k, v)
+	// 	notesNameList = append(notesNameList, v.NotesName)
+	// 	notesdata = append(notesdata, &object.NotesCount{
+	// 		NotesName: v.NotesName,
+	// 		Number:    v.N,
+	// 	})
+	// }
+	// fmt.Println(notesNameList)
+	// fmt.Println(notesdata)
 
 	jsondata, err := json.Marshal(notesdata)
 

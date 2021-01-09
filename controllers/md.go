@@ -49,6 +49,10 @@ func (this *MDController) ToDraft() {
 //获取所有笔记
 func (this *MDController) GetAllNote() {
 	uid := this.GetUid()
+	if uid == "" {
+		this.RetuenJson(-1, 0, "")
+		return
+	}
 	pg, err := this.GetInt("pg")
 	fmt.Println(pg, uid)
 	if err != nil || pg == 0 {
