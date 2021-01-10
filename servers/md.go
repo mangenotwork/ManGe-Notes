@@ -7,6 +7,7 @@ package servers
 import (
 	_ "encoding/json"
 	"fmt"
+	"log"
 	"time"
 	"unicode/utf8"
 
@@ -244,6 +245,7 @@ func (this *MDServers) GetMDContent(uid string, mid string, types int) (code int
 	}
 	if ismd {
 		mdtxt, err := new(dao.DaoMDText).GetMDTxt(mid)
+		log.Println("mdtxt = ", mdtxt)
 		if err != nil {
 			fmt.Println("查询MD内容错误，错误信息:", err)
 			return 0, 1, "查询MD内容错误，错误信息", ""
