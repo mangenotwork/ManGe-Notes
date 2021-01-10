@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"log"
+
 	"github.com/mangenotwork/ManGe-Notes/models"
 )
 
@@ -8,10 +10,12 @@ type DaoACC struct{}
 
 func (this *DaoACC) CreateUser(newuser *models.ACC) error {
 	orm := GetConn()
-	orm = orm.Table(new(models.ACC).TableName())
 	defer orm.Close()
+	log.Println("orm = ", orm)
+	log.Println(newuser)
 
-	return orm.Create(newuser).Error
+	err := orm.Create(&newuser).Error
+	return err
 }
 
 //通过用户账号查询用户信息

@@ -9,12 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mangenotwork/ManGe-Notes/object"
-	//util "man/ManNotes/util"
 	"github.com/mangenotwork/ManGe-Notes/dao"
 	"github.com/mangenotwork/ManGe-Notes/models"
-
-	"github.com/astaxie/beego"
+	"github.com/mangenotwork/ManGe-Notes/object"
 	"github.com/rs/xid"
 )
 
@@ -23,7 +20,7 @@ type SUCai struct{}
 //将上传的图片信息存入数据库
 func (this *SUCai) UploadImg(uid string, imgpath string, imgsize int64, imgdatas *object.UpLoadImgData) (string, string) {
 	//1. 图片上传成功后将图片信息存入图片表
-	mainurl := beego.AppConfig.DefaultString("img::mainurl", "")
+	mainurl := "/media/"
 	returnurl := fmt.Sprintf("%s%s", mainurl, imgpath)
 	nowtime := time.Now().Unix()
 

@@ -62,21 +62,46 @@ func (this *NotesServers) AllNotes(uid string) (code int, count int, data interf
 //管理模块 获取所有笔记本信息
 func (this *NotesServers) GetAllNotesInfo(uid string) (count int, data interface{}) {
 	//allnotes,err := new(models.Notes).GetNotesPgs(uid,0,20)
-	allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
+	//allnotes, err := new(dao.DaoNotes).GetNotesPgsInfo(uid, 0, 20)
+	//获取所有笔记本
+	allnotes, err := new(dao.DaoNotes).GetAllNotes(uid)
 	if err != nil {
 		fmt.Println(err)
 		return 0, "获取所有笔记本错误，后端错误"
 	}
 
+	allNotesId := make([]int, 0)
+	notesNameMap := make(map[int]string, 0)
+	for _, v := range allnotes {
+		allNotesId = append(allNotesId, v.NotesId)
+		notesNameMap[v.NotesId] = v.NotesName
+	}
+
+	//获取所有笔记
+	allnote, err := new(dao.DaoMDInof).GetData2Census(allNotesId)
+	log.Println("allnotes = ", allnote, err)
+	if err != nil {
+		fmt.Println(err)
+		return 0, "获取所有笔记本错误，后端错误"
+	}
+	log.Println(allnote)
+	//记录笔记本笔记对应个数
+	notesmap := make(map[string]int, 0)
+	for _, v := range allnote {
+		notes := notesNameMap[v.MDNotesid]
+		notesmap[notes]++
+	}
+	log.Println("notesmap = ", notesmap)
+
 	mangenotelist := make([]*object.MangeNotesList, 0)
 
-	for _, k := range allnotes {
+	for _, v := range allnotes {
 		mangenotelist = append(mangenotelist, &object.MangeNotesList{
-			NotesID:    k.NotesId,
-			NotesName:  k.NotesName,
-			NotesDes:   k.NotesDes,
-			CreateTime: time.Unix(k.NotesCreatetime, 0).Format("2006-01-02 15:04:05"),
-			NoteNumber: k.N,
+			NotesID:    v.NotesId,
+			NotesName:  v.NotesName,
+			NotesDes:   v.NotesDes,
+			CreateTime: time.Unix(v.NotesCreatetime, 0).Format("2006-01-02 15:04:05"),
+			NoteNumber: notesmap[v.NotesName],
 		})
 	}
 

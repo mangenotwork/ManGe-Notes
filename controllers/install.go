@@ -109,6 +109,12 @@ func (this *InstallController) InstallMysql() {
 	infodata.MysqlUser = user
 	infodata.MysqlPassword = password
 	infodata.MysqlDBName = dbname
+	object.GlobalDBType = "mysqls"
+	object.GlobalMysqlHost = host
+	object.GlobalMysqlPort = port
+	object.GlobalMysqlUser = user
+	object.GlobalMysqlPassword = password
+	object.GlobalMysqlDBName = dbname
 
 	installInfo, err := json.Marshal(infodata)
 	if err != nil {
@@ -170,6 +176,11 @@ func (this *InstallController) InstallPgsql() {
 	infodata.PgsqlUser = user
 	infodata.PgsqlPassword = password
 	infodata.PgsqlDBName = dbname
+	object.GlobalDBType = "pgsql"
+	object.GlobalPgsqlHost = host
+	object.GlobalPgsqlUser = user
+	object.GlobalPgsqlPassword = password
+	object.GlobalPgsqlDBName = dbname
 
 	installInfo, err := json.Marshal(infodata)
 	if err != nil {
@@ -194,6 +205,9 @@ func (this *InstallController) InstallSqlite() {
 		infodata.Step = 3
 		infodata.DBType = "sqlite"
 		infodata.SqlitePath = "./db/base.db"
+		object.GlobalDBType = "sqlite"
+		object.GlobalSqlitePath = "./db/base.db"
+
 		installInfo, err := json.Marshal(infodata)
 		if err != nil {
 			this.RetuenJson(1, 0, err)
@@ -227,6 +241,9 @@ func (this *InstallController) InstallLocalMedia() {
 	infodata.MediaType = "local"
 	infodata.Step = 4
 	infodata.MediaPath = path
+	object.GlobalMediaType = "local"
+	object.GlobalMediaPath = path
+
 	installInfo, err := json.Marshal(infodata)
 	if err != nil {
 		this.RetuenJson(1, 0, err)
@@ -260,6 +277,12 @@ func (this *InstallController) InstallAliyunMedia() {
 	infodata.AliOSSBucketName = bucketName
 	infodata.AliOSSEndpoint = endPoint
 	infodata.AliOSSSecret = ossSecret
+	object.GlobalMediaType = "ali"
+	object.GlobalAliOSSAccessKeyid = accessKeyID
+	object.GlobalAliOSSBucketName = bucketName
+	object.GlobalAliOSSEndpoint = endPoint
+	object.GlobalAliOSSSecret = ossSecret
+
 	installInfo, err := json.Marshal(infodata)
 	if err != nil {
 		this.RetuenJson(1, 0, err)
@@ -291,6 +314,11 @@ func (this *InstallController) InstallTencentMedia() {
 	infodata.TencenCosUrl = cos_url
 	infodata.TencenSecretid = cos_secretid
 	infodata.TencenSecretkey = cos_secretkey
+	object.GlobalMediaType = "tencent"
+	object.GlobalTencenCosUrl = cos_url
+	object.GlobalTencenSecretid = cos_secretid
+	object.GlobalTencenSecretkey = cos_secretkey
+
 	installInfo, err := json.Marshal(infodata)
 	if err != nil {
 		this.RetuenJson(1, 0, err)

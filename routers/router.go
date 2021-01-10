@@ -37,6 +37,8 @@ func init() {
 
 	beego.InsertFilter("/*", beego.BeforeRouter, Check_Install)
 
+	beego.SetStaticPath("/media", "media") //第一个是访问的路径，第二个是根下目录
+
 	//pg 页面请求   PGController
 	beego.Router("/", &controllers.PGController{}, "get:IndexPG") //登录页面
 	beego.Router("/login", &controllers.PGController{}, "get:Login")

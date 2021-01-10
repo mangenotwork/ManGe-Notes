@@ -12,14 +12,10 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-	_ "time"
 
-	util "github.com/mangenotwork/ManGe-Notes/util"
-	//models "man/ManNotes/models"
-	object "github.com/mangenotwork/ManGe-Notes/object"
-	servers "github.com/mangenotwork/ManGe-Notes/servers"
-
-	"github.com/astaxie/beego"
+	"github.com/mangenotwork/ManGe-Notes/object"
+	"github.com/mangenotwork/ManGe-Notes/servers"
+	"github.com/mangenotwork/ManGe-Notes/util"
 	"github.com/nfnt/resize"
 	"github.com/rs/xid"
 )
@@ -70,7 +66,10 @@ func (this *UploadController) UploadImg() {
 	id := xid.New()
 	newimgName := fmt.Sprintf("%s%s", id.String(), fileExt)
 	//图片在服务器上的存储位置
-	savedir := beego.AppConfig.DefaultString("img::savepath", "")
+	savedir := "./media/"
+	//TODO 阿里云，腾讯云存储
+
+	//savedir := beego.AppConfig.DefaultString("img::savepath", "")
 	savepath := fmt.Sprintf("%s%s", savedir, newimgName)
 	fmt.Println(savepath)
 	fmt.Println(path.Join(savepath))

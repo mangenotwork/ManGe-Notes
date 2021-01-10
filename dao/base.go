@@ -10,6 +10,7 @@ import (
 
 //获取连接
 func GetConn() *gorm.DB {
+	log.Println("object.GlobalDBType = ", object.GlobalDBType)
 	switch object.GlobalDBType {
 	case "sqlite":
 		c, err := conn.GetSqliteConn()
